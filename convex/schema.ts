@@ -4,6 +4,12 @@ import { v } from "convex/values";
 export default defineSchema({
   // Users table to store user data and subscription information
   users: defineTable({
+    // Canvas integration
+    canvasAccessToken: v.optional(v.string()),
+    canvasEnabled: v.optional(v.boolean()),
+    canvasUniversityUrl: v.optional(v.string()),
+    canvasUrl: v.optional(v.string()),
+    
     // Auth data
     clerkId: v.string(),
     name: v.optional(v.string()),
@@ -40,13 +46,18 @@ export default defineSchema({
   })
   .index("by_userId", ["userId"]),
 
+  
+
   // Messages table
   messages: defineTable({
     chatId: v.id("chats"),
     content: v.string(),
-    role: v.string(), // "user" or "assistant"
-    tokens: v.optional(v.number()), // For usage tracking
-    createdAt: v.number(),
+    createdAt: v.float64(),
+    role: v.string(),
+    tokens: v.optional(v.float64()),
+    isError: v.optional(v.boolean()),  // Add this field
+    isLoading: v.optional(v.boolean()),
+    userId: v.optional(v.id("users")),
   })
   .index("by_chatId", ["chatId"]),
 }); 

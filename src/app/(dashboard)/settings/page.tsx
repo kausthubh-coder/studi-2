@@ -18,7 +18,10 @@ import {
   CreditCard,
   DollarSign,
   PlusCircle,
-  XCircle
+  XCircle,
+  BookOpen,
+  ToggleLeft,
+  ToggleRight
 } from "lucide-react";
 
 type SettingSectionProps = {
@@ -55,6 +58,47 @@ export default function SettingsPage() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  // Canvas settings state
+  const [canvasEnabled, setCanvasEnabled] = useState(convexUser?.canvasEnabled || false);
+  const [canvasUrl, setCanvasUrl] = useState(convexUser?.canvasUrl || "");
+  const [canvasAccessToken, setCanvasAccessToken] = useState(convexUser?.canvasAccessToken || "");
+  const [canvasSaving, setCanvasSaving] = useState(false);
+  const [canvasSaved, setCanvasSaved] = useState(false);
+
+  // Update Canvas settings mutation
+  const updateCanvasSettings = useMutation(api.users.updateCanvasSettings);
+
+  // Handle Canvas settings save
+  const handleSaveCanvasSettings = async () => {
+    setCanvasSaving(true);
+    try {
+      // If Canvas is enabled, we need both URL and access token
+      if (canvasEnabled && (!canvasUrl || !canvasAccessToken)) {
+        alert("Please enter both Canvas URL and access token");
+        setCanvasSaving(false);
+        return;
+      }
+
+      // Prepare the mutation arguments
+      const args: any = { canvasEnabled };
+      
+      // Only include URL and token if Canvas is enabled
+      if (canvasEnabled) {
+        args.canvasUrl = canvasUrl;
+        args.canvasAccessToken = canvasAccessToken;
+      }
+
+      await updateCanvasSettings(args);
+      setCanvasSaved(true);
+      setTimeout(() => setCanvasSaved(false), 2000);
+    } catch (error) {
+      console.error("Failed to save Canvas settings:", error);
+      alert("Failed to save Canvas settings. Please try again.");
+    } finally {
+      setCanvasSaving(false);
+    }
+  };
 
   const handleSavePreferences = () => {
     // This would save the preferences to Convex
@@ -198,6 +242,84 @@ export default function SettingsPage() {
               className="py-2 px-4 border border-black text-black rounded-md hover:bg-gray-50 transition-colors"
             >
               Change Password
+            </button>
+          </div>
+        </SettingSection>
+      </motion.div>
+
+      <motion.div variants={item}>
+        <SettingSection 
+          title="Canvas Integration" 
+          description="Connect to your Canvas LMS account"
+          icon={BookOpen}
+        >
+          <div className="flex items-center justify-between py-3 border-b border-gray-200">
+            <div>
+              <h3 className="font-bold text-black">Enable Canvas Integration</h3>
+              <p className="text-sm text-black">Connect Studi AI to your Canvas LMS account</p>
+            </div>
+            <button 
+              onClick={() => setCanvasEnabled(!canvasEnabled)}
+              className="p-2 rounded-md flex items-center gap-2"
+            >
+              {canvasEnabled ? (
+                <ToggleRight size={24} className="text-black" />
+              ) : (
+                <ToggleLeft size={24} className="text-black" />
+              )}
+            </button>
+          </div>
+
+          {canvasEnabled && (
+            <>
+              <div className="py-3 border-b border-gray-200">
+                <h3 className="font-bold text-black mb-2">Canvas URL</h3>
+                <p className="text-sm text-black mb-2">Enter your Canvas instance URL (e.g., https://university.instructure.com)</p>
+                <input
+                  type="text"
+                  value={canvasUrl}
+                  onChange={(e) => setCanvasUrl(e.target.value)}
+                  placeholder="https://university.instructure.com"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black text-black"
+                />
+              </div>
+
+              <div className="py-3 border-b border-gray-200">
+                <h3 className="font-bold text-black mb-2">Canvas Access Token</h3>
+                <p className="text-sm text-black mb-2">Enter your Canvas API access token</p>
+                <input
+                  type="password"
+                  value={canvasAccessToken}
+                  onChange={(e) => setCanvasAccessToken(e.target.value)}
+                  placeholder="Canvas API access token"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black text-black"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  You can generate an access token in your Canvas account settings.
+                </p>
+              </div>
+            </>
+          )}
+
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={handleSaveCanvasSettings}
+              disabled={canvasSaving}
+              className="py-2 px-4 bg-black text-white rounded-md hover:bg-gray-800 transition-colors flex items-center gap-2"
+            >
+              {canvasSaving ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Saving...
+                </>
+              ) : canvasSaved ? (
+                <>
+                  <Check size={16} />
+                  Saved!
+                </>
+              ) : (
+                "Save Canvas Settings"
+              )}
             </button>
           </div>
         </SettingSection>

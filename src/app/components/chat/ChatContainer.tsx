@@ -1,22 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useCallback, useState } from "react";
-import { MessageList } from "./MessageList";
-import { Message } from "@/types/chat";
+import { Message as MessageType } from "@/types/chat";
 import { 
   ArrowUp, 
   Paperclip, 
   Plus, 
-  Bot, 
-  Sparkles, 
-  MessageSquare, 
   ArrowLeft, 
   Loader2, 
-  Image,
-  FileUp,
-  BookOpen,
-  Code,
-  FileQuestion,
   Edit,
   Trash,
   Check,
@@ -24,9 +15,12 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { Message } from "./Message";
+import { logger } from "../../../utils/logger";
+import { Id } from "../../../../convex/_generated/dataModel";
 
 type ChatContainerProps = {
-  messages: Message[];
+  messages: MessageType[];
   isLoading: boolean;
   onSendMessage: (content: string) => void;
   title?: string;
@@ -76,6 +70,7 @@ export function ChatContainer({
   const handleSendMessage = () => {
     if (!message.trim() || isLoading) return;
     
+    logger.info('Sending message', { chatId, contentLength: message.length }, 'chat');
     onSendMessage(message.trim());
     setMessage("");
     
@@ -105,6 +100,7 @@ export function ChatContainer({
   // Save edited title
   const saveEditedTitle = () => {
     if (onUpdateTitle && editedTitle.trim()) {
+      logger.info('Updating chat title', { chatId, newTitle: editedTitle }, 'chat');
       onUpdateTitle(editedTitle.trim());
     }
     setIsEditing(false);
@@ -128,6 +124,7 @@ export function ChatContainer({
   // Handle chat deletion
   const handleDeleteChat = () => {
     if (confirm("Are you sure you want to delete this chat? This action cannot be undone.")) {
+      logger.info('Deleting chat', { chatId }, 'chat');
       onDeleteChat?.();
     }
   };
@@ -144,35 +141,29 @@ export function ChatContainer({
     }
   }, [messages]);
 
-  // Action buttons for suggestions
-  const ActionButton = ({ icon, label, onClick }: { 
-    icon: React.ReactNode; 
-    label: string;
-    onClick: () => void;
-  }) => (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 rounded-full border border-black text-black transition-colors"
-    >
-      {icon}
-      <span className="text-xs">{label}</span>
-    </motion.button>
-  );
-  
+  // Format messages for our components
+  const formattedMessages = messages.map(msg => ({
+    id: msg._id,
+    content: msg.content,
+    role: msg.role,
+    timestamp: new Date(msg._creationTime),
+    originalChatId: msg.chatId, // Keep the original chatId for reference
+    functionCall: msg.functionCall ? JSON.parse(msg.functionCall) : undefined
+  }));
+
   return (
     <div className="flex flex-col h-[calc(100vh-64px)] bg-white">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-black">
         <div className="flex items-center">
-          <button 
+          <motion.button 
             onClick={() => router.push("/dashboard")}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <ArrowLeft className="h-5 w-5 text-black" />
-          </button>
+          </motion.button>
           
           {isEditing ? (
             <div className="ml-2 flex items-center">
@@ -185,18 +176,22 @@ export function ChatContainer({
                 className="text-xl font-semibold text-black bg-white border-b border-black px-1 py-0.5 focus:outline-none"
                 autoFocus
               />
-              <button 
+              <motion.button 
                 onClick={saveEditedTitle}
                 className="p-1 ml-1 rounded-full hover:bg-gray-100"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
                 <Check className="h-4 w-4 text-green-600" />
-              </button>
-              <button 
+              </motion.button>
+              <motion.button 
                 onClick={cancelEditingTitle}
                 className="p-1 rounded-full hover:bg-gray-100"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
                 <X className="h-4 w-4 text-red-600" />
-              </button>
+              </motion.button>
             </div>
           ) : (
             <h1 className="ml-2 text-xl font-semibold text-black">{title || "New Chat"}</h1>
@@ -233,118 +228,71 @@ export function ChatContainer({
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto px-4 pt-6 pb-4">
         <div className="max-w-4xl mx-auto">
-          {messages.length === 0 ? (
+          {formattedMessages.length === 0 ? (
             <div className="flex flex-col items-center w-full max-w-4xl mx-auto space-y-8">
               <h1 className="text-4xl font-bold text-black">
                 What would you like to know?
               </h1>
-              
-              <div className="flex flex-wrap items-center justify-center gap-3 mt-4">
-                <ActionButton
-                  icon={<MessageSquare className="w-4 h-4" />}
-                  label="How can you help me with my studies?"
-                  onClick={() => onSendMessage("How can you help me with my studies?")}
-                />
-                <ActionButton
-                  icon={<BookOpen className="w-4 h-4" />}
-                  label="Learning technique suggestions"
-                  onClick={() => onSendMessage("What are some effective learning techniques?")}
-                />
-                <ActionButton
-                  icon={<FileQuestion className="w-4 h-4" />}
-                  label="Answer my homework questions"
-                  onClick={() => onSendMessage("Can you help me with homework questions?")}
-                />
-                <ActionButton
-                  icon={<Code className="w-4 h-4" />}
-                  label="Help me with programming"
-                  onClick={() => onSendMessage("How can you help me with programming assignments?")}
-                />
-                <ActionButton
-                  icon={<Sparkles className="w-4 h-4" />}
-                  label="Make a study plan"
-                  onClick={() => onSendMessage("Help me create a study plan for exams")}
-                />
-              </div>
             </div>
           ) : (
-            <>
-              <MessageList messages={messages} />
-              <div ref={messagesEndRef} />
-            </>
+            <div className="space-y-4">
+              {formattedMessages.map((msg) => (
+                <Message
+                  key={msg.id}
+                  message={{
+                    _id: msg.id,
+                    content: msg.content,
+                    role: msg.role,
+                    _creationTime: msg.timestamp.getTime(),
+                    chatId: msg.originalChatId,
+                    functionCall: msg.functionCall ? JSON.stringify(msg.functionCall) : undefined
+                  }}
+                />
+              ))}
+            </div>
           )}
+          
+          {isLoading && (
+            <div className="flex justify-center ml-8 my-4">
+              <div className="animate-pulse bg-white border border-black rounded-lg p-4 max-w-md shadow-sm">
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            </div>
+          )}
+          
+          <div ref={messagesEndRef} />
         </div>
       </div>
       
       {/* Input area */}
-      <div className="px-4 pb-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="relative bg-white rounded-xl border border-black">
-            <textarea
-              ref={textareaRef}
-              value={message}
-              onChange={(e) => {
-                setMessage(e.target.value);
-                adjustTextareaHeight();
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="Type your message..."
-              className="w-full px-4 py-3 resize-none bg-transparent border-none text-black text-sm focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[60px]"
-              style={{ overflow: "hidden" }}
-              disabled={isLoading}
-            />
-            
-            <div className="flex items-center justify-between p-3 border-t border-gray-200">
-              <div className="flex items-center gap-2">
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1"
-                >
-                  <Paperclip className="w-4 h-4 text-black" />
-                </motion.button>
-              </div>
-              
-              <AnimatePresence>
-                {isLoading && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute top-[-40px] left-1/2 transform -translate-x-1/2 bg-black text-white px-3 py-1 rounded-full flex items-center gap-2 text-sm"
-                  >
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Studi is thinking...
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              
-              <div className="flex items-center gap-2">
-                <motion.button
-                  type="button"
-                  onClick={handleSendMessage}
-                  disabled={!message.trim() || isLoading}
-                  whileHover={message.trim() && !isLoading ? { scale: 1.05 } : {}}
-                  whileTap={message.trim() && !isLoading ? { scale: 0.95 } : {}}
-                  className={`px-3 py-2 rounded-lg text-sm transition-colors border flex items-center justify-between gap-1 ${
-                    message.trim() && !isLoading
-                      ? "bg-black text-white border-black"
-                      : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                  }`}
-                >
-                  <ArrowUp className="w-4 h-4" />
-                  <span className="sr-only">Send</span>
-                </motion.button>
-              </div>
-            </div>
-          </div>
-          
-          {messages.length === 0 && (
-            <p className="text-xs text-center mt-2 text-black">
-              Press Enter to send • Shift + Enter for a new line
-            </p>
-          )}
+      <div className="border-t border-black p-4 bg-white">
+        <div className="max-w-4xl mx-auto relative">
+          <textarea
+            ref={textareaRef}
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              adjustTextareaHeight();
+            }}
+            onKeyDown={handleKeyDown}
+            placeholder="Type your message..."
+            className="w-full border border-black rounded-lg p-3 pr-14 resize-none focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-black"
+            style={{ height: "60px", maxHeight: "200px" }}
+            disabled={isLoading}
+          />
+          <button
+            type="button"
+            onClick={handleSendMessage}
+            disabled={!message.trim() || isLoading}
+            className="absolute right-3 bottom-3 p-2 bg-black text-white rounded-full hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {isLoading ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <ArrowUp className="h-5 w-5" />
+            )}
+          </button>
         </div>
       </div>
     </div>

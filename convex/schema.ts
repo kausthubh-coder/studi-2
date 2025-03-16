@@ -7,7 +7,6 @@ export default defineSchema({
     // Canvas integration
     canvasAccessToken: v.optional(v.string()),
     canvasEnabled: v.optional(v.boolean()),
-    canvasUniversityUrl: v.optional(v.string()),
     canvasUrl: v.optional(v.string()),
     
     // Auth data
@@ -58,6 +57,12 @@ export default defineSchema({
     isError: v.optional(v.boolean()),  // Add this field
     isLoading: v.optional(v.boolean()),
     userId: v.optional(v.id("users")),
+    functionCall: v.optional(v.string()),
+    functionData: v.optional(v.object({
+      name: v.string(),
+      arguments: v.string(),
+      result: v.string(),
+    })),
   })
   .index("by_chatId", ["chatId"]),
 }); 

@@ -1,136 +1,171 @@
-# Frontend Architecture
+# Application Architecture
 
 ## Overview
 
-The frontend of the Canvas Manus application is built using Next.js 14, leveraging the app router for server components and routing. The application uses Convex as a backend, providing real-time data synchronization and a document-based database.
+Studi is a Next.js application designed to help students interact with their Canvas LMS data through a chat interface. The application uses a combination of client-side and server-side components, with Convex as the backend database and API layer.
 
-## Key Technologies
+## Tech Stack
 
-- **Next.js 14**: React framework for server-side rendering and client components
-- **Tailwind CSS**: Utility-first CSS framework for styling
-- **Clerk**: Authentication provider
-- **Convex**: Backend and database
-- **Framer Motion**: Animation library for UI interactions
-- **Lucide React**: Icon library for UI elements
+- **Frontend**: Next.js 14 with React and TypeScript
+- **Backend**: Convex for database and serverless functions
+- **Authentication**: Clerk for user authentication
+- **AI Integration**: OpenAI API for chat completions
+- **Canvas Integration**: Canvas LMS API for educational data
+- **Styling**: Tailwind CSS with shadcn/ui components
 
-## Directory Structure
+## Core Components
 
-- `/src`: Main source code directory
-  - `/app`: Next.js app directory (app router)
-    - `/(auth)`: Authentication pages
-    - `/(dashboard)`: Dashboard and authenticated user experience
-      - `/dashboard`: Main dashboard page
-      - `/chat`: Chat listing and creation page
-      - `/chat/[id]`: Individual chat page
-    - `/components`: Reusable React components
-      - `/auth`: Authentication-related components
-      - `/chat`: Chat-related components
-      - `/navigation`: Navigation components
-    - `/globals.css`: Global styles
-  - `/types`: TypeScript type definitions
-- `/convex`: Convex backend code
-  - `/schema.ts`: Database schema
-  - `/users.ts`: User-related functions
-  - `/chats.ts`: Chat-related functions
-  - `/messages.ts`: Message-related functions
-  - `/openai.ts`: OpenAI integration
-- `/public`: Static assets
+### Frontend Architecture
 
-## UI Architecture
+The frontend is organized into several key areas:
 
-The UI is designed with a modern, clean aesthetic featuring a white background with black borders. The interface is built to be responsive, with different layouts for mobile and desktop views.
+1. **Pages and Layouts**
+   - App router-based structure with nested layouts
+   - Main pages: Home, Chat, Dashboard, Settings
 
-### Dashboard Layout
+2. **Components**
+   - UI components (buttons, inputs, etc.) from shadcn/ui
+   - Custom components for specific features (ChatContainer, Message, etc.)
+   - Layout components for page structure
 
-The dashboard layout includes:
+3. **Hooks and Utilities**
+   - Custom React hooks for state management
+   - Utility functions for common operations
+   - Logger for debugging and monitoring
 
-1. **Sidebar**:
-   - Logo and branding
-   - New chat button
-   - Navigation links (Dashboard, Settings)
-   - List of recent chats
-   - User profile section with Clerk UserButton
+### Backend Architecture (Convex)
 
-2. **Main Content Area**:
-   - Dynamic content based on the current route
-   - Responsive padding and layout
-   - Subtle animations for page transitions using Framer Motion
+The Convex backend handles:
 
-### Dashboard Page
+1. **Database**
+   - Users, chats, and messages storage
+   - Relationships between entities
 
-The dashboard page displays:
+2. **API Endpoints**
+   - Mutations for creating and updating data
+   - Queries for retrieving data
+   - Actions for external API calls (OpenAI, Canvas)
 
-- Welcome section with user's name
-- Recent chats in a card layout
-- Account information (email, plan, credits)
-- Usage statistics (tokens used, chats created)
+3. **Authentication**
+   - Integration with Clerk for user authentication
+   - User session management
 
-### Chat Pages
+### Data Flow
 
-1. **Chat Listing Page**:
-   - New conversation button
-   - Example conversation starters
-   - Recent conversations list
-   - Animated micro-interactions for better UX
+1. **User Authentication**
+   - User signs in via Clerk
+   - Authentication state is managed client-side
+   - User data is stored in Convex
 
-2. **Chat Detail Page**:
-   - Message list with user and AI messages
-   - Message input with emoji support
-   - Chat title and functionality
-   - Animations for new messages and loading states
+2. **Chat Interaction**
+   - User sends a message via the UI
+   - Message is stored in Convex
+   - OpenAI API is called to generate a response
+   - Response is stored and displayed to the user
 
-## Component Architecture
+3. **Canvas Integration**
+   - User connects their Canvas account
+   - Access token is securely stored
+   - AI can request Canvas data via function calls
+   - Data is fetched and presented to the user
 
-Components are organized by feature and follow a composition pattern. Most UI components leverage Tailwind CSS for styling, with minimal CSS-in-JS. Animation is provided via Framer Motion for enhanced user experience.
+## Key Files and Directories
 
-### Key Components
-
-- **Navigation**: Main navigation and sidebar
-- **ChatContainer**: Container for the chat UI
-- **MessageList**: List of messages in a chat
-- **Message**: Individual message component
-- **MessageInput**: Input for new messages
-
-## State Management
-
-State is primarily managed through:
-
-1. **Convex Queries and Mutations**: For data fetching and updates
-2. **React State**: For local UI state
-3. **URL Parameters**: For navigation and routing
+```
+studi/
+├── src/
+│   ├── app/                  # Next.js app router
+│   │   ├── (auth)/           # Authentication pages
+│   │   ├── (dashboard)/      # Dashboard pages
+│   │   ├── api/              # API routes
+│   │   ├── components/       # React components
+│   │   │   ├── chat/         # Chat-related components
+│   │   │   ├── ui/           # UI components
+│   │   ├── lib/              # Utility libraries
+│   │   └── types/            # TypeScript type definitions
+│   ├── utils/                # Utility functions
+│   │   └── logger.ts         # Logging utility
+├── convex/                   # Convex backend
+│   ├── _generated/           # Generated Convex files
+│   ├── schema.ts             # Database schema
+│   ├── users.ts              # User-related functions
+│   ├── messages.ts           # Message-related functions
+│   ├── chats.ts              # Chat-related functions
+│   ├── canvas.ts             # Canvas integration
+│   └── openai.ts             # OpenAI integration
+├── public/                   # Static assets
+└── docs/                     # Documentation
+```
 
 ## Authentication Flow
 
-Authentication is handled by Clerk, with the following flow:
+1. User visits the application
+2. If not authenticated, redirected to sign-in page
+3. User signs in or creates an account via Clerk
+4. On successful authentication:
+   - Clerk provides a JWT token
+   - Token is used to authenticate Convex requests
+   - User data is created or retrieved from the database
 
-1. User signs in via Clerk UI
-2. On successful authentication, user data is synchronized with Convex
-3. User is redirected to the dashboard
-4. Authentication state is checked on protected routes
+## Chat System Architecture
 
-## Styling Approach
+The chat system consists of:
 
-The styling approach uses:
+1. **ChatContainer Component**
+   - Manages the UI for the chat interface
+   - Handles message input and submission
 
-1. **Tailwind CSS**: For most UI styling
-2. **CSS Variables**: For theme colors and repeated values
-3. **Framer Motion**: For animations and transitions
+2. **Message Component**
+   - Renders individual messages
+   - Supports different message types (user, assistant, system, function)
 
-## Micro-interactions
+3. **Convex Backend**
+   - `messages.ts`: Stores and retrieves messages
+   - `openai.ts`: Handles AI message generation
+   - `canvas.ts`: Processes Canvas-related function calls
 
-The UI includes several micro-interactions to enhance user experience:
+4. **OpenAI Integration**
+   - Processes user messages
+   - Generates assistant responses
+   - Handles function calling for Canvas data
 
-- Hover states on buttons and interactive elements
-- Subtle scale animations on cards and buttons
-- Loading states with custom animations
-- Transition animations between pages
-- Subtle feedback on user actions
+## Canvas Integration
 
-## Responsive Design
+The Canvas integration allows:
 
-The UI is fully responsive with:
+1. **Authentication**
+   - User connects their Canvas account via OAuth
+   - Access token is securely stored in the database
 
-- Mobile-first design approach
-- Sidebar that collapses on smaller screens
-- Responsive grid layouts that adjust based on viewport size
-- Touch-friendly targets on mobile devices 
+2. **Data Access**
+   - AI can request specific Canvas data via function calls
+   - Available functions: get_courses, get_assignments, get_announcements, get_modules
+
+3. **Data Presentation**
+   - Canvas data is formatted and presented to the user
+   - AI provides context and explanations for the data
+
+## Logging System
+
+The application uses a custom logger that:
+
+1. Provides different log levels (debug, info, warn, error)
+2. Supports context tagging for better organization
+3. Formats logs with timestamps and additional metadata
+4. Adjusts verbosity based on the environment
+
+## Future Architecture Considerations
+
+1. **Scalability**
+   - Implement caching for frequently accessed data
+   - Optimize database queries for performance
+
+2. **Security**
+   - Regular security audits
+   - Implement rate limiting
+   - Enhanced data encryption
+
+3. **Features**
+   - File upload and management
+   - Real-time collaboration
+   - Advanced Canvas integration features 

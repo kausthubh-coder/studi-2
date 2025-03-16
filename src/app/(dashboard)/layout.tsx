@@ -90,10 +90,10 @@ export default function DashboardLayout({
           </div>
           
           <div className="flex-1 overflow-y-auto">
-            <div className="p-4">
+            <div className="p-4 pb-1">
               <motion.button 
                 onClick={handleNewChat}
-                className="flex items-center gap-2 w-full p-2 rounded-md bg-black text-white hover:bg-gray-800 transition-colors mb-4"
+                className="flex items-center gap-2 w-full p-2 rounded-md bg-black text-white hover:bg-gray-800 transition-colors"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -103,10 +103,10 @@ export default function DashboardLayout({
             </div>
             
             {/* Navigation Links */}
-            <nav className="px-4 pb-2">
+            <nav className="px-4 pt-1">
               <Link 
                 href="/dashboard" 
-                className={`flex items-center gap-2 p-2 mb-1 rounded-md transition-colors ${
+                className={`flex items-center gap-2 p-2 rounded-md transition-colors ${
                   pathname === '/dashboard' ? 'text-black font-medium bg-gray-100' : 'text-black hover:bg-gray-50'
                 }`}
               >

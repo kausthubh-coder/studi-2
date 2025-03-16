@@ -12,8 +12,11 @@ export interface Message {
   _creationTime: number;
   chatId: Id<"chats">;
   content: string;
-  role: "user" | "assistant" | "system";
+  role: "user" | "assistant" | "system" | "function";
   isDeleted?: boolean;
+  isLoading?: boolean;
+  isError?: boolean;
+  functionCall?: string; // JSON string of function call data
 }
 
 /**

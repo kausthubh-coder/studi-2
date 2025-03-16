@@ -29,7 +29,7 @@ export function Navigation() {
     <header 
       className={`fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/90 dark:bg-gray-950/90 backdrop-blur-md shadow-md' 
+          ? 'bg-white backdrop-blur-md shadow-md border-b border-black' 
           : 'bg-transparent'
       }`}
     >
@@ -38,21 +38,19 @@ export function Navigation() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <div className="flex items-center">
-              <svg className="h-8 w-8 text-blue-600 dark:text-blue-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 3.5L5 6.5M9 3.5L13 6.5M9 3.5V9.5M15 20.5L19 17.5M15 20.5L11 17.5M15 20.5V14.5M5 6.5C5 8.70914 6.79086 10.5 9 10.5C11.2091 10.5 13 8.70914 13 6.5M5 6.5C5 4.29086 6.79086 2.5 9 2.5C11.2091 2.5 13 4.29086 13 6.5M19 17.5C19 15.2909 17.2091 13.5 15 13.5C12.7909 13.5 11 15.2909 11 17.5M19 17.5C19 19.7091 17.2091 21.5 15 21.5C12.7909 21.5 11 19.7091 11 17.5M13 6.5C13 8.70914 14.7909 10.5 17 10.5C19.2091 10.5 21 8.70914 21 6.5C21 4.29086 19.2091 2.5 17 2.5C14.7909 2.5 13 4.29086 13 6.5ZM11 17.5C11 15.2909 9.20914 13.5 7 13.5C4.79086 13.5 3 15.2909 3 17.5C3 19.7091 4.79086 21.5 7 21.5C9.20914 21.5 11 19.7091 11 17.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">Studi</span>
+              <span className="text-2xl">📚</span>
+              <span className="ml-2 text-xl font-bold text-black">Studi</span>
             </div>
-            <span className="ml-2 inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/30 dark:text-blue-400 dark:ring-blue-400/30">BETA</span>
+            <span className="ml-2 inline-flex items-center rounded-md bg-white px-2 py-1 text-xs font-medium text-black ring-1 ring-inset ring-black">BETA</span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <div className="flex space-x-8 text-sm font-medium text-gray-700 dark:text-gray-300">
-              <Link href="#features" className="hover:text-blue-600 dark:hover:text-blue-400">Features</Link>
-              <Link href="#testimonials" className="hover:text-blue-600 dark:hover:text-blue-400">Testimonials</Link>
-              <Link href="#pricing" className="hover:text-blue-600 dark:hover:text-blue-400">Pricing</Link>
-              <Link href="/blog" className="hover:text-blue-600 dark:hover:text-blue-400">Blog</Link>
+            <div className="flex space-x-8 text-sm font-medium text-black">
+              <Link href="#features" className="hover:text-gray-700 border-b border-black">✨ Features</Link>
+              <Link href="#testimonials" className="hover:text-gray-700 border-b border-black">💬 Testimonials</Link>
+              <Link href="#pricing" className="hover:text-gray-700 border-b border-black">💰 Pricing</Link>
+              <Link href="/blog" className="hover:text-gray-700 border-b border-black">✏️ Blog</Link>
             </div>
             
             <div className="flex items-center space-x-4">
@@ -60,22 +58,22 @@ export function Navigation() {
                 <>
                   <Link 
                     href="/dashboard" 
-                    className="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"
+                    className="text-sm font-medium text-black hover:text-gray-700 border-b border-black"
                   >
-                    Dashboard
+                    📊 Dashboard
                   </Link>
                   <UserButton afterSignOutUrl="/" />
                 </>
               ) : (
                 <>
                   <SignInButton mode="modal">
-                    <button className="text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
-                      Sign in
+                    <button className="text-sm font-medium text-black hover:text-gray-700 border-b border-black">
+                      🔑 Sign in
                     </button>
                   </SignInButton>
                   <SignUpButton mode="modal">
-                    <button className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-400">
-                      Get Early Access
+                    <button className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black shadow-sm hover:bg-gray-100 border-2 border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2">
+                      🚀 Get Early Access
                     </button>
                   </SignUpButton>
                 </>
@@ -86,7 +84,7 @@ export function Navigation() {
           {/* Mobile menu button */}
           <button
             type="button"
-            className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+            className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-black hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-black"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <span className="sr-only">Open main menu</span>
@@ -110,37 +108,37 @@ export function Navigation() {
         animate={{ opacity: mobileMenuOpen ? 1 : 0, height: mobileMenuOpen ? 'auto' : 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="px-4 pt-2 pb-4 space-y-1 bg-white dark:bg-gray-950 shadow-lg">
+        <div className="px-4 pt-2 pb-4 space-y-1 bg-white shadow-lg border-t border-b border-black">
           <Link 
             href="#features" 
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800"
+            className="block px-3 py-2 rounded-md text-base font-medium text-black hover:text-gray-700 hover:bg-gray-100 border-b border-black"
             onClick={() => setMobileMenuOpen(false)}
           >
-            Features
+            ✨ Features
           </Link>
           <Link 
             href="#testimonials" 
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800"
+            className="block px-3 py-2 rounded-md text-base font-medium text-black hover:text-gray-700 hover:bg-gray-100 border-b border-black"
             onClick={() => setMobileMenuOpen(false)}
           >
-            Testimonials
+            💬 Testimonials
           </Link>
           <Link 
             href="#pricing" 
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800"
+            className="block px-3 py-2 rounded-md text-base font-medium text-black hover:text-gray-700 hover:bg-gray-100 border-b border-black"
             onClick={() => setMobileMenuOpen(false)}
           >
-            Pricing
+            💰 Pricing
           </Link>
           <Link 
             href="/blog" 
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800"
+            className="block px-3 py-2 rounded-md text-base font-medium text-black hover:text-gray-700 hover:bg-gray-100 border-b border-black"
             onClick={() => setMobileMenuOpen(false)}
           >
-            Blog
+            ✏️ Blog
           </Link>
           
-          <div className="pt-4 pb-3 border-t border-gray-200 dark:border-gray-800">
+          <div className="pt-4 pb-3 border-t border-black">
             {isSignedIn ? (
               <div className="flex items-center px-3">
                 <div className="flex-shrink-0">
@@ -148,28 +146,28 @@ export function Navigation() {
                 </div>
                 <Link 
                   href="/dashboard" 
-                  className="ml-3 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-gray-800"
+                  className="ml-3 block px-3 py-2 rounded-md text-base font-medium text-black hover:text-gray-700 hover:bg-gray-100 border-b border-black"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Dashboard
+                  📊 Dashboard
                 </Link>
               </div>
             ) : (
               <div className="space-y-2 px-3">
                 <SignInButton mode="modal">
                   <button 
-                    className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700"
+                    className="w-full flex justify-center items-center px-4 py-2 border border-black shadow-sm text-sm font-medium rounded-md text-black bg-white hover:bg-gray-50"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Sign in
+                    🔑 Sign in
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
                   <button 
-                    className="w-full flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
+                    className="w-full flex justify-center items-center px-4 py-2 border-2 border-black text-sm font-medium rounded-md text-black bg-white hover:bg-gray-100"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Get Early Access
+                    🚀 Get Early Access
                   </button>
                 </SignUpButton>
               </div>

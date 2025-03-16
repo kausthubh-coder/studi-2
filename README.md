@@ -10,6 +10,7 @@ Studi is an AI-powered chat application that helps students interact with their 
 - **Responsive Design**: Works on desktop and mobile devices
 - **User Authentication**: Secure login with Clerk authentication
 - **Structured Logging**: Comprehensive logging system for debugging and monitoring
+- **Modern Landing Page**: Engaging, conversion-focused design with Canvas integration emphasis
 
 ### Canvas API Features
 
@@ -24,6 +25,18 @@ Studi integrates extensively with the Canvas LMS API to provide access to:
 - Quizzes and surveys
 
 All these features are accessible through natural language conversations with the AI assistant.
+
+## Landing Page
+
+The Studi landing page is designed to showcase the application's value proposition with a focus on Canvas LMS integration. Key sections include:
+
+- **Hero Section**: Introduces Studi as an AI-powered study assistant with Canvas integration
+- **Features Section**: Highlights key capabilities including Canvas data access, AI assistance, and study tools
+- **Testimonials**: Showcases student experiences with the platform
+- **Call to Action**: Encourages early access sign-ups
+- **Footer**: Provides navigation, resources, and company information
+
+The landing page is fully responsive and designed with modern web standards using Tailwind CSS and React components.
 
 ## Tech Stack
 

@@ -456,4 +456,110 @@ export function EnhancedFadeIn({ children, ...props }) {
     </FadeIn>
   );
 }
+```
+
+## Landing Page Components
+
+### `<Hero>`
+
+The main hero section of the landing page that introduces Studi as an AI-powered study assistant for Canvas LMS.
+
+**Features:**
+- Animated background with network-like pattern
+- Headline with typewriter effect
+- Clear value proposition and description
+- Call-to-action buttons for early access
+- Interactive preview of the AI chat functionality
+- Responsive design for all device sizes
+
+**Key Elements:**
+- Canvas integration emphasis
+- Modern, clean design with blue accent colors
+- Animated elements for visual interest
+
+### `<Features>`
+
+Showcases the key features of Studi with visual illustrations.
+
+**Features:**
+- Grid layout of feature cards
+- Icon illustrations for each feature
+- Animated reveal on scroll
+- Responsive design that adjusts columns based on screen size
+
+**Key Features Highlighted:**
+- Canvas LMS Integration
+- AI-Powered Study Assistance
+- Smart Assignment Help
+- Course Material Organization
+- Personalized Study Plans
+- Collaborative Learning
+
+### `<Testimonials>`
+
+Displays user testimonials to build trust and showcase real-world benefits.
+
+**Features:**
+- Carousel of testimonial cards
+- User avatars and names
+- Star ratings
+- Responsive design
+- Subtle animations on hover
+
+**Design Elements:**
+- Clean card design with subtle shadows
+- Emphasis on student experiences with Canvas integration
+- Diverse representation of users
+
+### `<CTA>` (Call to Action)
+
+Encourages visitors to sign up for early access.
+
+**Features:**
+- Eye-catching background with gradient
+- Clear headline and subheadline
+- Email input field
+- Submit button
+- Privacy policy link
+- Responsive design
+
+**Design Elements:**
+- Contrasting colors to draw attention
+- Simple form with clear instructions
+- Focus on early access to create urgency
+
+### `<Footer>`
+
+The footer section containing links, information, and copyright notice.
+
+**Features:**
+- Logo and company description
+- Organized link sections (Product, Resources, Company, Legal)
+- Social media links
+- Copyright information
+- Responsive grid layout
+
+**Design Elements:**
+- Clean organization of links
+- Subtle separation between sections
+- Consistent with overall design language
+
+### `<Navigation>`
+
+The navigation bar for the landing page.
+
+**Features:**
+- Logo and beta badge
+- Desktop navigation links
+- Authentication buttons (Sign in, Get Early Access)
+- Mobile-responsive menu with hamburger icon
+- Scroll effect that changes background on scroll
+- User button for authenticated users
+
+**Design Elements:**
+- Clean, minimal design
+- Consistent with overall color scheme
+- Smooth animations for mobile menu
+- Clear visual hierarchy
+
 ``` 

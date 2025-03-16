@@ -6,35 +6,35 @@ import { FadeIn, Reveal } from './animations';
 const testimonials = [
   {
     id: 1,
-    content: "Studi has been a game-changer for my engineering courses. It helps me understand complex concepts and keeps all my Canvas assignments organized in one place.",
+    content: "Studi has been a game-changer for my engineering courses. The Canvas integration makes it so easy to access all my course materials and assignments in one place.",
     author: "Alex Johnson",
     role: "Engineering Student, MIT",
     image: "/avatars/avatar-1.png"
   },
   {
     id: 2,
-    content: "As a pre-med student with a packed schedule, Studi helps me stay on top of my coursework. The summarization feature saves me hours of reading time.",
+    content: "As a pre-med student with a packed schedule, Studi helps me stay on top of my coursework. The AI assistant understands my Canvas materials and explains concepts clearly.",
     author: "Maria Garcia",
     role: "Pre-Med Student, Stanford",
     image: "/avatars/avatar-2.png"
   },
   {
     id: 3,
-    content: "The AI homework assistant is incredibly helpful for my math courses. It guides me through problems step-by-step rather than just giving answers.",
+    content: "The AI homework assistant is incredibly helpful for my math courses. It analyzes problems from my Canvas assignments and guides me through solutions step-by-step.",
     author: "Jamal Williams",
     role: "Computer Science Major, Berkeley",
     image: "/avatars/avatar-3.png"
   },
   {
     id: 4,
-    content: "Our study group uses Studi to prepare for exams. The way it connects directly to Canvas and helps us create study plans has improved all our grades.",
+    content: "Our study group uses Studi to prepare for exams. The way it connects directly to Canvas and helps us create study plans based on our course content has improved all our grades.",
     author: "Sarah Chen",
     role: "Business Student, Harvard",
     image: "/avatars/avatar-4.png"
   },
   {
     id: 5,
-    content: "I struggled with keeping track of all my assignments until I found Studi. Now I never miss a deadline, and my professors have noticed the improvement in my work.",
+    content: "I struggled with keeping track of all my Canvas assignments until I found Studi. Now I never miss a deadline, and my professors have noticed the improvement in my work.",
     author: "David Kim",
     role: "Psychology Major, Princeton",
     image: "/avatars/avatar-5.png"
@@ -43,52 +43,70 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section id="testimonials" className="py-24 bg-black/5 dark:bg-white/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="testimonials" className="py-24 bg-gray-100 dark:bg-gray-800">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* Section header */}
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <div className="mx-auto max-w-2xl text-center mb-16">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Trusted by Students Everywhere</h2>
+            <h2 className="text-base font-semibold leading-7 text-blue-600 dark:text-blue-400">Testimonials</h2>
           </Reveal>
-          <FadeIn>
-            <p className="text-lg opacity-80">
-              Hear how Studi is helping students excel in their academic journey.
+          <Reveal delay={0.1}>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+              Students Love Using Studi
             </p>
-          </FadeIn>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
+              Hear from students who have transformed their academic experience with our Canvas-integrated AI study assistant.
+            </p>
+          </Reveal>
         </div>
 
         {/* Testimonial grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((testimonial, index) => (
-            <FadeIn 
-              key={testimonial.id} 
-              delay={index * 0.1}
-              className={`bg-white dark:bg-black rounded-2xl p-6 shadow-sm border border-black/5 dark:border-white/5 flex flex-col ${
-                index === 0 ? 'md:col-span-2 lg:col-span-1' : ''
-              }`}
-            >
-              {/* Quote icon */}
-              <div className="mb-4">
-                <svg width="45" height="36" className="text-black/20 dark:text-white/20" viewBox="0 0 45 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13.325 0C15.911 0 18.199 0.647 20.188 1.942C22.177 3.145 23.767 4.88 24.958 7.147C26.149 9.413 26.744 12.053 26.744 15.066C26.744 18.172 26.009 21.139 24.539 23.966C23.161 26.701 21.248 29.111 18.801 31.197C16.353 33.282 13.65 34.835 10.692 35.854L9.38 32.355C11.737 31.337 13.837 29.895 15.677 28.031C17.517 26.167 18.661 24.141 19.107 21.952C18.57 22.076 18.033 22.139 17.495 22.139C15.088 22.139 13.092 21.336 11.506 19.731C9.92 18.126 9.127 16.042 9.127 13.48C9.127 10.918 9.966 8.805 11.644 7.147C13.325 5.487 15.212 4.529 17.307 4.273C15.677 4.273 13.92 3.577 12.039 2.184C10.252 0.792 9.358 0.096 9.358 0.096L13.325 0ZM37.801 0C40.387 0 42.675 0.647 44.664 1.942C46.653 3.145 48.243 4.88 49.434 7.147C50.625 9.413 51.22 12.053 51.22 15.066C51.22 18.172 50.484 21.139 49.014 23.966C47.637 26.701 45.724 29.111 43.277 31.197C40.829 33.282 38.126 34.835 35.168 35.854L33.856 32.355C36.213 31.337 38.312 29.895 40.153 28.031C41.993 26.167 43.137 24.141 43.583 21.952C43.045 22.076 42.508 22.139 41.971 22.139C39.564 22.139 37.568 21.336 35.982 19.731C34.396 18.126 33.603 16.042 33.603 13.48C33.603 10.918 34.442 8.805 36.119 7.147C37.801 5.487 39.688 4.529 41.783 4.273C40.153 4.273 38.395 3.577 36.514 2.184C34.728 0.792 33.834 0.096 33.834 0.096L37.801 0Z" />
-                </svg>
-              </div>
-              
-              {/* Testimonial content */}
-              <p className="flex-1 text-lg mb-6">{testimonial.content}</p>
-              
-              {/* Author info */}
-              <div className="flex items-center mt-auto">
-                <div className="flex-shrink-0 h-12 w-12 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center font-bold text-lg">
-                  {testimonial.author.charAt(0)}
+            <Reveal key={testimonial.id} delay={0.1 * index}>
+              <div className="flex flex-col h-full overflow-hidden rounded-2xl bg-white p-6 shadow dark:bg-gray-900">
+                <div className="flex-1">
+                  <div className="flex items-center gap-x-2 text-yellow-500 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <svg key={i} className="h-5 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fillRule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clipRule="evenodd" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-base text-gray-700 dark:text-gray-300 mb-6">"{testimonial.content}"</p>
                 </div>
-                <div className="ml-4">
-                  <p className="font-medium">{testimonial.author}</p>
-                  <p className="text-sm opacity-60">{testimonial.role}</p>
+                <div className="flex items-center gap-x-4">
+                  <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 overflow-hidden">
+                    {testimonial.image ? (
+                      <img src={testimonial.image} alt={testimonial.author} className="h-full w-full object-cover" />
+                    ) : (
+                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white">{testimonial.author}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{testimonial.role}</p>
+                  </div>
                 </div>
               </div>
-            </FadeIn>
+            </Reveal>
           ))}
+        </div>
+
+        {/* CTA */}
+        <div className="mt-16 text-center">
+          <Reveal>
+            <a href="#" className="inline-flex items-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-400">
+              Join these students
+              <svg className="ml-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </a>
+          </Reveal>
         </div>
       </div>
     </section>

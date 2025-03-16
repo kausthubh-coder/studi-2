@@ -48,102 +48,142 @@ const features = [
     name: 'Canvas Integration',
     icon: 'Canvas',
     description: 'Seamlessly connect with your Canvas LMS account to access courses, assignments, and materials in one place.',
+    details: 'Studi automatically syncs with your Canvas account, importing your courses, assignments, due dates, and learning materials. No more switching between platforms or missing important deadlines.'
   },
   {
-    id: 'ai',
-    name: 'AI-Powered Assistant',
+    id: 'ai-assistant',
+    name: 'AI-Powered Answers',
     icon: 'AI',
-    description: 'Get intelligent responses to your questions about course material, with context-aware understanding of your academic needs.',
+    description: 'Get instant, accurate answers to your questions about course material, assignments, and more.',
+    details: 'Our advanced AI understands your course content and can provide explanations, summaries, and answers tailored to your specific classes. It's like having a tutor available 24/7.'
   },
   {
-    id: 'homework',
-    name: 'Homework Assistant',
+    id: 'homework-help',
+    name: 'Homework Assistance',
     icon: 'Homework',
-    description: 'Receive step-by-step guidance on solving assignments and understanding complex concepts from your courses.',
+    description: 'Receive step-by-step guidance on solving problems and completing assignments.',
+    details: 'When you're stuck on a homework problem, Studi can break it down into manageable steps, provide hints, and guide you through the solution process without simply giving you the answer.'
   },
   {
     id: 'summarization',
-    name: 'Smart Summarization',
+    name: 'Content Summarization',
     icon: 'Summarization',
-    description: 'Automatically generate concise summaries of lecture materials, readings, and other course content.',
+    description: 'Transform lengthy lectures and readings into concise, easy-to-understand summaries.',
+    details: 'Upload lecture notes, readings, or recorded lectures, and Studi will generate comprehensive summaries highlighting the key points, making review and study sessions more efficient.'
   },
   {
-    id: 'studyplans',
+    id: 'study-plans',
     name: 'Personalized Study Plans',
     icon: 'StudyPlans',
-    description: 'Create customized study schedules based on your courses, assignments, and upcoming exams.',
+    description: 'Get customized study schedules based on your courses, assignments, and learning style.',
+    details: 'Studi analyzes your course load, upcoming assignments, and past performance to create optimized study plans that help you prepare effectively and reduce last-minute cramming.'
   },
   {
-    id: 'grades',
-    name: 'Grade Tracking',
+    id: 'grade-tracking',
+    name: 'Grade Tracking & Analysis',
     icon: 'Grades',
-    description: 'Monitor your academic progress across all courses and receive suggestions for improvement.',
-  },
+    description: 'Monitor your academic performance and receive insights to improve your grades.',
+    details: 'Keep track of your grades across all courses, identify trends, and get personalized recommendations on where to focus your efforts to improve your academic performance.'
+  }
 ];
 
 export function Features() {
-  const [activeFeature, setActiveFeature] = useState('canvas');
+  const [activeFeature, setActiveFeature] = useState(features[0].id);
 
   return (
-    <section id="features" className="py-24 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section header */}
-        <div className="max-w-3xl mx-auto text-center mb-16">
+    <section id="features" className="py-24 bg-gray-50 dark:bg-gray-900">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="text-center mb-16">
           <Reveal>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Elevate Your Academic Experience</h2>
+            <h2 className="text-base font-semibold leading-7 text-blue-600 dark:text-blue-400">Features</h2>
           </Reveal>
-          <FadeIn>
-            <p className="text-lg opacity-80">
-              Studi integrates with Canvas LMS to provide powerful tools that help you succeed in your courses.
+          <Reveal delay={0.1}>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">Everything You Need to Excel in Your Studies</p>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Studi combines powerful Canvas integration with AI assistance to transform how you learn and study.
             </p>
-          </FadeIn>
+          </Reveal>
         </div>
 
-        {/* Feature tabs */}
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Tab navigation */}
-          <div className="space-y-4">
-            {features.map((feature) => (
-              <FadeIn key={feature.id} delay={0.1}>
+        <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:gap-x-12">
+          {/* Feature tabs */}
+          <div className="flex flex-col space-y-4">
+            {features.map((feature, index) => (
+              <Reveal key={feature.id} delay={0.1 * index} direction="left">
                 <button
                   onClick={() => setActiveFeature(feature.id)}
-                  className={`w-full text-left px-6 py-4 rounded-xl transition-all duration-200 border ${
+                  className={`flex items-start p-4 text-left rounded-lg transition-all ${
                     activeFeature === feature.id
-                      ? 'border-black dark:border-white bg-black/5 dark:bg-white/5'
-                      : 'border-black/5 dark:border-white/5 hover:bg-black/5 hover:dark:bg-white/5'
+                      ? 'bg-white dark:bg-gray-800 shadow-md'
+                      : 'hover:bg-white/50 dark:hover:bg-gray-800/50'
                   }`}
                 >
-                  <div className="flex items-center">
-                    <div className={`mr-4 p-2 rounded-lg ${
+                  <div className={`flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-lg ${
+                    activeFeature === feature.id
+                      ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                      : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
+                  }`}>
+                    {FeatureIcons[feature.icon]()}
+                  </div>
+                  <div className="ml-4">
+                    <p className={`text-lg font-medium ${
                       activeFeature === feature.id
-                        ? 'bg-black text-white dark:bg-white dark:text-black'
-                        : 'bg-black/5 dark:bg-white/5'
+                        ? 'text-gray-900 dark:text-white'
+                        : 'text-gray-600 dark:text-gray-300'
                     }`}>
-                      {FeatureIcons[feature.icon]()}
-                    </div>
-                    <div>
-                      <h3 className="font-medium">{feature.name}</h3>
-                      {activeFeature === feature.id && (
-                        <p className="text-sm mt-1 opacity-80">{feature.description}</p>
-                      )}
-                    </div>
+                      {feature.name}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                      {feature.description}
+                    </p>
                   </div>
                 </button>
-              </FadeIn>
+              </Reveal>
             ))}
           </div>
 
-          {/* Feature preview */}
-          <FadeIn className="bg-black/5 dark:bg-white/5 rounded-2xl aspect-[4/3] flex items-center justify-center border border-black/10 dark:border-white/10 relative overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center text-3xl font-bold p-8 text-center">
-              {activeFeature === 'canvas' && "🎓 Canvas Integration"}
-              {activeFeature === 'ai' && "🤖 AI Assistance"}
-              {activeFeature === 'homework' && "📚 Assignment Help"}
-              {activeFeature === 'summarization' && "📝 Smart Summaries"}
-              {activeFeature === 'studyplans' && "📅 Study Planning"}
-              {activeFeature === 'grades' && "📊 Grade Tracking"}
-            </div>
-          </FadeIn>
+          {/* Feature details */}
+          <div className="relative lg:mt-0 mt-8">
+            {features.map((feature) => (
+              <div
+                key={feature.id}
+                className={`absolute inset-0 transition-opacity duration-300 ${
+                  activeFeature === feature.id ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                }`}
+              >
+                <div className="h-full flex flex-col">
+                  <div className="relative aspect-video w-full rounded-2xl bg-white dark:bg-gray-800 shadow-xl overflow-hidden">
+                    {/* Feature illustration/screenshot would go here */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="p-4">
+                          <div className={`h-16 w-16 mx-auto rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 flex items-center justify-center`}>
+                            {FeatureIcons[feature.icon]()}
+                          </div>
+                          <h3 className="mt-6 text-xl font-medium text-center text-gray-900 dark:text-white">{feature.name}</h3>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-8 flex flex-col flex-1">
+                    <p className="text-lg text-gray-700 dark:text-gray-300 flex-1">
+                      {feature.details}
+                    </p>
+                    <div className="mt-6">
+                      <a href="#" className="text-blue-600 dark:text-blue-400 font-medium flex items-center hover:text-blue-500 dark:hover:text-blue-300">
+                        Learn more about {feature.name.toLowerCase()}
+                        <svg className="ml-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -11,13 +11,27 @@ Studi is an AI-powered chat application that helps students interact with their 
 - **User Authentication**: Secure login with Clerk authentication
 - **Structured Logging**: Comprehensive logging system for debugging and monitoring
 
+### Canvas API Features
+
+Studi integrates extensively with the Canvas LMS API to provide access to:
+
+- Courses, modules, and content
+- Files and resources
+- Assignments and grades
+- Discussions and announcements
+- User information and enrollments
+- Calendar events and deadlines
+- Quizzes and surveys
+
+All these features are accessible through natural language conversations with the AI assistant.
+
 ## Tech Stack
 
 - **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
 - **Backend**: Convex for database and serverless functions
 - **Authentication**: Clerk
-- **AI**: OpenAI API
-- **Canvas Integration**: Canvas LMS API
+- **AI**: OpenAI API with function calling
+- **Canvas Integration**: Canvas LMS REST API
 
 ## Getting Started
 
@@ -82,9 +96,13 @@ studi/
 │   ├── schema.ts         # Database schema
 │   ├── users.ts          # User-related functions
 │   ├── messages.ts       # Message-related functions
+│   ├── canvas.ts         # Canvas API integration
 │   └── openai.ts         # OpenAI integration
 ├── public/               # Static assets
 └── docs/                 # Documentation
+    ├── architecture.md   # Architecture overview
+    ├── logger.md         # Logger documentation
+    └── canvas-api.md     # Canvas API documentation
 ```
 
 ## Documentation
@@ -93,6 +111,21 @@ For more detailed documentation, see the `docs` directory:
 
 - [Architecture Overview](docs/architecture.md)
 - [Logger Documentation](docs/logger.md)
+- [Canvas API Documentation](docs/canvas-api.md)
+
+## Canvas API Integration
+
+The Canvas API integration is one of the core features of Studi. It allows the chatbot to:
+
+1. **Retrieve Course Information**: Access course syllabi, modules, and materials
+2. **Track Assignments**: View upcoming assignments, due dates, and submission status
+3. **Access Grades**: Check grades for assignments and overall course performance
+4. **View Announcements**: Read course announcements and updates
+5. **Participate in Discussions**: Access discussion forums and threads
+6. **Manage Files**: Browse and download course files and resources
+7. **Check Calendar Events**: View upcoming events and deadlines
+
+For developers, the Canvas API functions are organized in `convex/canvas.ts` and follow a consistent pattern with standardized error handling and response formatting.
 
 ## Contributing
 

@@ -42,35 +42,18 @@ export function Message({ message }: MessageProps) {
   };
 
   return (
-    <div
-      className={`mb-4 ${
-        isUser 
-          ? 'mr-0 ml-auto flex justify-end' 
-          : 'ml-0 mr-auto flex justify-start'
-      }`}
-    >
+    <div className={`mb-4 flex ${isUser ? 'justify-end' : 'justify-center'} w-full`}>
       <div
         className={`relative rounded-lg ${
           isUser
-            ? 'bg-white border border-black shadow-sm p-4 max-w-[85%]' 
-            : 'bg-white p-4 max-w-3xl'
+            ? 'bg-white border border-black shadow-sm p-4 max-w-[75%]' 
+            : 'bg-white p-4 max-w-[75%]'
         }`}
       >
-        <div className={`flex ${isUser ? 'flex-row-reverse' : 'flex-row'} gap-3`}>
-          {isUser && (
-            <div className="flex-shrink-0 mt-1">
-              <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white">
-                <UserCircle size={20} />
-              </div>
-            </div>
-          )}
-          
+        <div className="flex gap-3">
           <div className="flex-1 min-w-0">
-            <div className={`flex items-center mb-1.5 ${isUser ? 'justify-end' : 'justify-start'}`}>
-              <span className="font-semibold text-black">
-                {isUser ? "You" : "Studi"}
-              </span>
-              <span className="text-xs text-gray-500 ml-2 opacity-80">
+            <div className="flex items-center mb-1.5 justify-end">
+              <span className="text-xs text-gray-500 opacity-80">
                 {formattedTime}
               </span>
             </div>

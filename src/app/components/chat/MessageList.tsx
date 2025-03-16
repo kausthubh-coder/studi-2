@@ -61,7 +61,7 @@ export function MessageList({ messages }: MessageListProps) {
               </motion.div>
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-4 px-4">
               {group.messages.map((message, index) => (
                 <motion.div
                   key={message._id}
@@ -72,11 +72,8 @@ export function MessageList({ messages }: MessageListProps) {
                     delay: Math.min(0.05 * index, 0.3),
                     ease: "easeOut"
                   }}
-                  className="flex"
                 >
-                  <div className={`${message.role === 'user' ? 'ml-auto' : ''} max-w-[85%]`}>
-                    <Message message={message} />
-                  </div>
+                  <Message message={message} />
                 </motion.div>
               ))}
             </div>

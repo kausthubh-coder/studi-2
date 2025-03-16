@@ -77,6 +77,184 @@ const canvasFunctions = [
       },
       required: ["course_id"]
     }
+  },
+  {
+    name: "get_files",
+    description: "Get files for a specific course from Canvas LMS",
+    parameters: {
+      type: "object",
+      properties: {
+        course_id: {
+          type: "string",
+          description: "The Canvas course ID"
+        }
+      },
+      required: ["course_id"]
+    }
+  },
+  {
+    name: "get_file_download_url",
+    description: "Get download URL for a specific file from Canvas LMS",
+    parameters: {
+      type: "object",
+      properties: {
+        file_id: {
+          type: "string",
+          description: "The Canvas file ID"
+        }
+      },
+      required: ["file_id"]
+    }
+  },
+  {
+    name: "get_course_grades",
+    description: "Get grades for assignments in a specific course from Canvas LMS",
+    parameters: {
+      type: "object",
+      properties: {
+        course_id: {
+          type: "string",
+          description: "The Canvas course ID"
+        }
+      },
+      required: ["course_id"]
+    }
+  },
+  {
+    name: "get_enrollment_grades",
+    description: "Get overall grades for all enrolled courses from Canvas LMS",
+    parameters: {
+      type: "object",
+      properties: {},
+      required: []
+    }
+  },
+  {
+    name: "get_discussions",
+    description: "Get discussion topics for a specific course from Canvas LMS",
+    parameters: {
+      type: "object",
+      properties: {
+        course_id: {
+          type: "string",
+          description: "The Canvas course ID"
+        }
+      },
+      required: ["course_id"]
+    }
+  },
+  {
+    name: "get_discussion_details",
+    description: "Get details for a specific discussion topic including entries and replies",
+    parameters: {
+      type: "object",
+      properties: {
+        course_id: {
+          type: "string",
+          description: "The Canvas course ID"
+        },
+        discussion_id: {
+          type: "string",
+          description: "The Canvas discussion topic ID"
+        }
+      },
+      required: ["course_id", "discussion_id"]
+    }
+  },
+  {
+    name: "get_user_profile",
+    description: "Get the user's profile information from Canvas LMS",
+    parameters: {
+      type: "object",
+      properties: {},
+      required: []
+    }
+  },
+  {
+    name: "get_user_enrollments",
+    description: "Get the user's enrollments (courses with roles) from Canvas LMS",
+    parameters: {
+      type: "object",
+      properties: {},
+      required: []
+    }
+  },
+  {
+    name: "get_calendar_events",
+    description: "Get calendar events from Canvas LMS",
+    parameters: {
+      type: "object",
+      properties: {
+        start_date: {
+          type: "string",
+          description: "The start date for calendar events (YYYY-MM-DD)"
+        },
+        end_date: {
+          type: "string",
+          description: "The end date for calendar events (YYYY-MM-DD)"
+        }
+      },
+      required: []
+    }
+  },
+  {
+    name: "get_upcoming_events",
+    description: "Get upcoming events/assignments with due dates from Canvas LMS",
+    parameters: {
+      type: "object",
+      properties: {},
+      required: []
+    }
+  },
+  {
+    name: "get_quizzes",
+    description: "Get quizzes for a specific course from Canvas LMS",
+    parameters: {
+      type: "object",
+      properties: {
+        course_id: {
+          type: "string",
+          description: "The Canvas course ID"
+        }
+      },
+      required: ["course_id"]
+    }
+  },
+  {
+    name: "get_quiz_details",
+    description: "Get details for a specific quiz including questions",
+    parameters: {
+      type: "object",
+      properties: {
+        course_id: {
+          type: "string",
+          description: "The Canvas course ID"
+        },
+        quiz_id: {
+          type: "string",
+          description: "The Canvas quiz ID"
+        }
+      },
+      required: ["course_id", "quiz_id"]
+    }
+  },
+  {
+    name: "get_module_items",
+    description: "Get items for a specific module in a course",
+    parameters: {
+      type: "object",
+      properties: {
+        course_id: {
+          type: "string",
+          description: "The Canvas course ID"
+        },
+        module_id: {
+          type: "string",
+          description: "The Canvas module ID"
+        }
+      },
+      required: ["course_id", "module_id"]
+    }
   }
 ];
 
@@ -119,8 +297,8 @@ export const generateChatCompletion = action({
       // Prepare system message
       const systemMessage = {
         role: "system",
-        content: "You are a helpful AI assistant. Provide concise and accurate responses to the user's questions. " +
-                 (user?.canvasEnabled ? "You can access the user's Canvas LMS data to provide educational assistance." : "")
+        content: "You are a knowledgeable AI assistant specializing in educational content. Format your responses in a blog-style with proper markdown formatting including headings, bullet points, and code blocks where appropriate. Be informative yet conversational, and organize complex information with clear structure. " +
+                 (user?.canvasEnabled ? "You can access the user's Canvas LMS data to provide educational assistance and structure this information in a readable, well-formatted way." : "")
       };
       
       // Combine system message with user messages and cast to any to avoid type issues
@@ -186,6 +364,97 @@ export const generateChatCompletion = action({
               functionResult = await ctx.runAction(internal.canvas.getModules, { 
                 userId: args.userId,
                 courseId: functionArgs.course_id
+              });
+              break;
+            case "get_files":
+              console.log(`[OpenAI] Executing get_files for course ${functionArgs.course_id}`);
+              functionResult = await ctx.runAction(internal.canvas.getFiles, { 
+                userId: args.userId,
+                courseId: functionArgs.course_id
+              });
+              break;
+            case "get_file_download_url":
+              console.log(`[OpenAI] Executing get_file_download_url for file ${functionArgs.file_id}`);
+              functionResult = await ctx.runAction(internal.canvas.getFileDownloadUrl, { 
+                userId: args.userId,
+                fileId: functionArgs.file_id
+              });
+              break;
+            case "get_course_grades":
+              console.log(`[OpenAI] Executing get_course_grades for course ${functionArgs.course_id}`);
+              functionResult = await ctx.runAction(internal.canvas.getCourseGrades, { 
+                userId: args.userId,
+                courseId: functionArgs.course_id
+              });
+              break;
+            case "get_enrollment_grades":
+              console.log(`[OpenAI] Executing get_enrollment_grades for user ${args.userId}`);
+              functionResult = await ctx.runAction(internal.canvas.getEnrollmentGrades, { 
+                userId: args.userId
+              });
+              break;
+            case "get_discussions":
+              console.log(`[OpenAI] Executing get_discussions for course ${functionArgs.course_id}`);
+              functionResult = await ctx.runAction(internal.canvas.getDiscussions, { 
+                userId: args.userId,
+                courseId: functionArgs.course_id
+              });
+              break;
+            case "get_discussion_details":
+              console.log(`[OpenAI] Executing get_discussion_details for discussion ${functionArgs.discussion_id}`);
+              functionResult = await ctx.runAction(internal.canvas.getDiscussionDetails, { 
+                userId: args.userId,
+                courseId: functionArgs.course_id,
+                discussionId: functionArgs.discussion_id
+              });
+              break;
+            case "get_user_profile":
+              console.log(`[OpenAI] Executing get_user_profile for user ${args.userId}`);
+              functionResult = await ctx.runAction(internal.canvas.getUserProfile, { 
+                userId: args.userId
+              });
+              break;
+            case "get_user_enrollments":
+              console.log(`[OpenAI] Executing get_user_enrollments for user ${args.userId}`);
+              functionResult = await ctx.runAction(internal.canvas.getUserEnrollments, { 
+                userId: args.userId
+              });
+              break;
+            case "get_calendar_events":
+              console.log(`[OpenAI] Executing get_calendar_events`);
+              functionResult = await ctx.runAction(internal.canvas.getCalendarEvents, { 
+                userId: args.userId,
+                startDate: functionArgs.start_date,
+                endDate: functionArgs.end_date
+              });
+              break;
+            case "get_upcoming_events":
+              console.log(`[OpenAI] Executing get_upcoming_events for user ${args.userId}`);
+              functionResult = await ctx.runAction(internal.canvas.getUpcomingEvents, { 
+                userId: args.userId
+              });
+              break;
+            case "get_quizzes":
+              console.log(`[OpenAI] Executing get_quizzes for course ${functionArgs.course_id}`);
+              functionResult = await ctx.runAction(internal.canvas.getQuizzes, { 
+                userId: args.userId,
+                courseId: functionArgs.course_id
+              });
+              break;
+            case "get_quiz_details":
+              console.log(`[OpenAI] Executing get_quiz_details for quiz ${functionArgs.quiz_id}`);
+              functionResult = await ctx.runAction(internal.canvas.getQuizDetails, { 
+                userId: args.userId,
+                courseId: functionArgs.course_id,
+                quizId: functionArgs.quiz_id
+              });
+              break;
+            case "get_module_items":
+              console.log(`[OpenAI] Executing get_module_items for module ${functionArgs.module_id}`);
+              functionResult = await ctx.runAction(internal.canvas.getModuleItems, { 
+                userId: args.userId,
+                courseId: functionArgs.course_id,
+                moduleId: functionArgs.module_id
               });
               break;
             default:

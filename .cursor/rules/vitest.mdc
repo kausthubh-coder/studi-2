@@ -1,0 +1,51 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+## Performance Optimization
+
+- Utilize the Just-in-Time (JIT) compiler for faster test execution and reduced setup time[1].
+- Implement proper test isolation to prevent test interference and improve reliability[1].
+- Use the watch mode effectively for rapid feedback during development[1].
+
+## Advanced Testing Techniques
+
+- Leverage in-source testing for quick function testing without separate test files[3].
+- Use `.only` to focus on specific tests during development, improving efficiency[3].
+- Implement component testing for Vue, React, Svelte, Lit, and Marko[7].
+
+## Integration and Configuration
+
+- Take advantage of Vitest's compatibility with Vite's config, transformers, resolvers, and plugins[7].
+- Use the same setup from your app to run tests, ensuring consistency between development and testing environments[7].
+- Implement workspace support for better organization in large projects[7].
+
+## Security and Reliability
+
+- Keep Vitest updated to benefit from security patches, such as those addressing remote code execution vulnerabilities[2].
+- Utilize the `diff.maxDepth` option to reduce the risk of crashes when dealing with complex objects[2].
+
+## Feature Utilization
+
+- Implement smart and instant watch mode for HMR-like testing experience[7].
+- Use built-in Chai for assertions with Jest-compatible expect APIs[7].
+- Leverage Tinyspy for mocking, stubbing, and spies[7].
+- Utilize workers multi-threading via Tinypool for improved performance in large test suites[7].
+
+## Browser Testing
+
+- Explore the new browser mode for running component tests directly in the browser[7].
+- Consider using the UI mode for better test debugging and visualization[1].
+
+## TypeScript and Modern JavaScript Support
+
+- Take advantage of out-of-the-box TypeScript and JSX support[7].
+- Utilize top-level await and ESM-first approach for modern JavaScript testing[7].
+
+## Additional Best Practices
+
+- Implement sharding for distributing test load across multiple machines or processes[7].
+- Use filtering, timeouts, and concurrent execution for optimizing test runs[7].
+- Leverage snapshot testing for UI components and complex objects[7].
+- Implement type testing using expect-type for enhanced type-level assertions[7].

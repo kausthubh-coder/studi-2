@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
+import { useConvexAuth } from "convex/react";
 
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isSignedIn } = useAuth();
+  const { isAuthenticated, isLoading } = useConvexAuth();
 
   // Handle scroll effect
   useEffect(() => {
@@ -24,6 +26,49 @@ export function Navigation() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [scrolled]);
+
+  // Use useEffect to handle initial client-side rendering
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // During SSR or initial load, render a simplified version
+  if (isLoading || !isClient) {
+    return (
+      <header 
+        className={`fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300 ${
+          scrolled 
+            ? 'bg-white backdrop-blur-md shadow-md border-b border-black' 
+            : 'bg-transparent'
+        }`}
+      >
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <div className="flex items-center">
+              <span className="text-2xl">📚</span>
+              <span className="ml-2 text-xl font-bold text-black">Studi</span>
+              <span className="ml-2 inline-flex items-center rounded-md bg-white px-2 py-1 text-xs font-medium text-black ring-1 ring-inset ring-black">BETA</span>
+            </div>
+
+            {/* Loading navigation placeholder */}
+            <nav className="hidden md:flex items-center space-x-8">
+              <div className="flex space-x-8 text-sm font-medium text-black">
+                <div className="hover:text-gray-700 border-b border-black">✨ Features</div>
+                <div className="hover:text-gray-700 border-b border-black">💬 Testimonials</div>
+                <div className="hover:text-gray-700 border-b border-black">💰 Pricing</div>
+                <div className="hover:text-gray-700 border-b border-black">✏️ Blog</div>
+              </div>
+            </nav>
+
+            {/* Mobile menu button placeholder */}
+            <div className="md:hidden p-2 h-10 w-10"></div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header 
@@ -54,7 +99,7 @@ export function Navigation() {
             </div>
             
             <div className="flex items-center space-x-4">
-              {isSignedIn ? (
+              {isSignedIn || isAuthenticated ? (
                 <>
                   <Link 
                     href="/dashboard" 
@@ -139,7 +184,7 @@ export function Navigation() {
           </Link>
           
           <div className="pt-4 pb-3 border-t border-black">
-            {isSignedIn ? (
+            {isSignedIn || isAuthenticated ? (
               <div className="flex items-center px-3">
                 <div className="flex-shrink-0">
                   <UserButton afterSignOutUrl="/" />

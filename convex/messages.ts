@@ -2,6 +2,14 @@ import { v } from "convex/values";
 import { mutation, query, internalMutation } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
 import { internal, api } from "./_generated/api";
+import { ConvexError } from "convex/values";
+
+/**
+ * Helper function to extract the clean Clerk ID
+ */
+function getCleanClerkId(subject: string): string {
+  return subject.includes("|") ? subject.split("|")[1] : subject;
+}
 
 // Type definition for better type safety
 type Message = {
@@ -21,6 +29,32 @@ export const getMessages = query({
     chatId: v.id("chats"),
   },
   handler: async (ctx, args) => {
+    // Get user identity
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Unauthorized: Please sign in to view messages");
+    }
+
+    // Extract clean Clerk ID
+    const clerkId = getCleanClerkId(identity.subject);
+
+    // Get user from database
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
+      .first();
+
+    if (!user) {
+      throw new ConvexError("User not found");
+    }
+
+    // Verify that the chat belongs to this user
+    const chat = await ctx.db.get(args.chatId);
+    if (!chat || chat.userId !== user._id) {
+      throw new ConvexError("Unauthorized: You don't have access to this chat");
+    }
+
+    // Return the messages
     return await ctx.db
       .query("messages")
       .withIndex("by_chatId", (q) => q.eq("chatId", args.chatId))
@@ -76,21 +110,25 @@ export const sendMessage = mutation({
     console.log("User identity:", identity ? "authenticated" : "not authenticated");
     
     if (!identity) {
-      throw new Error("Not authenticated - please sign in to send messages");
+      throw new ConvexError("Not authenticated - please sign in to send messages");
     }
+    
+    // Extract clean Clerk ID
+    const clerkId = getCleanClerkId(identity.subject);
+    console.log("Using clean Clerk ID:", clerkId);
     
     // Get user from database using identity
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerkId", (q) => 
-        q.eq("clerkId", identity.subject)
+        q.eq("clerkId", clerkId)
       )
-      .unique();
+      .first();
     
     console.log("User lookup result:", user ? "found" : "not found");
     
     if (!user) {
-      throw new Error("User not found - please refresh the page or sign in again");
+      throw new ConvexError("User not found - please refresh the page or sign in again");
     }
     
     // Save the user's message

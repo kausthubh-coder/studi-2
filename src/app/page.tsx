@@ -1,17 +1,17 @@
-import { Navigation } from './components/navigation';
+import NavigationWrapper from './components/navigation-wrapper';
 import { Hero } from './components/hero';
 import { Features } from './components/features';
 import { Testimonials } from './components/testimonials';
 import { Pricing } from './components/pricing';
 import { CTA } from './components/cta';
 import { Footer } from './components/footer';
-import { AuthCheck } from './components/auth/auth-check';
+import AuthCheckWrapper from './components/auth/auth-check-wrapper';
 
 export default function Home() {
   return (
     <main>
-      <AuthCheck />
-      <Navigation />
+      <AuthCheckWrapper />
+      <NavigationWrapper />
       <Hero />
       <Features />
       <Testimonials />

@@ -30,10 +30,18 @@ export default function DashboardLayout({
   const createChat = useMutation(api.chats.createChat);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
+  // Get current user from Convex
+  const currentUser = useQuery(api.users.getUser);
+  
   useEffect(() => {
     // Close mobile menu when route changes
     setIsMobileMenuOpen(false);
-  }, [pathname]);
+    
+    // Check if onboarding needs to be completed
+    if (currentUser && isLoaded && isSignedIn && currentUser.onboardingCompleted === false && pathname !== '/onboarding') {
+      router.push('/onboarding');
+    }
+  }, [pathname, currentUser, isLoaded, isSignedIn, router]);
   
   // Function to open Clerk user profile
   const openClerkProfile = () => {

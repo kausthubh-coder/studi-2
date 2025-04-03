@@ -1,0 +1,56 @@
+---
+description: 
+globs: *.tsx,src/app/*
+alwaysApply: false
+---
+Based on the latest information from March 2025, here are the best practices and most useful features for Next.js:
+
+## Enhanced Rendering Techniques
+
+- Utilize improved Incremental Static Regeneration (ISR), Server-Side Rendering (SSR), and Static Site Generation (SSG) for faster load speeds[1].
+- Leverage React Server Components (RSC) to reduce client-side JavaScript execution[1].
+- Implement Edge Functions and streaming to improve page load speed by rendering closer to users[1].
+
+## App Directory Improvements
+
+- Use the restructured app directory for better scalability and modularity[1].
+- Implement layouts that automatically apply to nested routes for improved project organization[1].
+- Utilize new data fetching techniques like getServerSideProps and getStaticProps directly within the app directory[1].
+
+## Performance Optimization
+
+- Use the Next.js Image component (next/image) for automatic image optimization, including WebP format, CDN-based optimization, and lazy loading[1][3].
+- Implement lazy loading and code splitting using next/dynamic for non-essential components[3].
+- Utilize partial rendering and progressive hydration to shorten Time to Interactive (TTI)[1].
+
+## SEO and Accessibility Enhancements
+
+- Use integrated meta tag optimization and improved schema markup to raise search engine rankings[1].
+- Implement the Next.js next/head API for appropriate titles, meta descriptions, and Open Graph tags[1].
+- Use structured data in JSON-LD for comprehensive search results[1].
+
+## Server Actions and API Handling
+
+- Utilize Server Actions for simplified backend interactions without complex API layers[4].
+- Implement Route Handlers for efficient backend processing and data retrieval[1].
+
+## Mobile-First Optimization
+
+- Use CSS Grid and Flexbox for responsive layouts without media queries[1].
+- Implement container queries to dynamically adjust components based on available space[1].
+- Use hardware-accelerated animations to avoid janky scroll behavior on mobile devices[1].
+
+## Advanced Routing and Layouts
+
+- Take advantage of the file-based routing system centered around the app directory[4].
+- Use nested layouts to improve code organization and reduce complexity in multi-route applications[4].
+
+## Data Fetching and Caching
+
+- Utilize async APIs for cookies, headers, params, and searchParams to prepare data before the request arrives[4].
+- Note that fetch requests and GET route handlers are no longer cached by default in Next.js 15, allowing for more control over performance[4][5].
+
+## Security and Middleware
+
+- Implement Next.js middleware for authentication, A/B testing, and request pre-processing[1].
+- Use environment variables safely and enable strict Content Security Policy (CSP) for enhanced security[1].

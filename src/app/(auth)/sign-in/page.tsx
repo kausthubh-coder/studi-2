@@ -1,8 +1,12 @@
 "use client";
 
 import { SignIn } from "@clerk/nextjs";
+import { useAuthRedirect } from "../../../hooks/use-auth-redirect";
 
 export default function SignInPage() {
+  // Use the auth redirect hook
+  useAuthRedirect();
+  
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md p-8 space-y-8 bg-white shadow-lg rounded-lg">
@@ -19,7 +23,7 @@ export default function SignInPage() {
               card: "shadow-none p-0 w-full",
             }
           }}
-          redirectUrl="/dashboard"
+          redirectUrl="/onboarding"
         />
       </div>
     </div>

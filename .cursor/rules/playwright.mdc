@@ -1,0 +1,52 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+## Test Structure and Organization
+
+- Implement the Page Object Model (POM) design pattern for better test organization and maintainability[1].
+- Use fixtures for efficient test setup and teardown[1].
+- Leverage in-source testing for quick function testing without separate test files[2].
+
+## Locator Strategies
+
+- Use stable, unique locators like data-testid, aria-label, or name attributes[1][5].
+- Leverage semantic HTML and simple CSS selectors for better stability[1][5].
+- Utilize role-based selectors that identify elements by their purpose[3].
+- Keep all selectors in a central file for easier maintenance[3].
+
+## Performance and Efficiency
+
+- Utilize parallel testing to run multiple tests concurrently, reducing execution time[4].
+- Implement sharding to distribute tests across multiple worker processes or machines[4].
+- Use the watch mode for rapid feedback during development[2].
+
+## Cross-Browser and Mobile Testing
+
+- Take advantage of Playwright's multi-browser support for Chromium, Firefox, and WebKit[6].
+- Utilize mobile test automation capabilities for testing mobile web applications[4].
+
+## Advanced Features
+
+- Implement visual regression testing using Playwright's visual comparison API[2].
+- Use auto-waiting functionality to ensure elements are actionable before performing actions[5][6].
+- Leverage browser context management for efficient handling of multiple tabs or windows[2].
+
+## Integration and Compatibility
+
+- Utilize Playwright's compatibility with Vite's config, transformers, resolvers, and plugins[2].
+- Integrate with CI/CD processes for seamless automation in software pipelines[4].
+
+## Security and Reliability
+
+- Keep Playwright updated to benefit from security patches and new features[2].
+- Implement proper test isolation to prevent interference between tests[2].
+
+## Emerging Trends
+
+- Explore AI-driven testing capabilities for dynamic maintenance and predictive analysis[4].
+- Consider integrating with data fabric architecture for optimized automation workflows[4].
+
+By following these best practices and leveraging Playwright's latest features, developers and QA specialists can create more reliable, efficient, and maintainable test automation in 2025.

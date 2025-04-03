@@ -1,0 +1,58 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ Follow clean code principles
+- Prefer async/await over callbacks
+- Write comprehensive error handling
+
+## Type Safety and Annotations
+
+- Use explicit types for variables, function parameters, and return values to improve code readability and catch errors early[1][4].
+- Leverage TypeScript's type inference capabilities where possible to reduce verbosity while maintaining strong type guarantees[4].
+- Enable strict mode in tsconfig.json to ensure more rigorous type checking[2].
+- Utilize the `unknown` type instead of `any` for safer handling of variables with uncertain types[4].
+
+## Advanced Type Features
+
+- Employ mapped types to transform existing types into new ones[4].
+- Utilize template literal types for dynamic type creation[4].
+- Implement conditional types for flexible and dynamic type assignments[4].
+
+## Generics and Utility Types
+
+- Use generics for creating reusable and flexible components[1].
+- Leverage built-in utility types like `Partial`, `Readonly`, `Record`, `Pick`, and `Omit` for easy type manipulation[1].
+- Create custom utility types for specific use cases in your projects[1].
+
+## Code Organization and Modularity
+
+- Organize your code into modules and use named exports for better maintainability[1].
+- Implement interfaces for defining object shapes and type aliases for complex types[1].
+
+## Error Handling and Type Guards
+
+- Use custom error types for more precise error handling[1].
+- Implement type guards for runtime type checks and narrowing[1][4].
+
+## Performance and Optimization
+
+- Utilize lazy loading and code splitting techniques to improve application performance[1].
+- Ensure unused code is removed during the build process through tree shaking[1].
+
+## Tooling and Integration
+
+- Use ESLint with TypeScript to catch potential issues early and maintain code quality[1][4].
+- Integrate Prettier for consistent code formatting across your project[1][4].
+- Leverage modern build tools like ESBuild and Vite, which offer out-of-the-box TypeScript support[4].
+
+## AI and Machine Learning Integration
+
+- Use TypeScript with machine learning libraries like TensorFlow.js for type-safe AI-driven applications[4].
+- Integrate TypeScript with AI-driven coding assistants like GitHub Copilot for enhanced productivity[4].
+
+## React-Specific Best Practices
+
+- When using TypeScript with React, ensure proper configuration and strict type checking[5].
+- Implement type-safe event handling in React components[5].

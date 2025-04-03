@@ -1,0 +1,264 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Fullstack Development Guide
+
+## Project Setup and Structure
+- Create a modular folder structure separating components, hooks, utils, and pages
+- Use src/app for Next.js app router files
+- Keep API-related code in convex directory for backend logic
+- Place reusable components in src/components directory
+- Store utility functions in src/utils
+- Create custom hooks in src/hooks for shared logic
+
+## Development Workflow
+- Start with writing tests first (Test-Driven Development)
+- Create unit tests for individual components and functions
+- Write integration tests for connected components
+- Implement end-to-end tests with Playwright to verify user flows
+- Use descriptive commit messages following conventional commits format
+- Review code regularly using ESLint and TypeScript type checking
+
+## Next.js Best Practices
+- Use the App Router for improved SEO and performance
+- Implement React Server Components for reducing client-side JavaScript
+- Create layout components for consistent page structure
+- Use next/image for automatic image optimization
+- Implement lazy loading with next/dynamic for non-essential components
+- Use server actions for form handling and data mutations
+- Create API routes in app/api directory for backend functionality
+- Utilize Next.js built-in SEO features like metadata API
+
+## TypeScript Practices
+- Use explicit types for function parameters and return values
+- Create interfaces for consistent data structures
+- Leverage TypeScript's type inference where appropriate
+- Use unknown instead of any for better type safety
+- Implement proper error handling with custom error types
+- Use type guards for runtime type checking
+- Create utility types for common patterns
+
+## Convex Database Guidelines
+- Define your schema in convex/schema.ts with proper types
+- Use the new function syntax for Convex functions
+- Create queries using withIndex instead of filter for better performance
+- Implement proper pagination for listing data
+- Use mutations for data modifications
+- Create actions for integrating with external services like OpenAI
+- Properly validate arguments with Convex validators
+- Use internal functions for sensitive operations
+- Implement proper error handling in database operations
+
+## Authentication with Clerk
+- Use ClerkProvider at the root of your application
+- Implement SignIn and SignUp components for authentication
+- Create protected routes using middleware
+- Use useAuth hook to access authentication state
+- Implement custom user profiles with Clerk's API
+- Store Clerk user IDs in your Convex database for associations
+- Use Clerk's webhooks for user lifecycle events
+
+## Testing Strategy
+- Write unit tests with Vitest for individual components
+- Create integration tests for connected components
+- Implement end-to-end tests with Playwright
+- Use mocks for external dependencies
+- Test error handling scenarios
+- Write tests for authentication flows
+- Use the watch mode for rapid feedback during development
+
+## UI Development with Tailwind CSS
+- Use Tailwind's utility classes directly in your JSX
+- Create consistent components with shared styling
+- Implement responsive design using Tailwind's breakpoint utilities
+- Extract common patterns into custom Tailwind components
+- Use the theme configuration for consistent colors and spacing
+- Create a design system with reusable UI components
+- Implement dark mode support with Tailwind's dark mode utilities
+- have a 
+
+## AI Integration Best Practices
+- Use OpenAI API with proper error handling and retries
+- Implement vector storage for efficient similarity searches
+- Create wrapper functions around AI capabilities
+- Use streaming responses for better user experience
+- Implement proper rate limiting and fallbacks
+- Handle API errors gracefully with user-friendly messages
+- Cache expensive AI operations where appropriate
+
+## Performance Optimization
+- Use React Server Components for data-fetching components
+- Implement static generation for content that doesn't change often
+- Use incremental static regeneration for semi-dynamic content
+- Optimize images with next/image
+- Implement proper code splitting with dynamic imports
+- Use React.memo and useMemo for expensive calculations
+- Monitor and optimize database queries
+
+## Deployment and DevOps
+- Set up CI/CD pipelines for automated testing and deployment
+- Use environment variables for configuration
+- Implement proper logging for debugging
+- Set up monitoring for production applications
+- Create staging environments for testing before production
+- Use proper versioning for your API
+- Implement database migrations for schema changes
+
+## Security Considerations
+- Never store API keys in client-side code
+- Use environment variables for sensitive information
+- Implement proper authentication and authorization
+- Validate user inputs on both client and server
+- Use HTTPS for all communications
+- Implement rate limiting for API endpoints
+- Keep dependencies updated for security patches
+
+Based on the latest information from March 2025, here are the best practices and most useful features for Clerk:
+
+## Authentication Methods
+
+- Implement Social Sign-On (SSO) for faster user conversion, with support for 20+ providers[1].
+- Utilize passwordless authentication options like Magic Links and Email/SMS-based One-Time Passcodes (OTP) for improved security and user experience[3].
+- Offer Multi-Factor Authentication (MFA) with SMS passcodes, authenticator apps (TOTP), and hardware keys to prevent 99.9% of account takeovers[3].
+
+## Security Features
+
+- Enable advanced security measures like bot detection, fraud prevention, and abuse protection[1][3].
+- Implement session management features, including active device monitoring and session revocation[1][3].
+- Utilize Clerk's SOC 2 Type II certification and CCPA compliance for robust security standards[1][3].
+
+## User Management
+
+- Use Clerk's comprehensive suite of embeddable UIs and flexible APIs for complete user management functionality[1].
+- Implement user profile management and organization handling tools[5].
+
+## Integration and Customization
+
+- Leverage Clerk's compatibility with modern frameworks like React, Next.js, and Remix[5].
+- Utilize Clerk as an OpenID Connect (OIDC) identity provider for external services[4].
+- Customize UI components to match your brand while maintaining security best practices[1].
+
+## Performance and User Experience
+
+- Take advantage of Clerk's globally distributed infrastructure for low-latency authentication[3].
+- Implement multi-account, multi-device, and multi-session support for enhanced user flexibility[3].
+
+## Development Best Practices
+
+- Use Clerk's pre-built UI components like SignIn, SignUp,UserButton, and UserProfile and  for rapid development[1].
+- Implement automatic account linking for users signing in with different methods[3].
+- Utilize Clerk's admin dashboards for efficient user management and monitoring[1].
+
+
+Based on the latest information from March 2025, here are the best practices and most useful features for Next.js:
+
+## Enhanced Rendering Techniques
+
+- Utilize improved Incremental Static Regeneration (ISR), Server-Side Rendering (SSR), and Static Site Generation (SSG) for faster load speeds[1].
+- Leverage React Server Components (RSC) to reduce client-side JavaScript execution[1].
+- Implement Edge Functions and streaming to improve page load speed by rendering closer to users[1].
+
+## App Directory Improvements
+
+- Use the restructured app directory for better scalability and modularity[1].
+- Implement layouts that automatically apply to nested routes for improved project organization[1].
+- Utilize new data fetching techniques like getServerSideProps and getStaticProps directly within the app directory[1].
+
+## Performance Optimization
+
+- Use the Next.js Image component (next/image) for automatic image optimization, including WebP format, CDN-based optimization, and lazy loading[1][3].
+- Implement lazy loading and code splitting using next/dynamic for non-essential components[3].
+- Utilize partial rendering and progressive hydration to shorten Time to Interactive (TTI)[1].
+
+## SEO and Accessibility Enhancements
+
+- Use integrated meta tag optimization and improved schema markup to raise search engine rankings[1].
+- Implement the Next.js next/head API for appropriate titles, meta descriptions, and Open Graph tags[1].
+- Use structured data in JSON-LD for comprehensive search results[1].
+
+## Server Actions and API Handling
+
+- Utilize Server Actions for simplified backend interactions without complex API layers[4].
+- Implement Route Handlers for efficient backend processing and data retrieval[1].
+
+## Mobile-First Optimization
+
+- Use CSS Grid and Flexbox for responsive layouts without media queries[1].
+- Implement container queries to dynamically adjust components based on available space[1].
+- Use hardware-accelerated animations to avoid janky scroll behavior on mobile devices[1].
+
+## Advanced Routing and Layouts
+
+- Take advantage of the file-based routing system centered around the app directory[4].
+- Use nested layouts to improve code organization and reduce complexity in multi-route applications[4].
+
+## Data Fetching and Caching
+
+- Utilize async APIs for cookies, headers, params, and searchParams to prepare data before the request arrives[4].
+- Note that fetch requests and GET route handlers are no longer cached by default in Next.js 15, allowing for more control over performance[4][5].
+
+## Security and Middleware
+
+- Implement Next.js middleware for authentication, A/B testing, and request pre-processing[1].
+- Use environment variables safely and enable strict Content Security Policy (CSP) for enhanced security[1].
+
+
+## Project Structure and Organization
+
+- Keep Tailwind styles in a dedicated `styles.css` file[1].
+- Organize components into modular files for better maintainability[1].
+- Use `@layer` directives for base, components, and utilities to manage global styles effectively[1].
+
+## Performance Optimization
+
+- Utilize the Just-in-Time (JIT) compiler, which is now the default engine, for faster builds and reduced CSS file size[1][5].
+- Enable purging of unused styles by configuring the `content` option in `tailwind.config.js`[5]:
+
+```javascript
+module.exports = {
+  content: ['./src/**/*.{html,js,jsx,ts,tsx,vue}'],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+```
+
+## Customization and Theming
+
+- Leverage the `tailwind.config.js` file to define custom themes, colors, spacing, and typography[1].
+- Use the new OKLCH color space for improved color accessibility, especially in dark mode[3].
+- Implement dark mode by enabling it in the configuration and using the `dark:` prefix for classes[1].
+
+## Responsive Design
+
+- Follow Tailwind's mobile-first approach using responsive prefixes like `md:` and `lg:`[1].
+- Utilize Flexbox and Grid utilities for creating flexible, responsive layouts[1].
+- Implement container queries for more granular control over component responsiveness[2].
+
+## Accessibility and SEO
+
+- Use Tailwind's built-in accessibility tools to ensure good contrast and readability[1].
+- Implement ARIA attributes for better accessibility in interactive elements[1].
+- Optimize website speed by leveraging Tailwind's performance benefits, contributing to better SEO rankings[2].
+
+## New Features and Best Practices
+
+- Take advantage of the expanded color palette, which now includes previously disabled colors like cyan, rose, fuchsia, and lime[5].
+- Use the `@apply` directive to create reusable styles and avoid excessive utility class duplication[1].
+- Leverage Tailwind plugins for added functionality, such as forms and typography[1].
+
+## Integration with Modern Frameworks
+
+- Utilize Tailwind CSS with component-based frameworks like React or Vue for better organization in large projects[1][2].
+- Take advantage of Tailwind's compatibility with Next.js and other modern web development frameworks[2].
+
+## Advanced Techniques
+
+- Use the CLI to update components and take advantage of new features, such as improved dark mode colors[3].
+- Implement custom UI components using Tailwind's utility classes for consistent design across projects[1].
+
+
+

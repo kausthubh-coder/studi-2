@@ -3,7 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useConvex } from "convex/react";
 import { logger } from "../../../utils/logger";
 
@@ -11,9 +11,18 @@ export const AuthCheck = () => {
   const { isSignedIn, user } = useUser();
   const convex = useConvex();
   const convexUser = useQuery(api.users.getUser);
+  const [isClient, setIsClient] = useState(false);
+
+  // Set isClient to true when component mounts
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // When a user signs in with Clerk, create or update the user in Convex
   useEffect(() => {
+    // Skip this effect during SSR or before client hydration
+    if (!isClient) return;
+
     if (isSignedIn && user && !convexUser) {
       // Create or update the user in Convex
       const createUser = async () => {
@@ -31,7 +40,7 @@ export const AuthCheck = () => {
       };
       createUser();
     }
-  }, [isSignedIn, user, convexUser, convex]);
+  }, [isSignedIn, user, convexUser, convex, isClient]);
 
   return null; // This component doesn't render anything
 }; 

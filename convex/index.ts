@@ -9,6 +9,14 @@ import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
+import { ConvexError } from "convex/values";
+
+/**
+ * Helper function to extract the clean Clerk ID
+ */
+function getCleanClerkId(subject: string): string {
+  return subject.includes("|") ? subject.split("|")[1] : subject;
+}
 
 // Type for Canvas API response
 type CanvasResponse<T> = {
@@ -144,8 +152,13 @@ export const getModules = action({
 
 // Helper function to get user ID from Clerk subject ID
 async function getUserId(ctx: any, clerkSubject: string): Promise<Id<"users"> | null> {
-  const user = await ctx.runQuery(internal.users.getUserByClerkId, { 
-    clerkId: clerkSubject 
+  // Extract clean Clerk ID
+  const clerkId = getCleanClerkId(clerkSubject);
+  console.log("Looking up user with clean Clerk ID:", clerkId);
+  
+  // Use the exported getUserByClerkId query
+  const user = await ctx.runQuery("users:getUserByClerkId", { 
+    clerkId: clerkId 
   });
   
   if (!user) {
@@ -156,7 +169,10 @@ async function getUserId(ctx: any, clerkSubject: string): Promise<Id<"users"> | 
 }
 
 // User management
-export { getUser, createOrUpdateUser, updateCanvasSettings } from "./users";
+export { getMe, getUser, createOrUpdateUser, updateOnboardingStatus } from "./users";
 
 // Message handling
-export { getMessages, sendMessage } from "./messages"; 
+export { getMessages, sendMessage } from "./messages";
+
+// Chat handling
+export { createChat, getChats, getChat, deleteChat, updateChat, getChatMessages } from "./chats"; 

@@ -94,7 +94,7 @@ export default function ChatDetailPage() {
       await deleteChat({
         chatId: convexChatId
       });
-      router.push("/dashboard");
+      router.push("/home");
     } catch (error) {
       console.error("Failed to delete chat:", error);
     }
@@ -109,15 +109,44 @@ export default function ChatDetailPage() {
     );
   }
 
-  return (
-    <ChatContainer 
-      messages={messagesResult as Message[]} 
-      isLoading={isLoading}
-      onSendMessage={handleSendMessage}
-      title={chat.title}
-      chatId={convexChatId ? convexChatId.toString() : undefined}
-      onUpdateTitle={handleUpdateTitle}
-      onDeleteChat={handleDeleteChat}
-    />
-  );
+  // Add a try-catch block around the chat loading and display a friendly error if it fails
+  try {
+    return (
+      <ChatContainer 
+        messages={messagesResult as Message[]} 
+        isLoading={isLoading}
+        onSendMessage={handleSendMessage}
+        title={chat.title}
+        chatId={convexChatId ? convexChatId.toString() : undefined}
+        onUpdateTitle={handleUpdateTitle}
+        onDeleteChat={handleDeleteChat}
+      />
+    );
+  } catch (error: any) {
+    // If there's an unauthorized error, redirect to dashboard
+    useEffect(() => {
+      console.error("Error in chat page:", error);
+      if (error.message?.includes("Unauthorized")) {
+        router.push("/dashboard");
+      }
+    }, [error, router]);
+    
+    // Show error message
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <div className="bg-red-50 border-2 border-red-300 rounded-lg p-8 max-w-md text-center">
+          <h2 className="text-xl font-bold text-red-800 mb-4">Unable to load chat</h2>
+          <p className="text-gray-700 mb-4">
+            {error.message || "There was a problem loading this chat. You may not have permission to view it."}
+          </p>
+          <button 
+            onClick={() => router.push("/dashboard")} 
+            className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+          >
+            Return to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
 } 

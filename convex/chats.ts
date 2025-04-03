@@ -1,6 +1,14 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
+import { ConvexError } from "convex/values";
+
+/**
+ * Helper function to extract the clean Clerk ID
+ */
+function getCleanClerkId(subject: string): string {
+  return subject.includes("|") ? subject.split("|")[1] : subject;
+}
 
 // Create a new chat
 export const createChat = mutation({
@@ -11,17 +19,21 @@ export const createChat = mutation({
     // Get user identity
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error("Unauthorized: Please sign in to create a chat");
+      throw new ConvexError("Unauthorized: Please sign in to create a chat");
     }
+    
+    // Extract clean Clerk ID
+    const clerkId = getCleanClerkId(identity.subject);
+    console.log("Using Clerk ID:", clerkId);
 
     // Get user from database
     const user = await ctx.db
       .query("users")
-      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
       .first();
 
     if (!user) {
-      throw new Error("User not found");
+      throw new ConvexError("User not found");
     }
 
     // Create a new chat
@@ -38,25 +50,28 @@ export const createChat = mutation({
 
 // Get all chats for the current user
 export const getChats = query({
-  args: {},
   handler: async (ctx) => {
     // Get user identity
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      return [];
+      throw new ConvexError("Unauthorized: Please sign in to view your chats");
     }
+    
+    // Extract clean Clerk ID
+    const clerkId = getCleanClerkId(identity.subject);
+    console.log("Getting chats for Clerk ID:", clerkId);
 
-    // Get user from database
+    // Find the user
     const user = await ctx.db
       .query("users")
-      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
       .first();
 
     if (!user) {
-      return [];
+      throw new ConvexError("User not found");
     }
 
-    // Get all chats for this user, sorted by most recent first
+    // Get all chats for this user
     const chats = await ctx.db
       .query("chats")
       .withIndex("by_userId", (q) => q.eq("userId", user._id))
@@ -73,15 +88,31 @@ export const getChat = query({
     chatId: v.id("chats"),
   },
   handler: async (ctx, args) => {
+    // Verify authentication
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized: Please sign in to view this chat");
+    }
+
+    // Get user from database
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Get the chat
     const chat = await ctx.db.get(args.chatId);
     if (!chat) {
       throw new Error("Chat not found");
     }
 
-    // Optional: Check if the user has access to this chat
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Unauthorized");
+    // Verify that the user has access to this chat
+    if (chat.userId !== user._id) {
+      throw new Error("Unauthorized: You don't have access to this chat");
     }
 
     return chat;
@@ -179,5 +210,52 @@ export const updateChat = mutation({
     });
 
     return { success: true };
+  },
+});
+
+// Get all messages for a specific chat
+export const getChatMessages = query({
+  args: {
+    chatId: v.id("chats"),
+  },
+  handler: async (ctx, args) => {
+    // Get user identity
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Unauthorized: Please sign in to view chat messages");
+    }
+    
+    // Extract clean Clerk ID
+    const clerkId = getCleanClerkId(identity.subject);
+
+    // Find the user
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
+      .first();
+
+    if (!user) {
+      throw new ConvexError("User not found");
+    }
+
+    // Get the chat
+    const chat = await ctx.db.get(args.chatId);
+    if (!chat) {
+      throw new ConvexError("Chat not found");
+    }
+
+    // Verify the user owns this chat
+    if (chat.userId !== user._id) {
+      throw new ConvexError("Unauthorized: You do not have access to this chat");
+    }
+
+    // Get all messages for this chat
+    const messages = await ctx.db
+      .query("messages")
+      .withIndex("by_chatId", (q) => q.eq("chatId", args.chatId))
+      .order("asc")
+      .collect();
+
+    return messages;
   },
 }); 

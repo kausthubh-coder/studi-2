@@ -15,6 +15,12 @@ export default defineSchema({
     email: v.string(),
     imageUrl: v.optional(v.string()),
     
+    // Onboarding data
+    onboardingCompleted: v.optional(v.boolean()),
+    institution: v.optional(v.string()),
+    institutionType: v.optional(v.string()),
+    referralSource: v.optional(v.string()),
+    
     // Subscription data
     stripeCustomerId: v.optional(v.string()),
     stripeSubscriptionId: v.optional(v.string()),

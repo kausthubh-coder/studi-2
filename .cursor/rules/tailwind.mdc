@@ -1,0 +1,60 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+## Project Structure and Organization
+
+- Keep Tailwind styles in a dedicated `styles.css` file[1].
+- Organize components into modular files for better maintainability[1].
+- Use `@layer` directives for base, components, and utilities to manage global styles effectively[1].
+
+## Performance Optimization
+
+- Utilize the Just-in-Time (JIT) compiler, which is now the default engine, for faster builds and reduced CSS file size[1][5].
+- Enable purging of unused styles by configuring the `content` option in `tailwind.config.js`[5]:
+
+```javascript
+module.exports = {
+  content: ['./src/**/*.{html,js,jsx,ts,tsx,vue}'],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+```
+
+## Customization and Theming
+
+- Leverage the `tailwind.config.js` file to define custom themes, colors, spacing, and typography[1].
+- Use the new OKLCH color space for improved color accessibility, especially in dark mode[3].
+- Implement dark mode by enabling it in the configuration and using the `dark:` prefix for classes[1].
+
+## Responsive Design
+
+- Follow Tailwind's mobile-first approach using responsive prefixes like `md:` and `lg:`[1].
+- Utilize Flexbox and Grid utilities for creating flexible, responsive layouts[1].
+- Implement container queries for more granular control over component responsiveness[2].
+
+## Accessibility and SEO
+
+- Use Tailwind's built-in accessibility tools to ensure good contrast and readability[1].
+- Implement ARIA attributes for better accessibility in interactive elements[1].
+- Optimize website speed by leveraging Tailwind's performance benefits, contributing to better SEO rankings[2].
+
+## New Features and Best Practices
+
+- Take advantage of the expanded color palette, which now includes previously disabled colors like cyan, rose, fuchsia, and lime[5].
+- Use the `@apply` directive to create reusable styles and avoid excessive utility class duplication[1].
+- Leverage Tailwind plugins for added functionality, such as forms and typography[1].
+
+## Integration with Modern Frameworks
+
+- Utilize Tailwind CSS with component-based frameworks like React or Vue for better organization in large projects[1][2].
+- Take advantage of Tailwind's compatibility with Next.js and other modern web development frameworks[2].
+
+## Advanced Techniques
+
+- Use the CLI to update components and take advantage of new features, such as improved dark mode colors[3].
+- Implement custom UI components using Tailwind's utility classes for consistent design across projects[1].

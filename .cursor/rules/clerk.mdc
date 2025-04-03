@@ -1,0 +1,40 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Based on the latest information from March 2025, here are the best practices and most useful features for Clerk:
+
+## Authentication Methods
+
+- Implement Social Sign-On (SSO) for faster user conversion, with support for 20+ providers[1].
+- Utilize passwordless authentication options like Magic Links and Email/SMS-based One-Time Passcodes (OTP) for improved security and user experience[3].
+- Offer Multi-Factor Authentication (MFA) with SMS passcodes, authenticator apps (TOTP), and hardware keys to prevent 99.9% of account takeovers[3].
+
+## Security Features
+
+- Enable advanced security measures like bot detection, fraud prevention, and abuse protection[1][3].
+- Implement session management features, including active device monitoring and session revocation[1][3].
+- Utilize Clerk's SOC 2 Type II certification and CCPA compliance for robust security standards[1][3].
+
+## User Management
+
+- Use Clerk's comprehensive suite of embeddable UIs and flexible APIs for complete user management functionality[1].
+- Implement user profile management and organization handling tools[5].
+
+## Integration and Customization
+
+- Leverage Clerk's compatibility with modern frameworks like React, Next.js, and Remix[5].
+- Utilize Clerk as an OpenID Connect (OIDC) identity provider for external services[4].
+- Customize UI components to match your brand while maintaining security best practices[1].
+
+## Performance and User Experience
+
+- Take advantage of Clerk's globally distributed infrastructure for low-latency authentication[3].
+- Implement multi-account, multi-device, and multi-session support for enhanced user flexibility[3].
+
+## Development Best Practices
+
+- Use Clerk's pre-built UI components like SignIn, SignUp,UserButton, and UserProfile and  for rapid development[1].
+- Implement automatic account linking for users signing in with different methods[3].
+- Utilize Clerk's admin dashboards for efficient user management and monitoring[1].

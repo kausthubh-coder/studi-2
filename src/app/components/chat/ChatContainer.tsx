@@ -157,7 +157,7 @@ export function ChatContainer({
       <div className="flex items-center justify-between p-4 border-b border-black">
         <div className="flex items-center">
           <motion.button 
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.push("/home")}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

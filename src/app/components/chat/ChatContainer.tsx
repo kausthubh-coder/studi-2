@@ -70,7 +70,7 @@ export function ChatContainer({
   const handleSendMessage = () => {
     if (!message.trim() || isLoading) return;
     
-    logger.info('Sending message', { chatId, contentLength: message.length }, 'chat');
+    console.log('Sending message', { chatId, contentLength: message.length }, 'chat');
     onSendMessage(message.trim());
     setMessage("");
     
@@ -100,7 +100,7 @@ export function ChatContainer({
   // Save edited title
   const saveEditedTitle = () => {
     if (onUpdateTitle && editedTitle.trim()) {
-      logger.info('Updating chat title', { chatId, newTitle: editedTitle }, 'chat');
+      console.log('Updating chat title', { chatId, newTitle: editedTitle }, 'chat');
       onUpdateTitle(editedTitle.trim());
     }
     setIsEditing(false);
@@ -124,7 +124,7 @@ export function ChatContainer({
   // Handle chat deletion
   const handleDeleteChat = () => {
     if (confirm("Are you sure you want to delete this chat? This action cannot be undone.")) {
-      logger.info('Deleting chat', { chatId }, 'chat');
+      console.log('Deleting chat', { chatId }, 'chat');
       onDeleteChat?.();
     }
   };
@@ -157,7 +157,7 @@ export function ChatContainer({
       <div className="flex items-center justify-between p-4 border-b border-black">
         <div className="flex items-center">
           <motion.button 
-            onClick={() => router.push("/home")}
+            onClick={() => router.push("/dashboard")}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

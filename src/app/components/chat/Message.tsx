@@ -6,18 +6,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Message as MessageType } from "@/types/chat";
 import { formatDistanceToNow } from "date-fns";
 import ReactMarkdown from 'react-markdown';
-import { logger } from "../../../utils/logger";
 
 type MessageProps = {
   message: MessageType;
 };
 
 export function Message({ message }: MessageProps) {
-  logger.debug("Rendering message", { 
-    role: message.role, 
-    hasFunction: !!message.functionCall,
-    chatId: message.chatId
-  });
 
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);

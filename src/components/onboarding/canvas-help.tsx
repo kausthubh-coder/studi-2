@@ -18,12 +18,16 @@ export const CanvasHelpInstructions = () => {
           <li>Enter "Studi" as the purpose</li>
           <li>Set an expiration date (1 year recommended)</li>
           <li>Click "Generate Token"</li>
-          <li><strong className="text-black">Important:</strong> Copy the token immediately as Canvas will only show it once</li>
+          <li>
+            <strong className="text-black">Important:</strong> Copy the token
+            immediately as Canvas will only show it once
+          </li>
         </ol>
         <p className="mt-2 text-xs italic text-black">
-          Canvas tokens give applications access to your account data. Only create tokens for trusted applications.
+          Canvas tokens give applications access to your account data. Only
+          create tokens for trusted applications.
         </p>
       </div>
     </div>
   );
-}; 
+};

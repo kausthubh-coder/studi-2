@@ -5,9 +5,15 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { ArrowLeft, ArrowRight, Check, Info, BookOpen, School, Settings, Link as LinkIcon } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Info,
+  BookOpen,
+  School,
+  Settings,
+  Link as LinkIcon,
+} from "lucide-react";
 import { CanvasHelpInstructions } from "../../components/onboarding/canvas-help";
 
 const OnboardingPage = () => {
@@ -22,21 +28,21 @@ const OnboardingPage = () => {
     canvasUrl: "",
     canvasAccessToken: "",
   });
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  
+
   const updateUserProfile = useMutation(api.users.updateUserProfile);
   const createOrUpdateUser = useMutation(api.users.createOrUpdateUser);
   const currentUser = useQuery(api.users.getUser);
-  
+
   // If user has already completed onboarding, redirect to dashboard
   useEffect(() => {
     if (currentUser && currentUser.onboardingCompleted) {
       router.push("/home");
     }
   }, [currentUser, router]);
-  
+
   // Ensure the user exists in Convex when the component loads
   useEffect(() => {
     const ensureUserExists = async () => {
@@ -44,9 +50,9 @@ const OnboardingPage = () => {
         try {
           console.log("Creating/updating user in Convex...");
           await createOrUpdateUser({
-            name: user.fullName || 'Anonymous',
-            email: user.primaryEmailAddress?.emailAddress || '',
-            imageUrl: user.imageUrl || '',
+            name: user.fullName || "Anonymous",
+            email: user.primaryEmailAddress?.emailAddress || "",
+            imageUrl: user.imageUrl || "",
           });
           console.log("User created/updated successfully");
         } catch (error) {
@@ -54,10 +60,10 @@ const OnboardingPage = () => {
         }
       }
     };
-    
+
     ensureUserExists();
   }, [isLoaded, user, createOrUpdateUser]);
-  
+
   const handleNextStep = () => {
     if (currentStep === 1) {
       // Validate step 1
@@ -71,34 +77,36 @@ const OnboardingPage = () => {
       }
       setError("");
     }
-    
+
     setCurrentStep(currentStep + 1);
   };
-  
+
   const handlePreviousStep = () => {
     setCurrentStep(currentStep - 1);
     setError("");
   };
-  
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
     });
   };
-  
+
   const handleCanvasToggle = (enabled: boolean) => {
     setFormData({
       ...formData,
       canvasEnabled: enabled,
     });
   };
-  
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setError("");
-    
+
     try {
       // Validate Canvas fields if Canvas is enabled
       if (formData.canvasEnabled) {
@@ -107,20 +115,24 @@ const OnboardingPage = () => {
           setIsSubmitting(false);
           return;
         }
-        
+
         if (!formData.canvasAccessToken) {
           setError("Please enter your Canvas access token");
           setIsSubmitting(false);
           return;
         }
       }
-      
+
       // Process Canvas URL if needed
       let canvasUrl = formData.canvasUrl;
-      if (formData.canvasEnabled && canvasUrl && !canvasUrl.startsWith("http")) {
+      if (
+        formData.canvasEnabled &&
+        canvasUrl &&
+        !canvasUrl.startsWith("http")
+      ) {
         canvasUrl = `https://${canvasUrl}`;
       }
-      
+
       if (!user) {
         setError("You must be signed in to complete onboarding.");
         return;
@@ -129,9 +141,9 @@ const OnboardingPage = () => {
       // Step 1: Make sure user exists in Convex
       console.log("Creating/updating user record...");
       await createOrUpdateUser({
-        name: user.fullName || 'Anonymous',
-        email: user.primaryEmailAddress?.emailAddress || '',
-        imageUrl: user.imageUrl || '',
+        name: user.fullName || "Anonymous",
+        email: user.primaryEmailAddress?.emailAddress || "",
+        imageUrl: user.imageUrl || "",
       });
 
       // Step 2: Update user profile with onboarding data
@@ -143,37 +155,43 @@ const OnboardingPage = () => {
           referralSource: formData.referralSource,
           canvasEnabled: formData.canvasEnabled,
           canvasUrl: formData.canvasEnabled ? canvasUrl : undefined,
-          canvasAccessToken: formData.canvasEnabled ? formData.canvasAccessToken : undefined,
+          canvasAccessToken: formData.canvasEnabled
+            ? formData.canvasAccessToken
+            : undefined,
         });
       } catch (updateError) {
         console.error("Error updating profile:", updateError);
-        
+
         // Try one more time with a delay
         console.log("Retrying profile update after delay...");
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
         await updateUserProfile({
           institution: formData.institution,
           institutionType: formData.institutionType,
           referralSource: formData.referralSource,
           canvasEnabled: formData.canvasEnabled,
           canvasUrl: formData.canvasEnabled ? canvasUrl : undefined,
-          canvasAccessToken: formData.canvasEnabled ? formData.canvasAccessToken : undefined,
+          canvasAccessToken: formData.canvasEnabled
+            ? formData.canvasAccessToken
+            : undefined,
         });
       }
-      
+
       console.log("Onboarding completed successfully");
-      
+
       // Redirect to dashboard
       router.push("/home");
     } catch (error) {
       console.error("Error in onboarding process:", error);
-      setError("There was a problem completing your profile. Please try again.");
+      setError(
+        "There was a problem completing your profile. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   // Render appropriate step content
   const renderStepContent = () => {
     switch (currentStep) {
@@ -182,10 +200,12 @@ const OnboardingPage = () => {
           <div className="space-y-6">
             <div className="flex items-center mb-2">
               <span className="text-2xl mr-2">🎓</span>
-              <h2 className="text-2xl font-bold text-black">Welcome to Studi!</h2>
+              <h2 className="text-2xl font-bold text-black">
+                Welcome to Studi!
+              </h2>
             </div>
             <p className="text-black">Tell us about yourself to get started.</p>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-black mb-1 flex items-center">
@@ -205,7 +225,7 @@ const OnboardingPage = () => {
                   <option value="other">Other</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold text-black mb-1 flex items-center">
                   <BookOpen className="w-4 h-4 mr-2 text-black" />
@@ -220,7 +240,7 @@ const OnboardingPage = () => {
                   className="w-full px-4 py-2 border-2 border-black rounded-md bg-white text-black placeholder-gray-500"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-semibold text-black mb-1 flex items-center">
                   <Info className="w-4 h-4 mr-2 text-black" />
@@ -248,10 +268,14 @@ const OnboardingPage = () => {
           <div className="space-y-6">
             <div className="flex items-center mb-2">
               <span className="text-2xl mr-2">🔄</span>
-              <h2 className="text-2xl font-bold text-black">Canvas Integration</h2>
+              <h2 className="text-2xl font-bold text-black">
+                Canvas Integration
+              </h2>
             </div>
-            <p className="text-black">Connect with Canvas to access your courses and assignments.</p>
-            
+            <p className="text-black">
+              Connect with Canvas to access your courses and assignments.
+            </p>
+
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-black flex items-center">
@@ -262,20 +286,20 @@ const OnboardingPage = () => {
                   <button
                     type="button"
                     onClick={() => handleCanvasToggle(true)}
-                    className={`px-4 py-2 rounded-md border-2 ${formData.canvasEnabled ? 'bg-black text-white border-black' : 'bg-white text-gray-700 border-black'}`}
+                    className={`px-4 py-2 rounded-md border-2 ${formData.canvasEnabled ? "bg-black text-white border-black" : "bg-white text-gray-700 border-black"}`}
                   >
                     Yes ✅
                   </button>
                   <button
                     type="button"
                     onClick={() => handleCanvasToggle(false)}
-                    className={`px-4 py-2 rounded-md border-2 ${!formData.canvasEnabled ? 'bg-black text-white border-black' : 'bg-white text-gray-700 border-black'}`}
+                    className={`px-4 py-2 rounded-md border-2 ${!formData.canvasEnabled ? "bg-black text-white border-black" : "bg-white text-gray-700 border-black"}`}
                   >
                     No ❌
                   </button>
                 </div>
               </div>
-              
+
               {formData.canvasEnabled && (
                 <>
                   <div>
@@ -292,10 +316,11 @@ const OnboardingPage = () => {
                       className="w-full px-4 py-2 border-2 border-black rounded-md bg-white text-black placeholder-gray-500"
                     />
                     <p className="text-xs text-black mt-1">
-                      Enter your Canvas instance URL (e.g., https://your-institution.instructure.com)
+                      Enter your Canvas instance URL (e.g.,
+                      https://your-institution.instructure.com)
                     </p>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-semibold text-black mb-1 flex items-center">
                       <LinkIcon className="w-4 h-4 mr-2 text-black" />
@@ -310,14 +335,15 @@ const OnboardingPage = () => {
                       className="w-full px-4 py-2 border-2 border-black rounded-md bg-white text-black placeholder-gray-500"
                     />
                     <p className="text-xs text-black mt-1">
-                      Generate an access token in Canvas: Account → Settings → Approved Integrations
+                      Generate an access token in Canvas: Account → Settings →
+                      Approved Integrations
                     </p>
                   </div>
-                  
+
                   <CanvasHelpInstructions />
                 </>
               )}
-              
+
               {!formData.canvasEnabled && (
                 <div className="bg-blue-50 p-4 rounded-md border-2 border-black">
                   <p className="text-sm text-black flex items-center">
@@ -337,7 +363,8 @@ const OnboardingPage = () => {
             </div>
             <h2 className="text-2xl font-bold text-black">You're all set!</h2>
             <p className="text-black">
-              Thanks for completing your profile. You're ready to start using Studi! 🚀
+              Thanks for completing your profile. You're ready to start using
+              Studi! 🚀
             </p>
           </div>
         );
@@ -345,7 +372,7 @@ const OnboardingPage = () => {
         return null;
     }
   };
-  
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -367,9 +394,21 @@ const OnboardingPage = () => {
                 </button>
               )}
               <div className="flex space-x-2">
-                <span className={`${currentStep >= 1 ? 'text-black' : 'text-gray-300'}`}>📋</span>
-                <span className={`${currentStep >= 2 ? 'text-black' : 'text-gray-300'}`}>🔗</span>
-                <span className={`${currentStep >= 3 ? 'text-black' : 'text-gray-300'}`}>🎉</span>
+                <span
+                  className={`${currentStep >= 1 ? "text-black" : "text-gray-300"}`}
+                >
+                  📋
+                </span>
+                <span
+                  className={`${currentStep >= 2 ? "text-black" : "text-gray-300"}`}
+                >
+                  🔗
+                </span>
+                <span
+                  className={`${currentStep >= 3 ? "text-black" : "text-gray-300"}`}
+                >
+                  🎉
+                </span>
               </div>
             </div>
             <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 border border-black">
@@ -379,16 +418,16 @@ const OnboardingPage = () => {
               ></div>
             </div>
           </div>
-          
+
           {error && (
             <div className="mb-4 p-3 bg-red-50 border-2 border-red-500 rounded-md text-black text-sm flex items-center">
               <span className="mr-2">⚠️</span> {error}
             </div>
           )}
-          
+
           <div className="space-y-6">
             {renderStepContent()}
-            
+
             <div className="flex justify-end">
               {currentStep < 3 ? (
                 <button
@@ -417,4 +456,4 @@ const OnboardingPage = () => {
   );
 };
 
-export default OnboardingPage; 
+export default OnboardingPage;

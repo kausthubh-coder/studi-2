@@ -1,6 +1,7 @@
 "use client";
 
 import { FadeIn, Reveal } from './animations';
+import Image from 'next/image';
 
 // Testimonial data
 const testimonials = [
@@ -81,12 +82,18 @@ export function Testimonials() {
                       </svg>
                     ))}
                   </div>
-                  <p className="text-base text-black mb-6">"{testimonial.content}"</p>
+                  <p className="text-base text-black mb-6">&ldquo;{testimonial.content}&rdquo;</p>
                 </div>
                 <div className="flex items-center gap-x-4">
                   <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center text-black overflow-hidden border border-black">
                     {testimonial.image ? (
-                      <img src={testimonial.image} alt={testimonial.author} className="h-full w-full object-cover" />
+                      <Image 
+                        src={testimonial.image} 
+                        alt={testimonial.author} 
+                        width={40}
+                        height={40}
+                        className="h-full w-full object-cover" 
+                      />
                     ) : (
                       <span className="text-lg">👤</span>
                     )}
@@ -116,3 +123,5 @@ export function Testimonials() {
     </section>
   );
 } 
+
+

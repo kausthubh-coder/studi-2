@@ -7,12 +7,24 @@ import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { ChatContainer } from "@/app/components/chat/ChatContainer";
 import { Loader2 } from "lucide-react";
-import { Message } from "@/types/chat";
+import { useUser } from "@clerk/nextjs";
+
+// Define Message type here to solve the import error
+interface Message {
+  _id: string;
+  content: string;
+  role: "user" | "assistant";
+  _creationTime: number;
+  chatId: string;
+  functionCall?: string;
+}
 
 export default function ChatDetailPage() {
+  const { isLoaded, isSignedIn } = useUser();
   const params = useParams();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
   
   // Safely get chatId from params
   const chatIdString = params?.id ? (params.id as string) : null;
@@ -20,16 +32,16 @@ export default function ChatDetailPage() {
   // Convert string chatId to Convex Id when available
   const convexChatId = chatIdString as unknown as Id<"chats"> | null;
   
-  // Get chat details
+  // Get chat details only if authenticated
   const chat = useQuery(
     api.chats.getChat, 
-    convexChatId ? { chatId: convexChatId } : "skip"
+    isLoaded && isSignedIn && convexChatId ? { chatId: convexChatId } : "skip"
   );
   
-  // Get messages for this chat
+  // Get messages for this chat only if authenticated
   const messagesResult = useQuery(
     api.messages.getMessages, 
-    convexChatId ? { chatId: convexChatId } : "skip"
+    isLoaded && isSignedIn && convexChatId ? { chatId: convexChatId } : "skip"
   ) || [];
   
   // Send message mutation
@@ -40,6 +52,13 @@ export default function ChatDetailPage() {
   
   // Delete chat mutation
   const deleteChat = useMutation(api.chats.deleteChat);
+
+  // Handle authentication state
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push("/sign-in");
+    }
+  }, [isLoaded, isSignedIn, router]);
   
   // Handle sending a new message
   const handleSendMessage = async (content: string) => {
@@ -67,6 +86,7 @@ export default function ChatDetailPage() {
       }
     } catch (error) {
       console.error("Failed to send message:", error);
+      setError(error as Error);
     } finally {
       setIsLoading(false);
     }
@@ -83,6 +103,7 @@ export default function ChatDetailPage() {
       });
     } catch (error) {
       console.error("Failed to update chat title:", error);
+      setError(error as Error);
     }
   };
 
@@ -94,11 +115,31 @@ export default function ChatDetailPage() {
       await deleteChat({
         chatId: convexChatId
       });
-      router.push("/home");
+      router.push("/dashboard");
     } catch (error) {
       console.error("Failed to delete chat:", error);
+      setError(error as Error);
     }
   };
+  
+  // Effect to handle errors
+  useEffect(() => {
+    if (error) {
+      console.error("Error in chat page:", error);
+      if (error.message?.includes("Unauthorized")) {
+        router.push("/sign-in");
+      }
+    }
+  }, [error, router]);
+
+  // If not loaded or not authenticated yet, show loading state
+  if (!isLoaded || (isLoaded && !isSignedIn)) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-white">
+        <Loader2 className="h-8 w-8 animate-spin text-black" />
+      </div>
+    );
+  }
 
   // If chatId is not available or loading, show loading state
   if (!chatIdString || !chat) {
@@ -122,14 +163,8 @@ export default function ChatDetailPage() {
         onDeleteChat={handleDeleteChat}
       />
     );
-  } catch (error: any) {
-    // If there's an unauthorized error, redirect to dashboard
-    useEffect(() => {
-      console.error("Error in chat page:", error);
-      if (error.message?.includes("Unauthorized")) {
-        router.push("/dashboard");
-      }
-    }, [error, router]);
+  } catch (error) {
+    setError(error as Error);
     
     // Show error message
     return (
@@ -137,7 +172,7 @@ export default function ChatDetailPage() {
         <div className="bg-red-50 border-2 border-red-300 rounded-lg p-8 max-w-md text-center">
           <h2 className="text-xl font-bold text-red-800 mb-4">Unable to load chat</h2>
           <p className="text-gray-700 mb-4">
-            {error.message || "There was a problem loading this chat. You may not have permission to view it."}
+            {error instanceof Error ? error.message : "There was a problem loading this chat. You may not have permission to view it."}
           </p>
           <button 
             onClick={() => router.push("/dashboard")} 

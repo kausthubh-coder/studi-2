@@ -1,0 +1,49 @@
+# Fix authentication and onboarding issues
+
+## Commit 1: Fix React Hook rules violations in chat detail page
+- Moved useEffect outside of try-catch block to comply with React Hook rules
+- Added proper error state handling to improve error recovery
+- Enhanced type safety for error objects
+- Fixed TypeScript errors related to Message type imports
+
+## Commit 2: Replace explicit 'any' types with proper TypeScript interfaces
+- Added specific interfaces for Canvas data models (Course, Assignment, Announcement, Module)
+- Created a union type for function results to improve type safety
+- Enhanced error handling with proper type guards
+- Improved code maintainability through better type definitions
+
+## Commit 3: Remove unused imports across multiple components
+- Cleaned up dashboard layout (removed Sparkles, User imports)
+- Removed unused imports from dashboard page (Sparkles, BrainCircuit)
+- Eliminated unused imports from ChatContainer (Paperclip, Plus, AnimatePresence, logger, Id)
+- Removed UserCircle and Bot imports from Message component
+
+## Commit 4: Fix JSX HTML escaping issues
+- Added proper HTML entity escaping in JSX for quotes and apostrophes
+- Converted raw quotes to &ldquo;/&rdquo; in CanvasHelpInstructions component
+- Fixed similar escaping issues across other components
+- Enhanced accessibility and standards compliance
+
+## Commit 5: Update Next.js Image component usage
+- Replaced standard img tags with Next.js Image component
+- Added proper width and height attributes for better layout stability
+- Optimized images for better performance and Core Web Vitals
+- Followed Next.js best practices for image optimization
+
+## Commit 6: Add conditional data fetching based on authentication state
+- Modified Convex queries to use "skip" parameter when authentication is not ready
+- Prevented premature data fetching that was causing unauthorized errors
+- Added loading states during authentication verification
+- Fixed race conditions between authentication and data fetching
+
+## Commit 7: Enhance authentication checks and redirects
+- Improved AuthCheck component with explicit route protection
+- Added redirects to sign-in page for unauthenticated users
+- Enhanced route handling with public/private route definitions
+- Fixed workflow when accessing dashboard directly in the browser
+
+## Commit 8: Fix Convex function naming mismatch in onboarding flow
+- Fixed "updateUserProfile" to "updateOnboardingStatus" function call
+- Added missing "onboardingCompleted" parameter to function calls
+- Added a retry mechanism with delay for better reliability
+- Enhanced error handling in onboarding process

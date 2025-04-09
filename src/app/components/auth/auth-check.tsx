@@ -1,45 +1,89 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useQuery } from "convex/react";
+import { useConvex, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useEffect, useState } from "react";
-import { useConvex } from "convex/react";
+import { usePathname, useRouter } from "next/navigation";
 
 export const AuthCheck = () => {
-  const { isSignedIn, user } = useUser();
-  const convex = useConvex();
-  const convexUser = useQuery(api.users.getUser);
+  const { isSignedIn, user, isLoaded } = useUser();
+  const createOrUpdateUserMutation = useMutation(api.users.createOrUpdateUser);
   const [isClient, setIsClient] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // Private routes that require authentication
+  const privateRoutes = [
+    '/dashboard',
+    '/chat',
+    '/settings',
+    '/onboarding'
+  ];
+
+  // // Public routes that don't require authentication 
+  // const publicRoutes = [
+  //   '/',
+  //   '/sign-in',
+  //   '/sign-up'
+  // ];
+
+  // Check if current path is a private route
+  const isPrivateRoute = () => {
+    return privateRoutes.some(route => 
+      pathname === route || pathname.startsWith(`${route}/`)
+    );
+  };
 
   // Set isClient to true when component mounts
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  // Handle authentication redirects
+  useEffect(() => {
+    if (!isClient || !isLoaded) return;
+
+    if (!isSignedIn && isPrivateRoute()) {
+      // Redirect to sign-in if user tries to access a private route without authentication
+      router.push('/sign-in');
+    }
+  }, [isClient, isLoaded, isSignedIn, pathname, router]);
+
   // When a user signs in with Clerk, create or update the user in Convex
   useEffect(() => {
     // Skip this effect during SSR or before client hydration
-    if (!isClient) return;
+    if (!isClient || !isLoaded) return;
 
-    if (isSignedIn && user && !convexUser) {
+    if (isSignedIn && user) {
       // Create or update the user in Convex
-      const createUser = async () => {
-        console.log("Creating/updating user in Convex", { userId: user.id }, "auth");
+      const syncUser = async () => {
         try {
-          await convex.mutation(api.users.createOrUpdateUser, {
+          await createOrUpdateUserMutation({
             email: user.emailAddresses[0]?.emailAddress || "",
             name: user.fullName || "",
             imageUrl: user.imageUrl || "",
           });
-          console.log("User created/updated successfully", null, "auth");
+          setError(null); // Clear any previous errors
         } catch (error) {
-          console.log("Failed to create/update user", { error }, "auth");
+          console.error("Failed to create/update user", error);
+          setError("Failed to sync user data");
         }
       };
-      createUser();
+      syncUser();
     }
-  }, [isSignedIn, user, convexUser, convex, isClient]);
+  }, [isSignedIn, user, createOrUpdateUserMutation, isClient, isLoaded]);
 
-  return null; // This component doesn't render anything
-}; 
+  // Error message component (could be shown if needed)
+  if (error && isClient) {
+    console.error("AuthCheck Error:", error);
+    // You could return an error UI component here if needed
+  }
+
+  return null; // This component doesn't render anything visible
+};
+
+export default AuthCheck; 
+
+

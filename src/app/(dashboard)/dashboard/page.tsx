@@ -7,21 +7,30 @@ import { motion } from "framer-motion";
 import { 
   MessageSquare, 
   User, 
-  Sparkles, 
   Plus,
-  BrainCircuit,
   BarChart3,
-  Clock
+  Clock,
+  Loader2
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
-  const { user } = useUser();
-  const convexUser = useQuery(api.users.getUser);
-  const chats = useQuery(api.chats.getChats) || [];
-  const createChat = useMutation(api.chats.createChat);
+  const { user, isSignedIn, isLoaded } = useUser();
   const router = useRouter();
+  
+  // Only fetch data if authenticated
+  const convexUser = useQuery(
+    api.users.getUser,
+    isLoaded && isSignedIn ? {} : "skip"
+  );
+  
+  const chats = useQuery(
+    api.chats.getChats,
+    isLoaded && isSignedIn ? {} : "skip"
+  ) || [];
+  
+  const createChat = useMutation(api.chats.createChat);
 
   const container = {
     hidden: { opacity: 0 },
@@ -48,6 +57,25 @@ export default function DashboardPage() {
       console.error("Failed to create new chat:", error);
     }
   };
+
+  // Show loading state while authentication is being checked
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-white">
+        <Loader2 className="h-8 w-8 animate-spin text-black" />
+      </div>
+    );
+  }
+
+  // If user is not signed in, redirect to sign-in page
+  if (isLoaded && !isSignedIn) {
+    router.push("/sign-in");
+    return (
+      <div className="flex items-center justify-center h-screen bg-white">
+        <Loader2 className="h-8 w-8 animate-spin text-black" />
+      </div>
+    );
+  }
 
   return (
     <motion.div 
@@ -144,7 +172,7 @@ export default function DashboardPage() {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-black">Email</span>
-                <span className="text-black">{user?.emailAddresses[0].emailAddress}</span>
+                <span className="text-black">{user?.emailAddresses[0]?.emailAddress || 'Not available'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-black">Plan</span>
@@ -188,3 +216,5 @@ export default function DashboardPage() {
     </motion.div>
   );
 } 
+
+

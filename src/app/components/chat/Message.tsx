@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UserCircle, Bot, Copy, Check, Heart, ChevronDown, ChevronRight } from "lucide-react";
+import { Copy, Check, Heart, ChevronDown, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Message as MessageType } from "@/types/chat";
 import { formatDistanceToNow } from "date-fns";
@@ -146,3 +146,5 @@ export function Message({ message }: MessageProps) {
     </div>
   );
 } 
+
+

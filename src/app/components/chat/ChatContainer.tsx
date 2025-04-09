@@ -4,8 +4,6 @@ import { useEffect, useRef, useCallback, useState } from "react";
 import { Message as MessageType } from "@/types/chat";
 import { 
   ArrowUp, 
-  Paperclip, 
-  Plus, 
   ArrowLeft, 
   Loader2, 
   Edit,
@@ -13,11 +11,9 @@ import {
   Check,
   X
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Message } from "./Message";
-import { logger } from "../../../utils/logger";
-import { Id } from "../../../../convex/_generated/dataModel";
 
 type ChatContainerProps = {
   messages: MessageType[];
@@ -70,7 +66,7 @@ export function ChatContainer({
   const handleSendMessage = () => {
     if (!message.trim() || isLoading) return;
     
-    console.log('Sending message', { chatId, contentLength: message.length }, 'chat');
+    console.log('Sending message, { chatId, contentLength: message.length }, chat');
     onSendMessage(message.trim());
     setMessage("");
     
@@ -100,7 +96,7 @@ export function ChatContainer({
   // Save edited title
   const saveEditedTitle = () => {
     if (onUpdateTitle && editedTitle.trim()) {
-      console.log('Updating chat title', { chatId, newTitle: editedTitle }, 'chat');
+      console.log('Updating chat title, { chatId, newTitle: editedTitle }, chat');
       onUpdateTitle(editedTitle.trim());
     }
     setIsEditing(false);
@@ -124,7 +120,7 @@ export function ChatContainer({
   // Handle chat deletion
   const handleDeleteChat = () => {
     if (confirm("Are you sure you want to delete this chat? This action cannot be undone.")) {
-      console.log('Deleting chat', { chatId }, 'chat');
+      console.log('Deleting chat, { chatId }, chat');
       onDeleteChat?.();
     }
   };
@@ -298,3 +294,5 @@ export function ChatContainer({
     </div>
   );
 } 
+
+

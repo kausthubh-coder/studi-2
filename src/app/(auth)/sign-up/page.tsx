@@ -23,9 +23,10 @@ export default function SignUpPage() {
               card: "shadow-none p-0 w-full",
             }
           }}
-          redirectUrl="/onboarding"
         />
       </div>
     </div>
   );
 } 
+
+

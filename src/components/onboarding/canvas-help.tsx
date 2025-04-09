@@ -13,11 +13,11 @@ export const CanvasHelpInstructions = () => {
         <ol className="list-decimal list-inside mt-1 space-y-1">
           <li>Log in to your Canvas account</li>
           <li>Go to Account → Settings</li>
-          <li>Scroll to "Approved Integrations"</li>
-          <li>Click "New Access Token"</li>
-          <li>Enter "Studi" as the purpose</li>
+          <li>Scroll to &ldquo;Approved Integrations&rdquo;</li>
+          <li>Click &ldquo;New Access Token&rdquo;</li>
+          <li>Enter &ldquo;Studi&rdquo; as the purpose</li>
           <li>Set an expiration date (1 year recommended)</li>
-          <li>Click "Generate Token"</li>
+          <li>Click &ldquo;Generate Token&rdquo;</li>
           <li>
             <strong className="text-black">Important:</strong> Copy the token
             immediately as Canvas will only show it once
@@ -31,3 +31,6 @@ export const CanvasHelpInstructions = () => {
     </div>
   );
 };
+
+
+

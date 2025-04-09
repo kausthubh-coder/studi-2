@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { FadeIn, Reveal } from './animations';
+import { Reveal } from './animations';
 import { ReactElement } from 'react';
 
 // Note: You would typically use real icons from an icon library or SVG files
@@ -170,3 +170,5 @@ export function Features() {
     </section>
   );
 } 
+
+

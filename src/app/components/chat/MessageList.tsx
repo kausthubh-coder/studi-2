@@ -41,7 +41,7 @@ export function MessageList({ messages }: MessageListProps) {
   return (
     <div className="space-y-6 relative">
       <AnimatePresence initial={false}>
-        {groupedMessages.map((group, groupIndex) => (
+        {groupedMessages.map((group) => (
           <motion.div 
             key={group.date}
             initial={{ opacity: 0, y: 20 }}
@@ -83,3 +83,5 @@ export function MessageList({ messages }: MessageListProps) {
     </div>
   );
 } 
+
+

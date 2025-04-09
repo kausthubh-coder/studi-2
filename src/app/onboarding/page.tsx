@@ -32,14 +32,14 @@ const OnboardingPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const updateUserProfile = useMutation(api.users.updateUserProfile);
+  const updateOnboardingStatus = useMutation(api.users.updateOnboardingStatus);
   const createOrUpdateUser = useMutation(api.users.createOrUpdateUser);
   const currentUser = useQuery(api.users.getUser);
 
   // If user has already completed onboarding, redirect to dashboard
   useEffect(() => {
     if (currentUser && currentUser.onboardingCompleted) {
-      router.push("/home");
+      router.push("/dashboard");
     }
   }, [currentUser, router]);
 
@@ -149,7 +149,8 @@ const OnboardingPage = () => {
       // Step 2: Update user profile with onboarding data
       console.log("Updating user profile with onboarding data...");
       try {
-        await updateUserProfile({
+        await updateOnboardingStatus({
+          onboardingCompleted: true,
           institution: formData.institution,
           institutionType: formData.institutionType,
           referralSource: formData.referralSource,
@@ -166,7 +167,8 @@ const OnboardingPage = () => {
         console.log("Retrying profile update after delay...");
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        await updateUserProfile({
+        await updateOnboardingStatus({
+          onboardingCompleted: true,
           institution: formData.institution,
           institutionType: formData.institutionType,
           referralSource: formData.referralSource,
@@ -181,7 +183,7 @@ const OnboardingPage = () => {
       console.log("Onboarding completed successfully");
 
       // Redirect to dashboard
-      router.push("/home");
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error in onboarding process:", error);
       setError(
@@ -457,3 +459,6 @@ const OnboardingPage = () => {
 };
 
 export default OnboardingPage;
+
+
+

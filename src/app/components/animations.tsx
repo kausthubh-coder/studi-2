@@ -114,3 +114,5 @@ export const Typewriter = ({ text, delay = 0, className = '' }: TypewriterProps)
     ))}
   </motion.div>
 ); 
+
+

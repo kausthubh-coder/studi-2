@@ -2,11 +2,37 @@
 
 import React from 'react';
 
+// Define specific types for each data structure
+interface Course {
+  id: string;
+  name: string;
+}
+
+interface Assignment {
+  id: string;
+  name: string;
+  due_at?: string;
+}
+
+interface Announcement {
+  id: string;
+  title: string;
+  posted_at?: string;
+}
+
+interface Module {
+  id: string;
+  name: string;
+}
+
+// Define function result type
+type FunctionResult = Course[] | Assignment[] | Announcement[] | Module[] | { error?: string } | unknown;
+
 type FunctionCallProps = {
   functionCall: {
     name: string;
-    arguments: any;
-    result: any;
+    arguments: Record<string, unknown>;
+    result: FunctionResult;
   };
 };
 
@@ -15,7 +41,7 @@ export function FunctionCallResult({ functionCall }: FunctionCallProps) {
     return name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
   
-  const renderCourses = (courses: any[]) => {
+  const renderCourses = (courses: Course[]) => {
     if (!Array.isArray(courses) || courses.length === 0) {
       return <p className="text-gray-500">No courses found</p>;
     }
@@ -35,7 +61,7 @@ export function FunctionCallResult({ functionCall }: FunctionCallProps) {
     );
   };
   
-  const renderAssignments = (assignments: any[]) => {
+  const renderAssignments = (assignments: Assignment[]) => {
     if (!Array.isArray(assignments) || assignments.length === 0) {
       return <p className="text-gray-500">No assignments found</p>;
     }
@@ -59,7 +85,7 @@ export function FunctionCallResult({ functionCall }: FunctionCallProps) {
     );
   };
   
-  const renderAnnouncements = (announcements: any[]) => {
+  const renderAnnouncements = (announcements: Announcement[]) => {
     if (!Array.isArray(announcements) || announcements.length === 0) {
       return <p className="text-gray-500">No announcements found</p>;
     }
@@ -83,7 +109,7 @@ export function FunctionCallResult({ functionCall }: FunctionCallProps) {
     );
   };
   
-  const renderModules = (modules: any[]) => {
+  const renderModules = (modules: Module[]) => {
     if (!Array.isArray(modules) || modules.length === 0) {
       return <p className="text-gray-500">No modules found</p>;
     }
@@ -105,23 +131,23 @@ export function FunctionCallResult({ functionCall }: FunctionCallProps) {
   const renderFunctionResult = () => {
     const { name, result } = functionCall;
     
-    if (result.error) {
+    if (typeof result === 'object' && result !== null && 'error' in result) {
       return (
         <div className="text-red-500">
-          Error: {result.error}
+          Error: {(result as { error: string }).error}
         </div>
       );
     }
     
     switch (name) {
       case "get_courses":
-        return renderCourses(result);
+        return renderCourses(result as Course[]);
       case "get_assignments":
-        return renderAssignments(result);
+        return renderAssignments(result as Assignment[]);
       case "get_announcements":
-        return renderAnnouncements(result);
+        return renderAnnouncements(result as Announcement[]);
       case "get_modules":
-        return renderModules(result);
+        return renderModules(result as Module[]);
       default:
         return (
           <pre className="bg-gray-100 p-2 rounded text-sm overflow-auto">
@@ -140,3 +166,5 @@ export function FunctionCallResult({ functionCall }: FunctionCallProps) {
     </div>
   );
 } 
+
+

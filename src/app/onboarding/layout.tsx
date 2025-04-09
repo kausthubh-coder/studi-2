@@ -17,7 +17,7 @@ export default function OnboardingLayout({
   // Redirect if user has already completed onboarding
   useEffect(() => {
     if (currentUser && currentUser.onboardingCompleted) {
-      router.push("/home");
+      router.push("/dashboard");
     }
   }, [currentUser, router]);
 
@@ -27,3 +27,5 @@ export default function OnboardingLayout({
     </div>
   );
 } 
+
+

@@ -148,7 +148,7 @@ export default function DashboardPage() {
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
                   <MessageSquare className="h-8 w-8 text-black" />
                 </div>
-                <p className="text-black mb-4">You haven't started any chats yet.</p>
+                <p className="text-black mb-4">You haven&apos;t started any chats yet.</p>
                 <motion.button 
                   onClick={handleNewChat}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-black text-white hover:bg-gray-800 transition-colors"

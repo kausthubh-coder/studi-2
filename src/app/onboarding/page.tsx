@@ -363,9 +363,9 @@ const OnboardingPage = () => {
             <div className="mx-auto w-16 h-16 border-2 border-black rounded-full flex items-center justify-center">
               <span className="text-2xl">✅</span>
             </div>
-            <h2 className="text-2xl font-bold text-black">You're all set!</h2>
+            <h2 className="text-2xl font-bold text-black">You&apos;re all set!</h2>
             <p className="text-black">
-              Thanks for completing your profile. You're ready to start using
+              Thanks for completing your profile. You&apos;re ready to start using
               Studi! 🚀
             </p>
           </div>

@@ -62,7 +62,7 @@ export function CTA() {
                 </div>
                 <h3 className="mt-4 text-lg font-medium text-black">Privacy Focused</h3>
                 <p className="mt-2 text-sm text-black">
-                  Your data is secure and private. We only access what's needed to provide you with personalized assistance.
+                  Your data is secure and private. We only access what&apos;s needed to provide you with personalized assistance.
                 </p>
               </div>
             </Reveal>

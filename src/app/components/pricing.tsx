@@ -82,7 +82,7 @@ export function Pricing() {
           </Reveal>
           <FadeIn>
             <p className="text-lg opacity-80 mb-8">
-              Affordable plans designed specifically for students. Start free and upgrade when you're ready.
+              Affordable plans designed specifically for students. Start free and upgrade when you&apos;re ready.
             </p>
             
             {/* Billing toggle */}

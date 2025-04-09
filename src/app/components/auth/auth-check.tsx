@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useConvex, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -49,7 +49,7 @@ export const AuthCheck = () => {
       // Redirect to sign-in if user tries to access a private route without authentication
       router.push('/sign-in');
     }
-  }, [isClient, isLoaded, isSignedIn, pathname, router]);
+  }, [isClient, isLoaded, isSignedIn, pathname, router, isPrivateRoute]);
 
   // When a user signs in with Clerk, create or update the user in Convex
   useEffect(() => {

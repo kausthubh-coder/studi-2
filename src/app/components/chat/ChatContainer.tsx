@@ -30,7 +30,6 @@ export function ChatContainer({
   isLoading, 
   onSendMessage,
   title,
-  chatId,
   onUpdateTitle,
   onDeleteChat
 }: ChatContainerProps) {

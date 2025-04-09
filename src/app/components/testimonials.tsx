@@ -1,6 +1,6 @@
 "use client";
 
-import { FadeIn, Reveal } from './animations';
+import { Reveal } from './animations';
 import Image from 'next/image';
 
 // Testimonial data

@@ -47,3 +47,15 @@
 - Added missing "onboardingCompleted" parameter to function calls
 - Added a retry mechanism with delay for better reliability
 - Enhanced error handling in onboarding process
+
+# Fix linting and TypeScript errors
+
+## Commit 9: Fix linting and TypeScript errors
+- Fixed unescaped apostrophes in multiple components using &apos; HTML entity
+  - Fixed in pricing.tsx, cta.tsx, onboarding/page.tsx, and dashboard/page.tsx
+- Replaced 'any' type with proper TypeScript interface in settings/page.tsx
+- Added missing dependency in useEffect dependency array in auth-check.tsx
+
+These changes resolve the ESLint warnings and errors reported during build, 
+improving code quality and accessibility compliance. The fixes were kept minimal 
+to ensure only the required changes were made without disrupting functionality.

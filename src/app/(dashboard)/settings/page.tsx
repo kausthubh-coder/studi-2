@@ -81,7 +81,13 @@ export default function SettingsPage() {
       }
 
       // Prepare the mutation arguments
-      const args: any = { canvasEnabled };
+      interface CanvasSettingsArgs {
+        canvasEnabled: boolean;
+        canvasUrl?: string;
+        canvasAccessToken?: string;
+      }
+      
+      const args: CanvasSettingsArgs = { canvasEnabled };
       
       // Only include URL and token if Canvas is enabled
       if (canvasEnabled) {

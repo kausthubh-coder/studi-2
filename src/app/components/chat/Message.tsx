@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { Copy, Check, Heart, ChevronDown, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Message as MessageType } from "@/types/chat";
 import { formatDistanceToNow } from "date-fns";
 import ReactMarkdown from 'react-markdown';
+import { MessageType } from "./ChatContainer";
 
 type MessageProps = {
   message: MessageType;

@@ -1,8 +1,6 @@
 import { v } from "convex/values";
 import { action, mutation, query, internalQuery } from "./_generated/server";
 import { ConvexError } from "convex/values";
-import { Id } from "./_generated/dataModel";
-
 /**
  * Helper function to extract the clean Clerk ID
  */
@@ -163,3 +161,33 @@ export const getUser = query({
     return user;
   },
 }); 
+
+export const updateCanvasSettings = mutation({
+  args: {
+    canvasAccessToken: v.optional(v.string()),
+    canvasEnabled: v.optional(v.boolean())
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    // Get the user's ID
+    const user = await ctx.db
+      .query("users")
+      .filter(q => q.eq(q.field("email"), identity.email))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Update the user's canvas settings
+    return await ctx.db.patch(user._id, {
+      canvasAccessToken: args.canvasAccessToken,
+      canvasEnabled: args.canvasEnabled,
+      updatedAt: Date.now()
+    });
+  }
+});

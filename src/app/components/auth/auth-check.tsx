@@ -3,7 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 export const AuthCheck = () => {
@@ -14,27 +14,19 @@ export const AuthCheck = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Private routes that require authentication
-  const privateRoutes = [
-    '/dashboard',
-    '/chat',
-    '/settings',
-    '/onboarding'
-  ];
-
-  // // Public routes that don't require authentication 
-  // const publicRoutes = [
-  //   '/',
-  //   '/sign-in',
-  //   '/sign-up'
-  // ];
-
-  // Check if current path is a private route
-  const isPrivateRoute = () => {
+  // Solution 2: Move array inside useCallback
+  const isPrivateRoute = useCallback(() => {
+    const privateRoutes = [
+      '/dashboard',
+      '/chat',
+      '/settings',
+      '/onboarding'
+    ];
     return privateRoutes.some(route => 
       pathname === route || pathname.startsWith(`${route}/`)
     );
-  };
+  }, [pathname]); // Now pathname is the only dependency
+
 
   // Set isClient to true when component mounts
   useEffect(() => {

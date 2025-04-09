@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { Message as MessageType } from "@/types/chat";
 import { Message } from "./Message";
 import { AnimatePresence, motion } from "framer-motion";
 import { Calendar } from "lucide-react";
+import { MessageType } from "./ChatContainer";
 
 type MessageListProps = {
   messages: MessageType[];

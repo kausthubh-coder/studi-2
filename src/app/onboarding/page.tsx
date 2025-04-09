@@ -16,11 +16,20 @@ import {
 } from "lucide-react";
 import { CanvasHelpInstructions } from "../../components/onboarding/canvas-help";
 
+interface FormData {
+  institution: string;
+  institutionType: string;
+  referralSource: string;
+  canvasEnabled: boolean;
+  canvasUrl: string;
+  canvasAccessToken: string;
+}
+
 const OnboardingPage = () => {
   const router = useRouter();
   const { user, isLoaded } = useUser();
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     institution: "",
     institutionType: "",
     referralSource: "",
@@ -87,20 +96,20 @@ const OnboardingPage = () => {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
   const handleCanvasToggle = (enabled: boolean) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       canvasEnabled: enabled,
-    });
+    }));
   };
 
   const handleSubmit = async () => {
@@ -125,11 +134,7 @@ const OnboardingPage = () => {
 
       // Process Canvas URL if needed
       let canvasUrl = formData.canvasUrl;
-      if (
-        formData.canvasEnabled &&
-        canvasUrl &&
-        !canvasUrl.startsWith("http")
-      ) {
+      if (formData.canvasEnabled && canvasUrl && !canvasUrl.startsWith("http")) {
         canvasUrl = `https://${canvasUrl}`;
       }
 
@@ -138,15 +143,7 @@ const OnboardingPage = () => {
         return;
       }
 
-      // Step 1: Make sure user exists in Convex
-      console.log("Creating/updating user record...");
-      await createOrUpdateUser({
-        name: user.fullName || "Anonymous",
-        email: user.primaryEmailAddress?.emailAddress || "",
-        imageUrl: user.imageUrl || "",
-      });
-
-      // Step 2: Update user profile with onboarding data
+      // Update user profile with onboarding data in Convex
       console.log("Updating user profile with onboarding data...");
       try {
         await updateOnboardingStatus({
@@ -156,39 +153,18 @@ const OnboardingPage = () => {
           referralSource: formData.referralSource,
           canvasEnabled: formData.canvasEnabled,
           canvasUrl: formData.canvasEnabled ? canvasUrl : undefined,
-          canvasAccessToken: formData.canvasEnabled
-            ? formData.canvasAccessToken
-            : undefined,
+          canvasAccessToken: formData.canvasEnabled ? formData.canvasAccessToken : undefined,
         });
-      } catch (updateError) {
-        console.error("Error updating profile:", updateError);
 
-        // Try one more time with a delay
-        console.log("Retrying profile update after delay...");
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        await updateOnboardingStatus({
-          onboardingCompleted: true,
-          institution: formData.institution,
-          institutionType: formData.institutionType,
-          referralSource: formData.referralSource,
-          canvasEnabled: formData.canvasEnabled,
-          canvasUrl: formData.canvasEnabled ? canvasUrl : undefined,
-          canvasAccessToken: formData.canvasEnabled
-            ? formData.canvasAccessToken
-            : undefined,
-        });
+        console.log("Onboarding completed successfully");
+        router.push("/dashboard");
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        setError("Failed to update profile. Please try again.");
       }
-
-      console.log("Onboarding completed successfully");
-
-      // Redirect to dashboard
-      router.push("/dashboard");
     } catch (error) {
       console.error("Error in onboarding process:", error);
-      setError(
-        "There was a problem completing your profile. Please try again.",
-      );
+      setError("There was a problem completing your profile. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

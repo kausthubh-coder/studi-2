@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useCallback, useState } from "react";
-import { Message as MessageType } from "@/types/chat";
 import { 
   ArrowUp, 
   ArrowLeft, 
@@ -14,6 +13,16 @@ import {
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Message } from "./Message";
+
+// Define the Message type locally
+export interface MessageType {
+  _id: string;
+  content: string;
+  role: "user" | "assistant" | "system" | "function";
+  _creationTime: number;
+  chatId: string;
+  functionCall?: string;
+}
 
 type ChatContainerProps = {
   messages: MessageType[];

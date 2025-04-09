@@ -23,7 +23,6 @@ export default function SignInPage() {
               card: "shadow-none p-0 w-full",
             }
           }}
-          redirectUrl="/onboarding"
         />
       </div>
     </div>

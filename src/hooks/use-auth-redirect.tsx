@@ -20,7 +20,7 @@ export function useAuthRedirect() {
     
     // Verify authentication states are synchronized
     if (isSignedIn !== isAuthenticated) {
-      console.warn("Authentication state mismatch between Clerk and Convex");
+      console.error("Authentication state mismatch between Clerk and Convex");
       return;
     }
 
@@ -28,19 +28,18 @@ export function useAuthRedirect() {
       try {
         // Handle authenticated users
         if (isAuthenticated) {
-          // Redirect from auth pages
+          // Check if user exists in Convex
+          if (!user) return;
+
+          // Handle auth pages redirects
           if (pathname === '/sign-in' || pathname === '/sign-up') {
-            if (user && !user.onboardingCompleted) {
-              await router.push('/onboarding');
-            } else {
-              await router.push('/dashboard');
-            }
+            router.push(user.onboardingCompleted ? '/dashboard' : '/onboarding');
             return;
           }
           
           // Force onboarding completion
-          if (user && !user.onboardingCompleted && pathname !== '/onboarding') {
-            await router.push('/onboarding');
+          if (!user.onboardingCompleted && pathname !== '/onboarding') {
+            router.push('/onboarding');
             return;
           }
         } 
@@ -51,7 +50,7 @@ export function useAuthRedirect() {
               pathname !== '/sign-in' && 
               pathname !== '/sign-up' && 
               !pathname.includes('/api/')) {
-            await router.push('/sign-in');
+            router.push('/sign-in');
             return;
           }
         }

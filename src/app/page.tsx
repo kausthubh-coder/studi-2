@@ -12,10 +12,6 @@ export default function Home() {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      // Calculate mouse position relative to the center of the screen
-      const x = e.clientX - window.innerWidth / 2
-      const y = e.clientY - window.innerHeight / 2
-
       if (parallaxRef.current) {
         const elements = parallaxRef.current.querySelectorAll(".parallax-icon")
 

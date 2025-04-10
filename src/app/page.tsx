@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import AuthCheckWrapper from "./components/auth/auth-check-wrapper"
+import { Waitlist } from "@clerk/nextjs"
 
 export default function Home() {
   const parallaxRef = useRef<HTMLDivElement>(null)
-  const [email, setEmail] = useState("")
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null)
 
   useEffect(() => {
@@ -52,12 +52,6 @@ export default function Home() {
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    alert(`Thank you! ${email} has been added to our waitlist.`)
-    setEmail("")
-  }
-
   const handleIconHover = (id: string) => {
     setHoveredIcon(id)
   }
@@ -69,7 +63,7 @@ export default function Home() {
   return (
     <main>
       <AuthCheckWrapper />
-      <div className="min-h-screen bg-[#F6EEE3] relative overflow-hidden" ref={parallaxRef}>
+      <div className="min-h-screen bg-[#E8E1D6] relative overflow-hidden" ref={parallaxRef}>
         {/* Paper Texture */}
         <div className="fixed inset-0 z-0 pointer-events-none opacity-30 bg-[url('/paper-texture.png')]"></div>
 
@@ -80,7 +74,7 @@ export default function Home() {
 
         {/* Floating Navigation */}
         <header className="container mx-auto py-4 px-4 relative z-20 mt-6">
-          <nav className="flex items-center justify-between bg-[#F6EEE3]/80 backdrop-blur-sm border-2 border-black rounded-full px-6 py-3 shadow-sm">
+          <nav className="flex items-center justify-between bg-[#E8E1D6]/80 backdrop-blur-sm border-2 border-black rounded-full px-6 py-3 shadow-sm">
             <Link href="/" className="flex items-center gap-2">
               <div className="w-6 h-6 transition-transform duration-300 ease-out hover:scale-110">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
@@ -241,32 +235,41 @@ export default function Home() {
                 Enhance your education with Studi&apos;s AI-Powered Education platform
               </p>
 
-              {/* Glass Waitlist CTA */}
-              <div className="w-full max-w-md mb-12 bg-[#F6EEE3]/60 backdrop-blur-md p-8 rounded-lg border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <form onSubmit={handleSubmit} className="w-full">
-                  <div className="flex flex-col gap-4">
-                    <label htmlFor="email" className="text-left text-sm font-medium text-gray-800">
-                      Join our waitlist
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      className="w-full px-4 py-3 border-2 border-black rounded-md bg-[#F6EEE3]/80 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-300"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                    <button
-                      type="submit"
-                      className="w-full bg-black border-2 border-black text-white rounded-md px-6 py-3 font-medium flex items-center justify-center hover:bg-gray-900 transition-all duration-300 ease-out"
-                    >
-                      Join Waitlist <ArrowRight className="ml-2 h-4 w-4" />
-                    </button>
+              {/* Clerk Waitlist Form */}
+              <div className="w-full max-w-md mx-auto flex justify-center items-center">
+                <Waitlist 
+                  appearance={{
+                    elements: {
+                      rootBox: "w-full flex justify-center",
+                      card: "w-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8 rounded-lg",
+                      formButtonPrimary: "w-full bg-black border-2 border-black text-white rounded-md px-6 py-3 font-medium flex items-center justify-center hover:bg-gray-900 transition-all duration-300 ease-out mt-4",
+                      formInputText: "w-full px-4 py-3 border-2 border-black rounded-md bg-[#E8E1D6] focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-300",
+                      footerActionText: "text-gray-600 mt-2 text-center",
+                      footerActionLink: "text-black font-medium hover:underline",
+                      headerTitle: "text-2xl font-bold font-display text-center mb-2",
+                      headerSubtitle: "text-gray-700 text-center mb-4",
+                      form: "w-full",
+                    },
+                    layout: {
+                      socialButtonsPlacement: "bottom",
+                      socialButtonsVariant: "iconButton",
+                    }
+                  }}
+                />
+                <div className="flex items-center justify-between mt-6 px-2 hidden">
+                  <div className="flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="text-sm text-gray-700">Early access to features</span>
                   </div>
-                </form>
-
-                <p className="text-sm text-gray-700 mt-4">Be the first to know when we launch. No spam, ever.</p>
+                  <div className="flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span className="text-sm text-gray-700">No spam, ever</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

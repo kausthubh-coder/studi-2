@@ -1,16 +1,14 @@
-Refactor chat message type handling and streamline onboarding flow, first build
+Fix Clerk authentication routes and middleware configuration
 
-- Removed redundant Clerk onboarding tracking in favor of using only Convex
-- Deleted unnecessary server action in src/app/actions.ts
-- Refactored message type handling across chat components:
-  - Created local MessageType interface in ChatContainer.tsx
-  - Updated Message.tsx and MessageList.tsx to import type from ChatContainer
-  - Eliminated dependency on external types file
-- Simplified onboarding flow to use only Convex database for state tracking
-- Improved error handling in auth redirect hook
-- Enhanced performance by reducing network requests during onboarding
+- Implemented proper catch-all routes for Clerk authentication:
+  - Created [[...sign-in]] route for sign-in page
+  - Created [[...sign-up]] route for sign-up page
+  - Removed conflicting regular route files
+- Updated environment variables for Clerk authentication paths
+- Ensured middleware properly handles public authentication routes
+- Fixed route conflicts to resolve Clerk component configuration error
 
-These changes consolidate type definitions to follow component-level organization,
-remove redundant code paths for onboarding, and improve type safety throughout
-the codebase. The changes make the app more maintainable by establishing a single
-source of truth for user onboarding status in Convex.
+These changes establish the correct route structure required by Clerk's
+authentication components and ensure proper handling of sign-in/sign-up flows.
+The authentication routes are now properly configured as public routes in the
+middleware while maintaining protection for other routes.

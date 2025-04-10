@@ -19,7 +19,7 @@ export const clerkTheme = {
     formButtonPrimary: "w-full bg-black border-2 border-black text-white rounded-md px-6 py-3 font-medium hover:bg-gray-900 transition-all duration-300 ease-out",
     formButtonReset: "text-gray-700 hover:text-black transition-colors duration-300",
     formFieldLabel: "font-medium text-gray-700",
-    formFieldInput: "w-full px-4 py-3 border-2 border-black rounded-md bg-[#E8E1D6]/80 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-300",
+    formFieldInput: "w-full px-4 py-3 border-2 border-black rounded-md bg-[#E8E1D6]/80 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-0 transition-all duration-300",
     footerActionText: "text-gray-700 text-center",
     footerActionLink: "text-black font-medium hover:underline",
     headerTitle: "font-display text-3xl font-bold text-center",

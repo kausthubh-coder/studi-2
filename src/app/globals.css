@@ -233,6 +233,16 @@ html {
 .cl-formFieldInput {
   width: 100%;
   background-color: #E8E1D6 !important;
+  border: 2px solid black !important;
+  border-radius: 0.5rem !important;
+}
+
+/* Ensure all input fields have black borders */
+.cl-internal-b3fm6y, 
+.cl-formFieldInput__input {
+  border: 2px solid black !important;
+  border-radius: 0.5rem !important;
+  width: 100% !important;
 }
 
 .cl-headerTitle,
@@ -257,6 +267,24 @@ html {
 .cl-userButtonBox {
   background-color: #E8E1D6 !important;
   border: 2px solid black !important;
+}
+
+/* Ensure all Clerk input fields have black borders */
+.cl-input,
+.cl-input-wrapper,
+.cl-input-root,
+.cl-input-component,
+input[class*="cl-"] {
+  border-color: black !important;
+  width: 100% !important;
+}
+
+/* Ensure proper field styling on focus */
+.cl-input:focus-within,
+.cl-input-wrapper:focus-within,
+input[class*="cl-"]:focus {
+  border-color: black !important;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Mobile-specific styles */

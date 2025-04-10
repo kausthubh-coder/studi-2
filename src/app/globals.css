@@ -200,3 +200,92 @@ html {
   background: radial-gradient(circle at center, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%);
 }
 
+/* Custom Clerk Component Styles */
+.cl-rootBox {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cl-card {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  background-color: #E8E1D6 !important;
+}
+
+.cl-form {
+  width: 100%;
+}
+
+.cl-main {
+  margin: 0 auto;
+  width: 100%;
+}
+
+.cl-formButtonPrimary {
+  width: 100%;
+  background-color: black !important;
+  color: white !important;
+}
+
+.cl-formFieldInput {
+  width: 100%;
+  background-color: #E8E1D6 !important;
+}
+
+.cl-headerTitle,
+.cl-headerSubtitle,
+.cl-footerActionText {
+  text-align: center;
+}
+
+.cl-socialButtonsIconButton,
+.cl-socialButtonsBlockButton {
+  background-color: black !important;
+  color: white !important;
+  border: 2px solid black !important;
+}
+
+.cl-socialButtonsProviderIcon {
+  color: white !important; 
+}
+
+.cl-identityPreview,
+.cl-userPreview,
+.cl-userButtonBox {
+  background-color: #E8E1D6 !important;
+  border: 2px solid black !important;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .bg-radial-gradient {
+    opacity: 0.3;
+  }
+  
+  /* Ensure the background is visible on mobile */
+  .min-h-screen[class*="bg-[#E8E1D6]"] {
+    background-color: #E8E1D6 !important;
+  }
+  
+  /* Ensure text is readable on mobile */
+  .text-gray-700 {
+    color: #374151 !important;
+  }
+  
+  /* Fix navigation on mobile */
+  nav[class*="bg-[#E8E1D6]"] {
+    background-color: #E8E1D6 !important; 
+    backdrop-filter: blur(10px);
+  }
+  
+  /* Fix Clerk components on mobile */
+  .cl-card {
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1) !important;
+    border: 2px solid black !important;
+    background-color: #E8E1D6 !important;
+  }
+}
+

@@ -190,9 +190,6 @@ html {
   body {
     @apply bg-background text-foreground font-sans;
   }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
-  }
 }
 
 /* Custom utility classes */
@@ -265,8 +262,22 @@ html {
 .cl-identityPreview,
 .cl-userPreview,
 .cl-userButtonBox {
-  background-color: #E8E1D6 !important;
-  border: 2px solid black !important;
+  background-color: #ffffff !important;
+  color: black !important;
+}
+
+.cl-userButtonPopoverActionButton__manageAccount {
+  background-color: #ffffff !important;
+  color: black !important;
+}
+
+.cl-userButtonPopoverActionButton__signOut {
+  background-color: #ffffff !important;
+  color: black !important;
+}
+.cl-internal-1hp5nqm {
+  background-color: #ffffff !important;
+  color: black !important;
 }
 
 /* Ensure all Clerk input fields have black borders */

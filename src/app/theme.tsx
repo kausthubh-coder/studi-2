@@ -36,9 +36,9 @@ export const clerkTheme = {
     rootBox: "w-full flex justify-center",
     form: "w-full",
     main: "w-full mx-auto",
-    identityPreview: "border-2 border-black rounded-md bg-[#E8E1D6]",
-    userPreview: "border-2 border-black rounded-md bg-[#E8E1D6]",
-    userButtonBox: "border-2 border-black rounded-md bg-[#E8E1D6]",
+    identityPreview: "text-black bg-[#E8E1D6]",
+    userPreview: "text-black bg-[#E8E1D6]",
+    userButtonBox: "text-black bg-[#E8E1D6]",
   },
   layout: {
     socialButtonsPlacement: "bottom",

@@ -162,56 +162,6 @@ export default function DashboardPage() {
             )}
           </div>
         </motion.div>
-        
-        <motion.div variants={item} className="space-y-6">
-          <div className="bg-white shadow-sm border border-black rounded-lg p-6">
-            <h2 className="text-xl font-bold text-black flex items-center gap-2 mb-4">
-              <User className="h-5 w-5" />
-              Account Info
-            </h2>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-black">Email</span>
-                <span className="text-black">{user?.emailAddresses[0]?.emailAddress || 'Not available'}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-black">Plan</span>
-                <span className="text-black">{convexUser?.plan || "Free"}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-black">Credits</span>
-                <span className="text-black">{convexUser?.credits || 0}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white shadow-sm border border-black rounded-lg p-6">
-            <h2 className="text-xl font-bold text-black flex items-center gap-2 mb-4">
-              <BarChart3 className="h-5 w-5" />
-              Usage
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-black">Tokens Used</span>
-                  <span className="text-black">2012 / 5000</span>
-                </div>
-                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-black rounded-full" 
-                    style={{ width: `${Math.min(((convexUser?.usageTokens || 0) / 5000) * 100, 100)}%` }}
-                  ></div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-black">Chats Created</span>
-                  <span className="text-black">{chats.length}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </motion.div>
   );

@@ -7,7 +7,6 @@ import AuthCheckWrapper from "./components/auth/auth-check-wrapper"
 
 export default function Home() {
   const parallaxRef = useRef<HTMLDivElement>(null)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [email, setEmail] = useState("")
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null)
 
@@ -16,12 +15,6 @@ export default function Home() {
       // Calculate mouse position relative to the center of the screen
       const x = e.clientX - window.innerWidth / 2
       const y = e.clientY - window.innerHeight / 2
-
-      // Smooth the mouse position updates with lerping
-      setMousePosition((prev) => ({
-        x: prev.x + (x - prev.x) * 0.05,
-        y: prev.y + (y - prev.y) * 0.05,
-      }))
 
       if (parallaxRef.current) {
         const elements = parallaxRef.current.querySelectorAll(".parallax-icon")

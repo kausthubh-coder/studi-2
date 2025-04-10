@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
 import AuthCheckWrapper from "./components/auth/auth-check-wrapper"
 import { Waitlist } from "@clerk/nextjs"
 

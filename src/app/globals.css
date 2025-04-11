@@ -290,6 +290,13 @@ input[class*="cl-"] {
   width: 100% !important;
 }
 
+.cl-formFieldInput {
+  width: 100%;
+  background-color: #E8E1D6 !important; 
+  color: black !important;
+  border: 2px solid black !important;
+}
+
 /* Ensure proper field styling on focus */
 .cl-input:focus-within,
 .cl-input-wrapper:focus-within,

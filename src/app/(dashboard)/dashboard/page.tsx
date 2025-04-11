@@ -8,7 +8,6 @@ import {
   MessageSquare, 
   User, 
   Plus,
-  BarChart3,
   Clock,
   Loader2
 } from "lucide-react";
@@ -19,11 +18,7 @@ export default function DashboardPage() {
   const { user, isSignedIn, isLoaded } = useUser();
   const router = useRouter();
   
-  // Only fetch data if authenticated
-  const convexUser = useQuery(
-    api.users.getUser,
-    isLoaded && isSignedIn ? {} : "skip"
-  );
+  // Only fetch data if authenticate
   
   const chats = useQuery(
     api.chats.getChats,

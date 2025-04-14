@@ -3,7 +3,6 @@ import { Poppins, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/react";
-import { PostHogProvider } from "../components/PostHogProvider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -30,13 +29,11 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return (
+  return (  
     <html lang="en" className={`scroll-smooth ${poppins.variable} ${playfair.variable}`}> 
       <body className="font-sans antialiased">
-        <PostHogProvider>
           <Providers>{children}</Providers>
           <Analytics />
-        </PostHogProvider>
       </body>
     </html>
   );

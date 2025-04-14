@@ -64,7 +64,7 @@ export default function Home() {
       <AuthCheckWrapper />
       <div className="min-h-screen bg-[#E8E1D6] relative overflow-hidden" ref={parallaxRef}>
         {/* Paper Texture */}
-        <div className="fixed inset-0 z-0 pointer-events-none opacity-30 bg-[url('/paper-texture.png')]"></div>
+        {/* <div className="fixed inset-0 z-0 pointer-events-none opacity-30 bg-[url('/paper-texture.png')]"></div> */}
 
         {/* Grid Background with Radial Gradient */}
         <div className="fixed inset-0 z-0 pointer-events-none bg-[url('/grid-pattern.svg')] bg-repeat">

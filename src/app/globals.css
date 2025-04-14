@@ -194,7 +194,13 @@ html {
 
 /* Custom utility classes */
 .bg-radial-gradient {
-  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 80%);
+  background: radial-gradient(
+    circle at center,
+    transparent 0%,
+    rgba(0, 0, 0, 0.03) 30%,
+    rgba(0, 0, 0, 0.08) 60%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
 }
 
 /* Custom Clerk Component Styles */
@@ -329,8 +335,6 @@ input[class*="cl-"]:focus {
   
   /* Fix Clerk components on mobile */
   .cl-card {
-    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1) !important;
-    border: 2px solid black !important;
     background-color: #E8E1D6 !important;
   }
 }

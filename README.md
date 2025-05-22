@@ -1,160 +1,118 @@
-# Studi - AI-Powered Canvas LMS Assistant
+# Project Title
 
-Studi is an AI-powered chat application that helps students interact with their Canvas Learning Management System (LMS) data. It provides a conversational interface to access course information, assignments, announcements, and more.
+This project is a full-stack application built with Next.js, Convex, and Tailwind CSS. It provides a platform for real-time collaboration and chat functionalities.
 
 ## Features
 
-- **AI Chat Interface**: Conversational UI powered by OpenAI's GPT models
-- **Canvas LMS Integration**: Connect your Canvas account to access your educational data
-- **Function Calling**: AI can retrieve specific Canvas data when needed
-- **Responsive Design**: Works on desktop and mobile devices
-- **User Authentication**: Secure login with Clerk authentication
-- **Structured Logging**: Comprehensive logging system for debugging and monitoring
-- **Modern Landing Page**: Engaging, conversion-focused design with Canvas integration emphasis
-
-### Canvas API Features
-
-Studi integrates extensively with the Canvas LMS API to provide access to:
-
-- Courses, modules, and content
-- Files and resources
-- Assignments and grades
-- Discussions and announcements
-- User information and enrollments
-- Calendar events and deadlines
-- Quizzes and surveys
-
-All these features are accessible through natural language conversations with the AI assistant.
-
-## Landing Page
-
-The Studi landing page is designed to showcase the application's value proposition with a focus on Canvas LMS integration. Key sections include:
-
-- **Hero Section**: Introduces Studi as an AI-powered study assistant with Canvas integration
-- **Features Section**: Highlights key capabilities including Canvas data access, AI assistance, and study tools
-- **Testimonials**: Showcases student experiences with the platform
-- **Call to Action**: Encourages early access sign-ups
-- **Footer**: Provides navigation, resources, and company information
-
-The landing page is fully responsive and designed with modern web standards using Tailwind CSS and React components.
+*   Real-time chat: Users can send and receive messages instantly.
+*   Collaborative canvas: Users can draw and edit on a shared canvas.
+*   User authentication: Secure sign-up and sign-in functionality.
+*   Responsive design: The application is optimized for various screen sizes.
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
-- **Backend**: Convex for database and serverless functions
-- **Authentication**: Clerk
-- **AI**: OpenAI API with function calling
-- **Canvas Integration**: Canvas LMS REST API
+*   **Frontend:** Next.js, React, Tailwind CSS
+*   **Backend:** Convex (Real-time database and serverless functions)
+*   **Authentication:** Clerk
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+*   Node.js (v18 or later)
+*   npm or yarn
 
 ## Getting Started
 
-### Prerequisites
+1.  **Clone the repository:**
 
-- Node.js 18+ and npm
-- Convex account
-- Clerk account
-- OpenAI API key
-- Canvas LMS account (for full functionality)
+    ```bash
+    git clone https://github.com/your-username/your-project-name.git
+    cd your-project-name
+    ```
 
-### Installation
+2.  **Install dependencies:**
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/studi.git
-   cd studi
-   ```
+    ```bash
+    npm install
+    # or
+    yarn install
+    ```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+3.  **Set up Convex:**
 
-3. Set up environment variables:
-   Create a `.env.local` file with the following variables:
-   ```
-   NEXT_PUBLIC_CONVEX_URL=your_convex_url
-   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-   CLERK_SECRET_KEY=your_clerk_secret_key
-   OPENAI_API_KEY=your_openai_api_key
-   ```
+    *   Sign up for a Convex account at [https://www.convex.dev/](https://www.convex.dev/).
+    *   Create a new project in the Convex dashboard.
+    *   Install the Convex CLI:
+        ```bash
+        npm install -g convex
+        ```
+    *   Log in to your Convex account:
+        ```bash
+        npx convex login
+        ```
+    *   Initialize Convex in your project:
+        ```bash
+        npx convex init
+        ```
+        Follow the prompts and select your Convex project. This will create a `convex/` directory and `.env.local` file with your Convex deployment URL.
 
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
+4.  **Set up Clerk (Authentication):**
 
-5. Initialize Convex:
-   ```bash
-   npx convex dev
-   ```
+    *   Sign up for a Clerk account at [https://clerk.com/](https://clerk.com/).
+    *   Create a new application in the Clerk dashboard.
+    *   Navigate to "API Keys" in your Clerk application settings.
+    *   Copy the "Frontend API key" and "Backend API key".
+    *   Add these keys to your `.env.local` file:
 
-### Canvas Integration Setup
+        ```env
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_frontend_api_key
+        CLERK_SECRET_KEY=your_backend_api_key
+        ```
+    *  In the Clerk Dashboard, go to JWT Templates and create a new template. Select Convex. Copy the JWKS endpoint.
+    *  Go to your Convex Dashboard. In Settings -> Auth, add a new Auth Provider. Select `HTTPS / JWT` and `Clerk` as the provider. Fill in `JWKS endpoint` with the value from the Clerk template. Set `issuer` to your Clerk application's domain (e.g., `https://cool-gazelle-123.clerk.accounts.dev` - found in Clerk Dashboard -> API Keys -> Clerk URLs).
 
-1. Go to your Canvas LMS account
-2. Generate a new API token in your profile settings
-3. In the Studi application, navigate to Settings
-4. Enter your Canvas URL and API token
-5. Enable Canvas integration
+5.  **Push Convex schema and functions:**
+
+    ```bash
+    npx convex dev
+    ```
+    This command will watch for changes in your `convex/` directory and automatically sync them with your Convex deployment. Keep this running in a separate terminal.
+
+6.  **Run the development server:**
+
+    ```bash
+    npm run dev
+    # or
+    yarn dev
+    ```
+
+    Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
 ## Project Structure
 
 ```
-studi/
-├── src/                  # Source code
-│   ├── app/              # Next.js app router
-│   ├── components/       # React components
-│   ├── utils/            # Utility functions
-│   └── types/            # TypeScript types
-├── convex/               # Convex backend
-│   ├── schema.ts         # Database schema
-│   ├── users.ts          # User-related functions
-│   ├── messages.ts       # Message-related functions
-│   ├── canvas.ts         # Canvas API integration
-│   └── openai.ts         # OpenAI integration
-├── public/               # Static assets
-└── docs/                 # Documentation
-    ├── architecture.md   # Architecture overview
-    ├── logger.md         # Logger documentation
-    └── canvas-api.md     # Canvas API documentation
+.
+├── convex/              # Convex backend (schema, functions)
+├── public/              # Static assets
+├── src/
+│   ├── app/             # Next.js app directory
+│   │   ├── (auth)/      # Authentication pages (sign-in, sign-up)
+│   │   ├── (dashboard)/ # Protected dashboard pages
+│   │   ├── components/  # Shared UI components for the app
+│   │   └── ...
+│   ├── components/      # General UI components
+│   └── hooks/           # Custom React hooks
+├── .env.local           # Environment variables (generated by Convex, manually add Clerk keys)
+├── next.config.ts       # Next.js configuration
+├── tailwind.config.ts   # Tailwind CSS configuration
+└── tsconfig.json        # TypeScript configuration
 ```
-
-## Documentation
-
-For more detailed documentation, see the `docs` directory:
-
-- [Architecture Overview](docs/architecture.md)
-- [Logger Documentation](docs/logger.md)
-- [Canvas API Documentation](docs/canvas-api.md)
-
-## Canvas API Integration
-
-The Canvas API integration is one of the core features of Studi. It allows the chatbot to:
-
-1. **Retrieve Course Information**: Access course syllabi, modules, and materials
-2. **Track Assignments**: View upcoming assignments, due dates, and submission status
-3. **Access Grades**: Check grades for assignments and overall course performance
-4. **View Announcements**: Read course announcements and updates
-5. **Participate in Discussions**: Access discussion forums and threads
-6. **Manage Files**: Browse and download course files and resources
-7. **Check Calendar Events**: View upcoming events and deadlines
-
-For developers, the Canvas API functions are organized in `convex/canvas.ts` and follow a consistent pattern with standardized error handling and response formatting.
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions are welcome! Please open an issue or submit a pull request if you have any improvements or bug fixes.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- OpenAI for their powerful language models
-- Canvas LMS for their API
-- Convex for their real-time backend platform
-- Clerk for authentication services
+This project is licensed under the MIT License.

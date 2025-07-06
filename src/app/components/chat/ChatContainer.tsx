@@ -8,7 +8,9 @@ import {
   Edit,
   Trash,
   Check,
-  X
+  X,
+  Brain,
+  Zap
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -27,7 +29,7 @@ export interface MessageType {
 type ChatContainerProps = {
   messages: MessageType[];
   isLoading: boolean;
-  onSendMessage: (content: string) => void;
+  onSendMessage: (content: string, mode?: "simple" | "agent") => void;
   title?: string;
   chatId?: string;
   onUpdateTitle?: (newTitle: string) => void;
@@ -45,6 +47,7 @@ export function ChatContainer({
   const [message, setMessage] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title || "New Chat");
+  const [agentMode, setAgentMode] = useState(true); // Default to agent mode
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -74,8 +77,8 @@ export function ChatContainer({
   const handleSendMessage = () => {
     if (!message.trim() || isLoading) return;
     
-    console.log('Sending message, { chatId, contentLength: message.length }, chat');
-    onSendMessage(message.trim());
+    console.log('Sending message, { chatId, contentLength: message.length, mode:', agentMode ? 'agent' : 'simple', '}, chat');
+    onSendMessage(message.trim(), agentMode ? "agent" : "simple");
     setMessage("");
     
     // Reset textarea height
@@ -203,6 +206,21 @@ export function ChatContainer({
         </div>
         
         <div className="flex items-center gap-2">
+          {/* Agent Mode Toggle */}
+          <motion.button
+            onClick={() => setAgentMode(!agentMode)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={`p-2 rounded-full transition-all duration-200 ${
+              agentMode 
+                ? 'bg-indigo-100 text-indigo-600 border-2 border-indigo-300' 
+                : 'hover:bg-gray-100 text-gray-600 border-2 border-gray-300'
+            }`}
+            title={agentMode ? "Agent Mode ON - Advanced reasoning" : "Agent Mode OFF - Simple responses"}
+          >
+            {agentMode ? <Brain className="h-4 w-4" /> : <Zap className="h-4 w-4" />}
+          </motion.button>
+          
           {!isEditing && onUpdateTitle && (
             <motion.button
               onClick={startEditingTitle}
@@ -271,32 +289,55 @@ export function ChatContainer({
       
       {/* Input area */}
       <div className="border-t border-black p-4 bg-white">
-        <div className="max-w-4xl mx-auto relative">
-          <textarea
-            ref={textareaRef}
-            value={message}
-            onChange={(e) => {
-              setMessage(e.target.value);
-              adjustTextareaHeight();
-            }}
-            onKeyDown={handleKeyDown}
-            placeholder="Type your message..."
-            className="w-full border border-black rounded-lg p-3 pr-14 resize-none focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-black"
-            style={{ height: "60px", maxHeight: "200px" }}
-            disabled={isLoading}
-          />
-          <button
-            type="button"
-            onClick={handleSendMessage}
-            disabled={!message.trim() || isLoading}
-            className="absolute right-3 bottom-3 p-2 bg-black text-white rounded-full hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {isLoading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <ArrowUp className="h-5 w-5" />
-            )}
-          </button>
+        <div className="max-w-4xl mx-auto">
+          {/* Mode indicator */}
+          <div className="mb-2 flex items-center gap-2 text-sm">
+            <div className={`flex items-center gap-1 px-2 py-1 rounded-full ${
+              agentMode 
+                ? 'bg-indigo-100 text-indigo-700' 
+                : 'bg-gray-100 text-gray-700'
+            }`}>
+              {agentMode ? <Brain className="h-3 w-3" /> : <Zap className="h-3 w-3" />}
+              <span className="text-xs font-medium">
+                {agentMode ? "Agent Mode" : "Simple Mode"}
+              </span>
+            </div>
+            <span className="text-xs text-gray-500">
+              {agentMode 
+                ? "Advanced reasoning with multiple steps" 
+                : "Quick responses with single function calls"}
+            </span>
+          </div>
+          
+          <div className="relative">
+            <textarea
+              ref={textareaRef}
+              value={message}
+              onChange={(e) => {
+                setMessage(e.target.value);
+                adjustTextareaHeight();
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder={agentMode 
+                ? "Ask me anything - I'll think through it step by step..." 
+                : "Type your message..."}
+              className="w-full border border-black rounded-lg p-3 pr-14 resize-none focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-black"
+              style={{ height: "60px", maxHeight: "200px" }}
+              disabled={isLoading}
+            />
+            <button
+              type="button"
+              onClick={handleSendMessage}
+              disabled={!message.trim() || isLoading}
+              className="absolute right-3 bottom-3 p-2 bg-black text-white rounded-full hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isLoading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <ArrowUp className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

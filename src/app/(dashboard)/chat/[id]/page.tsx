@@ -44,8 +44,8 @@ export default function ChatDetailPage() {
     isLoaded && isSignedIn && convexChatId ? { chatId: convexChatId } : "skip"
   ) || [];
   
-  // Send message mutation
-  const sendMessage = useMutation(api.messages.sendMessage);
+  // Send message mutation - using the new enhanced version
+  const sendMessage = useMutation(api.messages.sendEnhancedMessage);
   
   // Update chat mutation
   const updateChat = useMutation(api.chats.updateChat);
@@ -61,7 +61,7 @@ export default function ChatDetailPage() {
   }, [isLoaded, isSignedIn, router]);
   
   // Handle sending a new message
-  const handleSendMessage = async (content: string) => {
+  const handleSendMessage = async (content: string, mode?: "simple" | "agent") => {
     if (!convexChatId) return;
     
     try {
@@ -69,6 +69,7 @@ export default function ChatDetailPage() {
       await sendMessage({
         chatId: convexChatId,
         content,
+        mode: mode || "agent", // Default to agent mode
       });
       
       // If this is the first message and the chat doesn't have a title yet, 

@@ -172,7 +172,10 @@ async function getUserId(ctx: any, clerkSubject: string): Promise<Id<"users"> | 
 export { getMe, getUser, createOrUpdateUser, updateOnboardingStatus } from "./users";
 
 // Message handling
-export { getMessages, sendMessage } from "./messages";
+export { getMessages, sendMessage, sendEnhancedMessage } from "./messages";
 
 // Chat handling
-export { createChat, getChats, getChat, deleteChat, updateChat, getChatMessages } from "./chats"; 
+export { createChat, getChats, getChat, deleteChat, updateChat, getChatMessages } from "./chats";
+
+// ReAct agent
+export { runReActAgent } from "./reactAgent"; 

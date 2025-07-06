@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, Heart, ChevronDown, ChevronRight } from "lucide-react";
+import { Copy, Check, Heart, ChevronDown, ChevronRight, Brain, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import ReactMarkdown from 'react-markdown';
@@ -16,10 +16,16 @@ export function Message({ message }: MessageProps) {
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);
   const [expandedFunction, setExpandedFunction] = useState(false);
+  const [expandedReasoning, setExpandedReasoning] = useState(false);
   const isUser = message.role === "user";
 
   // Parse function call data if present
   const functionCall = message.functionCall ? JSON.parse(message.functionCall) : null;
+  
+  // Check if this is a ReAct agent response
+  const isAgentResponse = functionCall?.agentType === "ReAct";
+  const agentSteps = functionCall?.reasoning || [];
+  const agentStepCount = functionCall?.steps || 0;
   
   const formattedTime = formatDistanceToNow(new Date(message._creationTime), {
     addSuffix: true,
@@ -62,8 +68,70 @@ export function Message({ message }: MessageProps) {
               </div>
             )}
             
+            {/* Render agent reasoning if present */}
+            {isAgentResponse && (
+              <div className="mt-3 border border-indigo-200 rounded-lg text-sm overflow-hidden bg-indigo-50">
+                <motion.button
+                  onClick={() => setExpandedReasoning(!expandedReasoning)}
+                  className="w-full flex items-center justify-between p-3 bg-indigo-50 text-indigo-900 hover:bg-indigo-100 transition-colors"
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                >
+                  <div className="font-semibold flex items-center">
+                    <Brain className="mr-2" size={16} />
+                    <span>Agent Reasoning ({agentStepCount} steps)</span>
+                  </div>
+                  {expandedReasoning ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                </motion.button>
+                
+                <AnimatePresence>
+                  {expandedReasoning && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-4 border-t border-indigo-200 bg-white">
+                        <div className="space-y-3">
+                          {agentSteps.map((step: {step: number, thought: string, action: string}, index: number) => (
+                            <div key={index} className="border-l-4 border-indigo-200 pl-3 py-2">
+                              <div className="flex items-start gap-2">
+                                <div className="flex-shrink-0 w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center text-xs font-medium text-indigo-600">
+                                  {step.step}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="mb-1">
+                                    <div className="flex items-center gap-1 mb-1">
+                                      <Brain className="w-3 h-3 text-gray-500" />
+                                      <span className="text-xs font-medium text-gray-700">Thought:</span>
+                                    </div>
+                                    <p className="text-xs text-gray-600 italic">
+                                      {step.thought}
+                                    </p>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <Zap className="w-3 h-3 text-purple-500" />
+                                    <span className="text-xs font-medium text-gray-700">Action:</span>
+                                    <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded">
+                                      {step.action}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+
             {/* Render function call result if present - collapsible version */}
-            {functionCall && (
+            {functionCall && !isAgentResponse && (
               <div className="mt-2 border border-black rounded-md text-xs overflow-hidden">
                 <motion.button
                   onClick={toggleFunctionDetails}

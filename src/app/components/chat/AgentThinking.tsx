@@ -7,7 +7,7 @@ import { Brain, Zap, Eye, CheckCircle, Clock, Activity } from "lucide-react";
 interface AgentStep {
   thought: string;
   action: string;
-  actionInput: any;
+  actionInput: Record<string, unknown>;
   observation: string;
   stepNumber: number;
   timestamp: number;
@@ -16,11 +16,10 @@ interface AgentStep {
 interface AgentThinkingProps {
   isActive: boolean;
   steps?: AgentStep[];
-  currentStep?: number;
   className?: string;
 }
 
-export function AgentThinking({ isActive, steps = [], currentStep = 0, className = "" }: AgentThinkingProps) {
+export function AgentThinking({ isActive, steps = [], className = "" }: AgentThinkingProps) {
   const [visibleSteps, setVisibleSteps] = useState<number>(0);
   const [isThinking, setIsThinking] = useState(false);
 

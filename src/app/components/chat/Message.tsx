@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, Heart, ChevronDown, ChevronRight, Brain, Zap, Eye } from "lucide-react";
+import { Copy, Check, Heart, ChevronDown, ChevronRight, Brain, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import ReactMarkdown from 'react-markdown';
@@ -95,7 +95,7 @@ export function Message({ message }: MessageProps) {
                     >
                       <div className="p-4 border-t border-indigo-200 bg-white">
                         <div className="space-y-3">
-                          {agentSteps.map((step: any, index: number) => (
+                          {agentSteps.map((step: {step: number, thought: string, action: string}, index: number) => (
                             <div key={index} className="border-l-4 border-indigo-200 pl-3 py-2">
                               <div className="flex items-start gap-2">
                                 <div className="flex-shrink-0 w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center text-xs font-medium text-indigo-600">

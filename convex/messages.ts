@@ -257,15 +257,28 @@ export const sendAgentMessage = mutation({
         args.content.includes("course")
       );
       
-      if (shouldUseAgent) {
-                 // Use ReAct agent
-         await ctx.scheduler.runAfter(0, internal.reactAgent.runReActAgent, {
-           query: args.content,
+             if (shouldUseAgent) {
+         // TODO: Re-enable ReAct agent once Convex API is regenerated
+         // Temporarily use enhanced OpenAI mode
+         const messages = await ctx.db
+           .query("messages")
+           .withIndex("by_chatId", (q) => q.eq("chatId", args.chatId))
+           .order("asc")
+           .collect();
+         
+         const formattedMessages = messages
+           .filter(msg => !msg.isLoading) // Exclude loading messages
+           .map(msg => ({
+             role: msg.role,
+             content: msg.content,
+           }));
+         
+         await ctx.scheduler.runAfter(0, api.openai.generateChatCompletion, {
+           messages: formattedMessages,
            chatId: args.chatId,
            userId: user._id,
-           maxSteps: args.maxSteps || 8,
          });
-      } else {
+       } else {
         // Use original OpenAI function
         const messages = await ctx.db
           .query("messages")
@@ -359,28 +372,39 @@ export const sendEnhancedMessage = mutation({
     const mode = args.mode || "agent"; // Default to agent mode
     
     try {
-      if (mode === "agent") {
-        // Add thinking indicator
-        const thinkingMessageId = await ctx.db.insert("messages", {
-          chatId: args.chatId,
-          userId: user._id,
-          content: "🧠 **Agent Mode Active**\n\nAnalyzing your request and planning my approach...",
-          role: "assistant",
-          createdAt: Date.now(),
-          isLoading: true,
-        });
-        
-                 // Schedule ReAct agent
-         await ctx.scheduler.runAfter(0, internal.reactAgent.runReActAgent, {
-           query: args.content,
+             if (mode === "agent") {
+         // TODO: Re-enable agent mode once Convex API is regenerated
+         // Add thinking indicator
+         const thinkingMessageId = await ctx.db.insert("messages", {
            chatId: args.chatId,
            userId: user._id,
-           maxSteps: args.maxSteps || 8,
+           content: "🧠 **Agent Mode Active**\n\nAgent mode is currently being configured. Using enhanced mode for now...",
+           role: "assistant",
+           createdAt: Date.now(),
+           isLoading: true,
          });
-        
-        // Remove thinking message
-        await ctx.db.delete(thinkingMessageId);
-      } else {
+         
+         // Temporarily use simple mode until agent is available
+         const messages = await ctx.db
+           .query("messages")
+           .withIndex("by_chatId", (q) => q.eq("chatId", args.chatId))
+           .order("asc")
+           .collect();
+         
+         const formattedMessages = messages.map(msg => ({
+           role: msg.role,
+           content: msg.content,
+         }));
+         
+         await ctx.scheduler.runAfter(0, api.openai.generateChatCompletion, {
+           messages: formattedMessages,
+           chatId: args.chatId,
+           userId: user._id,
+         });
+         
+         // Remove thinking message
+         await ctx.db.delete(thinkingMessageId);
+       } else {
         // Use simple mode (original OpenAI)
         const messages = await ctx.db
           .query("messages")

@@ -178,4 +178,4 @@ export { getMessages, sendMessage, sendEnhancedMessage } from "./messages";
 export { createChat, getChats, getChat, deleteChat, updateChat, getChatMessages } from "./chats";
 
 // ReAct agent
-export { runReActAgent } from "./react-agent"; 
+export { runReActAgent } from "./reactAgent"; 

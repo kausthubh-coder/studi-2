@@ -250,6 +250,7 @@ export const getChatMessages = query({
     }
 
     // Get all messages for this chat
+    // lol
     const messages = await ctx.db
       .query("messages")
       .withIndex("by_chatId", (q) => q.eq("chatId", args.chatId))

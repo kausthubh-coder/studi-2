@@ -41,34 +41,4 @@ export default defineSchema({
   .index("by_clerkId", ["clerkId"])
   .index("by_email", ["email"])
   .index("by_subscription", ["stripeSubscriptionId"]),
-
-  // Chats table
-  chats: defineTable({
-    userId: v.id("users"),
-    title: v.string(),
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  })
-  .index("by_userId", ["userId"]),
-
-  
-
-  // Messages table
-  messages: defineTable({
-    chatId: v.id("chats"),
-    content: v.string(),
-    createdAt: v.float64(),
-    role: v.string(),
-    tokens: v.optional(v.float64()),
-    isError: v.optional(v.boolean()),  // Add this field
-    isLoading: v.optional(v.boolean()),
-    userId: v.optional(v.id("users")),
-    functionCall: v.optional(v.string()),
-    functionData: v.optional(v.object({
-      name: v.string(),
-      arguments: v.string(),
-      result: v.string(),
-    })),
-  })
-  .index("by_chatId", ["chatId"]),
 }); 

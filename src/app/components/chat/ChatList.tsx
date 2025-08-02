@@ -4,47 +4,47 @@ import { useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { MessageSquare, Plus, Trash } from "lucide-react";
-import { useMutation } from "convex/react";
+import { useAction } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { motion } from "framer-motion";
 
-type ChatType = {
-  _id: string;
+type ThreadType = {
+  id: string;
   title: string;
-  updatedAt: number;
+  createdAt: number;
 };
 
 type ChatListProps = {
-  chats: ChatType[];
-  onDeleteChat: (chatId: string) => void;
+  threads: ThreadType[];
+  onDeleteThread: (threadId: string) => void;
 };
 
-export function ChatList({ chats, onDeleteChat }: ChatListProps) {
+export function ChatList({ threads, onDeleteThread }: ChatListProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const createChat = useMutation(api.chats.createChat);
+  const createThread = useAction(api.studyAgent.createThread);
   
   const handleNewChat = async () => {
-    // Create a new chat and navigate to it
+    // Create a new thread and navigate to it
     try {
-      const chatId = await createChat({ title: "New Chat" });
-      if (chatId) {
-        router.push(`/chat/${chatId}`);
+      const thread = await createThread({ title: "New Chat" });
+      if (thread?.id) {
+        router.push(`/chat/${thread.id}`);
       }
     } catch (error) {
-      console.error("Failed to create new chat:", error);
+      console.error("Failed to create new thread:", error);
     }
   };
   
-  const handleDelete = useCallback((e: React.MouseEvent, chatId: string) => {
+  const handleDelete = useCallback((e: React.MouseEvent, threadId: string) => {
     e.preventDefault();
     e.stopPropagation();
     
     // Confirm before deleting
     if (confirm("Are you sure you want to delete this chat?")) {
-      onDeleteChat(chatId);
+      onDeleteThread(threadId);
     }
-  }, [onDeleteChat]);
+  }, [onDeleteThread]);
 
   return (
     <div className="w-full h-full flex flex-col bg-gray-50 border-r border-black">
@@ -67,17 +67,17 @@ export function ChatList({ chats, onDeleteChat }: ChatListProps) {
             Your Chats
           </h3>
           <div className="mt-2 space-y-1">
-            {chats.length === 0 ? (
+            {threads.length === 0 ? (
               <div className="p-3 text-center text-sm text-black">
                 No chats yet. Start a new conversation!
               </div>
             ) : (
-              chats.map((chat) => {
-                const isActive = pathname === `/chat/${chat._id}`;
+              threads.map((thread) => {
+                const isActive = pathname === `/chat/${thread.id}`;
                 return (
                   <Link
-                    key={chat._id}
-                    href={`/chat/${chat._id}`}
+                    key={thread.id}
+                    href={`/chat/${thread.id}`}
                     className={`flex items-center justify-between p-2 rounded-md ${
                       isActive
                         ? "bg-gray-200 text-black font-medium"
@@ -87,13 +87,13 @@ export function ChatList({ chats, onDeleteChat }: ChatListProps) {
                     <div className="flex items-center gap-3 truncate">
                       <MessageSquare size={16} />
                       <span className="truncate text-sm">
-                        {chat.title || "New Chat"}
+                        {thread.title || "New Chat"}
                       </span>
                     </div>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDelete(e, chat._id);
+                        handleDelete(e, thread.id);
                       }}
                       className="ml-2 p-1 text-black hover:text-red-600 rounded-md hover:bg-gray-200 transition-colors"
                       aria-label="Delete chat"

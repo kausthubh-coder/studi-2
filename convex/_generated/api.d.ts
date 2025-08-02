@@ -8,11 +8,10 @@
  * @module
  */
 
-import type * as canvas from "../canvas.js";
-import type * as chats from "../chats.js";
+import type * as canvasOld from "../canvasOld.js";
+import type * as canvasTools from "../canvasTools.js";
 import type * as index from "../index.js";
-import type * as messages from "../messages.js";
-import type * as openai from "../openai.js";
+import type * as studyAgent from "../studyAgent.js";
 import type * as users from "../users.js";
 
 import type {
@@ -30,11 +29,10 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  canvas: typeof canvas;
-  chats: typeof chats;
+  canvasOld: typeof canvasOld;
+  canvasTools: typeof canvasTools;
   index: typeof index;
-  messages: typeof messages;
-  openai: typeof openai;
+  studyAgent: typeof studyAgent;
   users: typeof users;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

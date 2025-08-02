@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useAction } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { motion } from "framer-motion";
 import { 
@@ -18,14 +18,13 @@ export default function DashboardPage() {
   const { user, isSignedIn, isLoaded } = useUser();
   const router = useRouter();
   
-  // Only fetch data if authenticate
-  
-  const chats = useQuery(
-    api.chats.getChats,
+  // Fetch user's threads from the new Agent system
+  const threads = useQuery(
+    api.studyAgent.getUserThreads,
     isLoaded && isSignedIn ? {} : "skip"
   ) || [];
   
-  const createChat = useMutation(api.chats.createChat);
+  const createThread = useAction(api.studyAgent.createThread);
 
   const container = {
     hidden: { opacity: 0 },
@@ -44,9 +43,9 @@ export default function DashboardPage() {
   
   const handleNewChat = async () => {
     try {
-      const chatId = await createChat({ title: "New Chat" });
-      if (chatId) {
-        router.push(`/chat/${chatId}`);
+      const thread = await createThread({ title: "New Chat" });
+      if (thread?.id) {
+        router.push(`/chat/${thread.id}`);
       }
     } catch (error) {
       console.error("Failed to create new chat:", error);
@@ -112,27 +111,27 @@ export default function DashboardPage() {
               </Link>
             </div>
             
-            {chats.length > 0 ? (
+            {threads.length > 0 ? (
               <div className="space-y-3">
-                {chats.slice(0, 5).map((chat) => (
+                {threads.slice(0, 5).map((thread) => (
                   <Link 
-                    key={chat._id} 
-                    href={`/chat/${chat._id}`} 
+                    key={thread.id} 
+                    href={`/chat/${thread.id}`} 
                     className="flex items-center gap-3 p-3 rounded-lg border border-black hover:bg-gray-50 transition-colors"
                   >
                     <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
                       <MessageSquare className="h-5 w-5 text-black" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-black truncate">{chat.title || "New Chat"}</p>
+                      <p className="font-medium text-black truncate">{thread.title || "New Chat"}</p>
                       <p className="text-sm text-black truncate">
-                        {new Date(chat._creationTime).toLocaleDateString()}
+                        {new Date(thread.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="flex items-center justify-center">
                       <Clock className="h-4 w-4 text-black" />
                       <span className="text-xs text-black ml-1">
-                        {new Date(chat._creationTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(thread.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                   </Link>

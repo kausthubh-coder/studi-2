@@ -2,22 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useAction } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
-import { Id } from "../../../../../convex/_generated/dataModel";
-import { ChatContainer } from "@/app/components/chat/ChatContainer";
+import { ChatContainer, MessageType } from "@/app/components/chat/ChatContainer";
 import { Loader2 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 
-// Define Message type here to solve the import error
-interface Message {
-  _id: string;
-  content: string;
-  role: "user" | "assistant";
-  _creationTime: number;
-  chatId: string;
-  functionCall?: string;
-}
+// We'll use MessageType from ChatContainer instead of defining our own
 
 export default function ChatDetailPage() {
   const { isLoaded, isSignedIn } = useUser();
@@ -26,32 +17,20 @@ export default function ChatDetailPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   
-  // Safely get chatId from params
-  const chatIdString = params?.id ? (params.id as string) : null;
+  // Get threadId from params (using the same URL structure but treating it as threadId)
+  const threadId = params?.id ? (params.id as string) : null;
   
-  // Convert string chatId to Convex Id when available
-  const convexChatId = chatIdString as unknown as Id<"chats"> | null;
-  
-  // Get chat details only if authenticated
-  const chat = useQuery(
-    api.chats.getChat, 
-    isLoaded && isSignedIn && convexChatId ? { chatId: convexChatId } : "skip"
-  );
-  
-  // Get messages for this chat only if authenticated
+  // Get thread messages using the new Agent system
   const messagesResult = useQuery(
-    api.messages.getMessages, 
-    isLoaded && isSignedIn && convexChatId ? { chatId: convexChatId } : "skip"
+    api.studyAgent.getThreadMessages, 
+    isLoaded && isSignedIn && threadId ? { threadId } : "skip"
   ) || [];
   
-  // Send message mutation - using the new enhanced version
-  const sendMessage = useMutation(api.messages.sendEnhancedMessage);
+  // Send message using the new Agent system
+  const sendMessage = useAction(api.studyAgent.sendMessage);
   
-  // Update chat mutation
-  const updateChat = useMutation(api.chats.updateChat);
-  
-  // Delete chat mutation
-  const deleteChat = useMutation(api.chats.deleteChat);
+  // Create thread action
+  const createThread = useAction(api.studyAgent.createThread);
 
   // Handle authentication state
   useEffect(() => {
@@ -61,30 +40,32 @@ export default function ChatDetailPage() {
   }, [isLoaded, isSignedIn, router]);
   
   // Handle sending a new message
-  const handleSendMessage = async (content: string, mode?: "simple" | "agent") => {
-    if (!convexChatId) return;
+  const handleSendMessage = async (content: string) => {
+    if (!threadId) {
+      // If no threadId, create a new thread first
+      try {
+        setIsLoading(true);
+        const newThread = await createThread({
+          title: content.length > 30 ? content.substring(0, 30) + "..." : content
+        });
+        
+        // Redirect to the new thread
+        router.push(`/chat/${newThread.id}`);
+        return;
+      } catch (error) {
+        console.error("Failed to create thread:", error);
+        setError(error as Error);
+        setIsLoading(false);
+        return;
+      }
+    }
     
     try {
       setIsLoading(true);
       await sendMessage({
-        chatId: convexChatId,
-        content,
-        mode: mode || "agent", // Default to agent mode
+        threadId,
+        message: content,
       });
-      
-      // If this is the first message and the chat doesn't have a title yet, 
-      // set a title based on the content of the first message
-      if (messagesResult.length === 0 && (!chat?.title || chat.title === "New Chat")) {
-        // Create a title from the first message (truncate if too long)
-        const autoTitle = content.length > 30 
-          ? content.substring(0, 30) + "..." 
-          : content;
-          
-        await updateChat({
-          id: convexChatId,
-          title: autoTitle
-        });
-      }
     } catch (error) {
       console.error("Failed to send message:", error);
       setError(error as Error);
@@ -93,34 +74,16 @@ export default function ChatDetailPage() {
     }
   };
 
-  // Handle updating chat title
+  // Handle updating thread title (placeholder for now)
   const handleUpdateTitle = async (newTitle: string) => {
-    if (!convexChatId) return;
-    
-    try {
-      await updateChat({
-        id: convexChatId,
-        title: newTitle
-      });
-    } catch (error) {
-      console.error("Failed to update chat title:", error);
-      setError(error as Error);
-    }
+    // TODO: Implement thread title update when Agent component supports it
+    console.log("Update title:", newTitle);
   };
 
-  // Handle deleting chat
+  // Handle deleting thread (placeholder for now)
   const handleDeleteChat = async () => {
-    if (!convexChatId) return;
-    
-    try {
-      await deleteChat({
-        chatId: convexChatId
-      });
-      router.push("/dashboard");
-    } catch (error) {
-      console.error("Failed to delete chat:", error);
-      setError(error as Error);
-    }
+    // TODO: Implement thread deletion when Agent component supports it
+    router.push("/dashboard");
   };
   
   // Effect to handle errors
@@ -142,24 +105,15 @@ export default function ChatDetailPage() {
     );
   }
 
-  // If chatId is not available or loading, show loading state
-  if (!chatIdString || !chat) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-white">
-        <Loader2 className="h-8 w-8 animate-spin text-black" />
-      </div>
-    );
-  }
-
-  // Add a try-catch block around the chat loading and display a friendly error if it fails
+  // Show the chat interface (even if threadId is null - we'll handle it in the send message)
   try {
     return (
       <ChatContainer 
-        messages={messagesResult as Message[]} 
+        messages={messagesResult as MessageType[]} 
         isLoading={isLoading}
         onSendMessage={handleSendMessage}
-        title={chat.title}
-        chatId={convexChatId ? convexChatId.toString() : undefined}
+        title={threadId || "New Chat"}
+        chatId={threadId || undefined}
         onUpdateTitle={handleUpdateTitle}
         onDeleteChat={handleDeleteChat}
       />

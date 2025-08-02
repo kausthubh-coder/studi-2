@@ -22,7 +22,7 @@ export interface MessageType {
   content: string;
   role: "user" | "assistant" | "system" | "function";
   _creationTime: number;
-  chatId: string;
+  threadId: string; // Changed from chatId to threadId
   functionCall?: string;
 }
 
@@ -154,7 +154,7 @@ export function ChatContainer({
     content: msg.content,
     role: msg.role,
     timestamp: new Date(msg._creationTime),
-    originalChatId: msg.chatId, // Keep the original chatId for reference
+    originalThreadId: msg.threadId, // Keep the original threadId for reference
     functionCall: msg.functionCall ? JSON.parse(msg.functionCall) : undefined
   }));
 
@@ -266,7 +266,7 @@ export function ChatContainer({
                     content: msg.content,
                     role: msg.role,
                     _creationTime: msg.timestamp.getTime(),
-                    chatId: msg.originalChatId,
+                    threadId: msg.originalThreadId,
                     functionCall: msg.functionCall ? JSON.stringify(msg.functionCall) : undefined
                   }}
                 />

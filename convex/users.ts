@@ -120,8 +120,8 @@ export const updateOnboardingStatus = mutation({
   },
 });
 
-// Get a user by their Clerk ID
-export const getUserByClerkId = query({
+// Get a user by their Clerk ID - internal function
+export const getUserByClerkId = internalQuery({
   args: {
     clerkId: v.string(),
   },

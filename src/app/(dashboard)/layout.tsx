@@ -13,7 +13,7 @@ import {
   Home,
   Loader2
 } from "lucide-react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useAction } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { motion } from "framer-motion";
 
@@ -33,13 +33,13 @@ export default function DashboardLayout({
     isLoaded && isSignedIn ? {} : "skip"
   );
   
-  // Get chats only if authenticated
-  const chats = useQuery(
-    api.chats.getChats,
+  // Get threads only if authenticated
+  const threads = useQuery(
+    api.studyAgent.getUserThreads,
     isLoaded && isSignedIn ? {} : "skip"
   ) || [];
   
-  const createChat = useMutation(api.chats.createChat);
+  const createThread = useAction(api.studyAgent.createThread);
   
   useEffect(() => {
     // Close mobile menu when route changes
@@ -61,9 +61,9 @@ export default function DashboardLayout({
   
   const handleNewChat = async () => {
     try {
-      const chatId = await createChat({ title: "New Chat" });
-      if (chatId) {
-        router.push(`/chat/${chatId}`);
+      const thread = await createThread({ title: "New Chat" });
+      if (thread?.id) {
+        router.push(`/chat/${thread.id}`);
       }
     } catch (error) {
       console.error("Failed to create new chat:", error);
@@ -143,20 +143,20 @@ export default function DashboardLayout({
                   <ChevronRight size={16} className="text-black" />
                 </div>
                 <div className="space-y-1">
-                  {isSignedIn && chats.map((chat) => (
+                  {isSignedIn && threads.map((thread) => (
                     <Link 
-                      key={chat._id} 
-                      href={`/chat/${chat._id}`}
+                      key={thread.id} 
+                      href={`/chat/${thread.id}`}
                       className={`flex items-center gap-2 p-2 text-sm rounded-md transition-colors ${
-                        pathname === `/chat/${chat._id}` ? 'bg-gray-100 text-black font-medium' : 'text-black hover:bg-gray-50'
+                        pathname === `/chat/${thread.id}` ? 'bg-gray-100 text-black font-medium' : 'text-black hover:bg-gray-50'
                       }`}
                     >
                       <MessageSquare size={16} />
-                      <span className="truncate">{chat.title || "New Chat"}</span>
+                      <span className="truncate">{thread.title || "New Chat"}</span>
                     </Link>
                   ))}
                   
-                  {chats.length === 0 && (
+                  {threads.length === 0 && (
                     <p className="text-sm text-black py-2 px-2">No chats yet</p>
                   )}
                 </div>

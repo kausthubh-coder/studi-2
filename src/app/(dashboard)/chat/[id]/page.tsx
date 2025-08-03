@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useQuery, useAction } from "convex/react";
+import { useQuery, useAction, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { ChatContainer, MessageType } from "@/app/components/chat/ChatContainer";
 import { Loader2 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+// Agent imports temporarily disabled until we properly configure the component
+// import { useThreadMessages, toUIMessages, optimisticallySendMessage } from "@convex-dev/agent/react";
 
 // We'll use MessageType from ChatContainer instead of defining our own
 
@@ -20,14 +22,27 @@ export default function ChatDetailPage() {
   // Get threadId from params (using the same URL structure but treating it as threadId)
   const threadId = params?.id ? (params.id as string) : null;
   
-  // Get thread messages using the new Agent system
+  // Get thread messages using basic useQuery for now 
   const messagesResult = useQuery(
-    api.studyAgent.getThreadMessages, 
-    isLoaded && isSignedIn && threadId ? { threadId } : "skip"
-  ) || [];
+    api.studyAgent.listThreadMessages, 
+    isLoaded && isSignedIn && threadId ? { threadId, paginationOpts: { cursor: null, numItems: 20 } } : "skip"
+  );
+  
+  // Use basic messages for now - will be empty but functional
+  const messages = messagesResult?.page || [];
+  
+  // Convert to MessageType format for ChatContainer compatibility
+  const formattedMessages = messages.map((msg: any) => ({
+    _id: msg._id || "temp-id",
+    content: msg.content || "",
+    role: msg.role || "user",
+    _creationTime: msg._creationTime || Date.now(),
+    threadId: threadId || "",
+    functionCall: undefined
+  }));
   
   // Send message using the new Agent system
-  const sendMessage = useAction(api.studyAgent.sendMessage);
+  const sendMessage = useMutation(api.studyAgent.sendMessage);
   
   // Create thread action
   const createThread = useAction(api.studyAgent.createThread);
@@ -109,7 +124,7 @@ export default function ChatDetailPage() {
   try {
     return (
       <ChatContainer 
-        messages={messagesResult as MessageType[]} 
+        messages={formattedMessages as MessageType[]}
         isLoading={isLoading}
         onSendMessage={handleSendMessage}
         title={threadId || "New Chat"}

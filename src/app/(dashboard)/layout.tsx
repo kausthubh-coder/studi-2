@@ -17,6 +17,12 @@ import { useQuery, useAction } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { motion } from "framer-motion";
 
+type ThreadType = {
+  _id: string;
+  title?: string;
+  _creationTime: number;
+};
+
 export default function DashboardLayout({
   children,
 }: {
@@ -34,10 +40,12 @@ export default function DashboardLayout({
   );
   
   // Get threads only if authenticated
-  const threads = useQuery(
-    api.studyAgent.getUserThreads,
-    isLoaded && isSignedIn ? {} : "skip"
-  ) || [];
+  const threadsResult = useQuery(
+    api.studyAgent.listUserThreads,
+    isLoaded && isSignedIn ? { paginationOpts: { cursor: null, numItems: 20 } } : "skip"
+  );
+  
+  const threads = threadsResult?.page || [];
   
   const createThread = useAction(api.studyAgent.createThread);
   
@@ -62,8 +70,8 @@ export default function DashboardLayout({
   const handleNewChat = async () => {
     try {
       const thread = await createThread({ title: "New Chat" });
-      if (thread?.id) {
-        router.push(`/chat/${thread.id}`);
+      if (thread?.threadId) {
+        router.push(`/chat/${thread.threadId}`);
       }
     } catch (error) {
       console.error("Failed to create new chat:", error);
@@ -143,12 +151,12 @@ export default function DashboardLayout({
                   <ChevronRight size={16} className="text-black" />
                 </div>
                 <div className="space-y-1">
-                  {isSignedIn && threads.map((thread) => (
+                  {isSignedIn && threads.map((thread: ThreadType) => (
                     <Link 
-                      key={thread.id} 
-                      href={`/chat/${thread.id}`}
+                      key={thread._id} 
+                      href={`/chat/${thread._id}`}
                       className={`flex items-center gap-2 p-2 text-sm rounded-md transition-colors ${
-                        pathname === `/chat/${thread.id}` ? 'bg-gray-100 text-black font-medium' : 'text-black hover:bg-gray-50'
+                        pathname === `/chat/${thread._id}` ? 'bg-gray-100 text-black font-medium' : 'text-black hover:bg-gray-50'
                       }`}
                     >
                       <MessageSquare size={16} />

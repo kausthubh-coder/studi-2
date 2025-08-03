@@ -108,3 +108,9 @@ Located in `convex/canvasTools.ts`:
 3. Add Canvas tool calling capabilities to the Agent
 4. Enhance Agent instructions and context management
 5. Implement advanced Agent workflows for academic assistance
+
+## Development Ignore Patterns
+- dont look at convex generated code _generated in /convex
+
+## Workflow Guidance
+- When you need docs or context use contect7 or localdocs like @convex_agent_docs.md

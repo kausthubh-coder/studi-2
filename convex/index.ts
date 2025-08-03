@@ -4,4 +4,4 @@
 export { getMe, getUser, createOrUpdateUser, updateOnboardingStatus, getUserByClerkId } from "./users";
 
 // Study agent - new AI agent implementation
-export { sendMessage, getThreadMessages, createThread, getUserThreads } from "./studyAgent"; 
+export { sendMessage, listThreadMessages, createThread, listUserThreads } from "./studyAgent"; 

@@ -15,6 +15,8 @@ import {
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Message } from "./Message";
+import { StreamingMessage } from "./StreamingMessage";
+import { type UIMessage } from "@convex-dev/agent/react";
 
 // Define the Message type locally
 export interface MessageType {
@@ -27,7 +29,8 @@ export interface MessageType {
 }
 
 type ChatContainerProps = {
-  messages: MessageType[];
+  messages?: MessageType[]; // Legacy support
+  uiMessages?: UIMessage[]; // New Agent component format
   isLoading: boolean;
   onSendMessage: (content: string, mode?: "simple" | "agent") => void;
   title?: string;
@@ -38,6 +41,7 @@ type ChatContainerProps = {
 
 export function ChatContainer({ 
   messages, 
+  uiMessages,
   isLoading, 
   onSendMessage,
   title,
@@ -148,8 +152,12 @@ export function ChatContainer({
     }
   }, [messages]);
 
-  // Format messages for our components
-  const formattedMessages = messages.map(msg => ({
+  // Determine which messages to use and format them appropriately
+  const useUIMessages = uiMessages && uiMessages.length > 0;
+  const messagesToRender = useUIMessages ? uiMessages : (messages || []);
+  
+  // Format legacy messages for our components if needed
+  const formattedMessages = useUIMessages ? [] : (messages || []).map(msg => ({
     id: msg._id,
     content: msg.content,
     role: msg.role,
@@ -250,7 +258,7 @@ export function ChatContainer({
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto px-4 pt-6 pb-4">
         <div className="max-w-4xl mx-auto">
-          {formattedMessages.length === 0 ? (
+          {messagesToRender.length === 0 ? (
             <div className="flex flex-col items-center w-full max-w-4xl mx-auto space-y-8">
               <h1 className="text-4xl font-bold text-black">
                 What would you like to know?
@@ -258,19 +266,30 @@ export function ChatContainer({
             </div>
           ) : (
             <div className="space-y-4">
-              {formattedMessages.map((msg) => (
-                <Message
-                  key={msg.id}
-                  message={{
-                    _id: msg.id,
-                    content: msg.content,
-                    role: msg.role,
-                    _creationTime: msg.timestamp.getTime(),
-                    threadId: msg.originalThreadId,
-                    functionCall: msg.functionCall ? JSON.stringify(msg.functionCall) : undefined
-                  }}
-                />
-              ))}
+              {useUIMessages ? (
+                // Render new UIMessage format with streaming support
+                uiMessages!.map((msg) => (
+                  <StreamingMessage
+                    key={msg.key}
+                    message={msg}
+                  />
+                ))
+              ) : (
+                // Render legacy MessageType format
+                formattedMessages.map((msg) => (
+                  <Message
+                    key={msg.id}
+                    message={{
+                      _id: msg.id,
+                      content: msg.content,
+                      role: msg.role,
+                      _creationTime: msg.timestamp.getTime(),
+                      threadId: msg.originalThreadId,
+                      functionCall: msg.functionCall ? JSON.stringify(msg.functionCall) : undefined
+                    }}
+                  />
+                ))
+              )}
             </div>
           )}
           

@@ -14,15 +14,23 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+type ThreadType = {
+  _id: string;
+  title?: string;
+  _creationTime: number;
+};
+
 export default function DashboardPage() {
   const { user, isSignedIn, isLoaded } = useUser();
   const router = useRouter();
   
   // Fetch user's threads from the new Agent system
-  const threads = useQuery(
-    api.studyAgent.getUserThreads,
-    isLoaded && isSignedIn ? {} : "skip"
-  ) || [];
+  const threadsResult = useQuery(
+    api.studyAgent.listUserThreads,
+    isLoaded && isSignedIn ? { paginationOpts: { cursor: null, numItems: 20 } } : "skip"
+  );
+  
+  const threads = threadsResult?.page || [];
   
   const createThread = useAction(api.studyAgent.createThread);
 
@@ -44,8 +52,8 @@ export default function DashboardPage() {
   const handleNewChat = async () => {
     try {
       const thread = await createThread({ title: "New Chat" });
-      if (thread?.id) {
-        router.push(`/chat/${thread.id}`);
+      if (thread?.threadId) {
+        router.push(`/chat/${thread.threadId}`);
       }
     } catch (error) {
       console.error("Failed to create new chat:", error);
@@ -113,10 +121,10 @@ export default function DashboardPage() {
             
             {threads.length > 0 ? (
               <div className="space-y-3">
-                {threads.slice(0, 5).map((thread) => (
+                {threads.slice(0, 5).map((thread: ThreadType) => (
                   <Link 
-                    key={thread.id} 
-                    href={`/chat/${thread.id}`} 
+                    key={thread._id} 
+                    href={`/chat/${thread._id}`} 
                     className="flex items-center gap-3 p-3 rounded-lg border border-black hover:bg-gray-50 transition-colors"
                   >
                     <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
@@ -125,13 +133,13 @@ export default function DashboardPage() {
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-black truncate">{thread.title || "New Chat"}</p>
                       <p className="text-sm text-black truncate">
-                        {new Date(thread.createdAt).toLocaleDateString()}
+                        {new Date(thread._creationTime).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="flex items-center justify-center">
                       <Clock className="h-4 w-4 text-black" />
                       <span className="text-xs text-black ml-1">
-                        {new Date(thread.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(thread._creationTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                   </Link>

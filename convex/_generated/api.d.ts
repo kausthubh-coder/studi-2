@@ -8,7 +8,6 @@
  * @module
  */
 
-import type * as canvasOld from "../canvasOld.js";
 import type * as canvasTools from "../canvasTools.js";
 import type * as index from "../index.js";
 import type * as studyAgent from "../studyAgent.js";
@@ -29,7 +28,6 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  canvasOld: typeof canvasOld;
   canvasTools: typeof canvasTools;
   index: typeof index;
   studyAgent: typeof studyAgent;

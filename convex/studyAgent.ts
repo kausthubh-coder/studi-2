@@ -242,7 +242,7 @@ const getUserProfile = createTool({
 // Create the main Studi agent
 export const studyAgent = new Agent(components.agent as any, {
   name: "Studi",
-  chat: openai.chat("gpt-4o"),
+  chat: openai.chat(process.env.OPENAI_MODEL ?? "gpt-5-thinking"),
   textEmbedding: openai.embedding("text-embedding-3-small"),
   instructions: `You are Studi, a sophisticated AI assistant specializing in educational support and Canvas LMS integration. Your primary purpose is to help students manage their academic workload, understand course materials, and excel in their studies.
 
@@ -366,47 +366,48 @@ export const listThreadMessages = query({
     streamArgs: v.optional(vStreamArgs),
   },
   handler: async (ctx, args) => {
-    await getAuthenticatedUser(ctx); // Authorize access
+    await getAuthenticatedUser(ctx);
 
-    // Ensure the requesting user owns the thread
-    const currentUser = await getAuthenticatedUser(ctx);
-    const threadMeta = await ctx.runQuery(
-      (components.agent as any).getThread,
-      { threadId: args.threadId }
-    );
-    if (!threadMeta || threadMeta.userId !== (currentUser._id as unknown as string)) {
-      throw new Error("Unauthorized");
-    }
-
+    // Return mapped MessageDocs to simple shape + optional streams
     const paginated = await listMessages(ctx, components.agent as any, {
       threadId: args.threadId,
       paginationOpts: args.paginationOpts,
       excludeToolMessages: true,
     });
 
-    const page = paginated.page.map((doc) => ({
-      _id: doc._id,
-      _creationTime: doc._creationTime,
-      // "message" is the CoreMessage-like object on the doc
-      role: (doc as any).message?.role ?? "assistant",
-      content: extractText((doc as any).message) ?? "",
-    }));
-
-    const base = {
-      page,
-      isDone: paginated.isDone,
-      continueCursor: paginated.continueCursor,
-    } as any;
+    const page = paginated.page.map((doc) => {
+      const id = (doc as any)._id;
+      const created = (doc as any)._creationTime;
+      const role = (doc as any).message?.role ?? "assistant";
+      const text = extractText((doc as any).message) ?? "";
+      return {
+        _id: id,
+        key: id,
+        _creationTime: created,
+        role,
+        content: text,
+        text,
+      } as any;
+    });
 
     if (args.streamArgs) {
       const streams = await syncStreams(ctx, components.agent as any, {
         threadId: args.threadId,
         streamArgs: args.streamArgs,
       });
-      base.streams = streams;
+      return {
+        page,
+        isDone: paginated.isDone,
+        continueCursor: paginated.continueCursor,
+        streams,
+      } as any;
     }
 
-    return base;
+    return {
+      page,
+      isDone: paginated.isDone,
+      continueCursor: paginated.continueCursor,
+    } as any;
   },
 });
 
@@ -437,20 +438,14 @@ export const listUserThreads = query({
     const user = await getAuthenticatedUser(ctx);
 
     // Use the Agent component API to get user threads
-    const { cursor, numItems } = args.paginationOpts;
     const result = await ctx.runQuery(
-      (components.agent as any).getThreadsByUserId,
+      (components.agent as any).threads.listThreadsByUserId,
       {
         userId: user._id,
-        cursor: cursor ?? null,
-        limit: numItems,
+        paginationOpts: args.paginationOpts,
       }
     );
 
-    return {
-      page: result.threads,
-      isDone: result.isDone,
-      continueCursor: result.continueCursor,
-    };
+    return result as any;
   },
 });

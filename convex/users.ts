@@ -173,10 +173,11 @@ export const updateCanvasSettings = mutation({
       throw new Error("Not authenticated");
     }
 
-    // Get the user's ID
+    // Prefer querying by Clerk ID index to avoid full scans
+    const clerkId = getCleanClerkId(identity.subject);
     const user = await ctx.db
       .query("users")
-      .filter(q => q.eq(q.field("email"), identity.email))
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
       .first();
 
     if (!user) {

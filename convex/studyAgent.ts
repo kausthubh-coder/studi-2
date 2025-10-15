@@ -1,26 +1,32 @@
 import { v } from "convex/values";
-import { action, query, internalAction, mutation } from "./_generated/server";
+import { action, query, internalAction, mutation, ActionCtx, QueryCtx } from "./_generated/server";
 import { internal } from "./_generated/api";
-import { Agent, createTool } from "@convex-dev/agent";
+import { Agent, createTool, listMessages, extractText, vStreamArgs, syncStreams } from "@convex-dev/agent";
 import { openai } from "@ai-sdk/openai";
 import { components } from "./_generated/api";
-import { z } from "zod";
 import { paginationOptsValidator } from "convex/server";
+import { Id } from "./_generated/dataModel";
+import { z } from "zod";
 
 // Helper function to extract clean Clerk ID
 function getCleanClerkId(subject: string): string {
   return subject.includes("|") ? subject.split("|")[1] : subject;
 }
 
-// Thread authorization helper
-async function authorizeThreadAccess(ctx: any, threadId: string) {
-  // Get the authenticated user
+// Get authenticated user helper
+async function getAuthenticatedUser(ctx: ActionCtx | QueryCtx): Promise<{
+  _id: Id<"users">;
+  clerkId: string;
+  email: string;
+  name?: string;
+  canvasUrl?: string;
+  canvasAccessToken?: string;
+}> {
   const identity = await ctx.auth.getUserIdentity();
   if (!identity) {
     throw new Error("Not authenticated");
   }
 
-  // Extract clean Clerk ID and get user
   const clerkId = getCleanClerkId(identity.subject);
   const user = await ctx.runQuery(internal.users.getUserByClerkId, { clerkId });
   
@@ -28,9 +34,7 @@ async function authorizeThreadAccess(ctx: any, threadId: string) {
     throw new Error("User not found");
   }
 
-  // For now, just return the user - we'll improve authorization later
-  // when we can determine the correct component API structure
-  return { user };
+  return user;
 }
 
 /**
@@ -43,10 +47,13 @@ async function authorizeThreadAccess(ctx: any, threadId: string) {
 // Canvas Tools for the Agent
 const getCourses = createTool({
   description: "Get the user's active courses from Canvas LMS. Use this to understand what courses the student is enrolled in and get course IDs for further analysis.",
-  args: v.object({}),
-  handler: async (ctx, args): Promise<any> => {
+  args: z.object({}).describe("No arguments required"),
+  handler: async (ctx, args): Promise<unknown> => {
     try {
-      const result = await ctx.runAction(internal.canvasTools.getCourses, { userId: ctx.userId as any as any });
+      if (!ctx.userId) {
+        throw new Error("User ID not available in context");
+      }
+      const result = await ctx.runAction(internal.canvasTools.getCourses, { userId: ctx.userId as Id<"users"> });
       return result;
     } catch (error) {
       return { success: false, error: `Failed to get courses: ${error}` };
@@ -56,13 +63,16 @@ const getCourses = createTool({
 
 const getAssignments = createTool({
   description: "Get assignments for a specific course from Canvas LMS. Use this to analyze workload, due dates, and assignment details for planning and prioritization.",
-  args: v.object({
-    courseId: v.string(),
+  args: z.object({
+    courseId: z.string().describe("Canvas course ID"),
   }),
-  handler: async (ctx, args): Promise<any> => {
+  handler: async (ctx, args): Promise<unknown> => {
     try {
+      if (!ctx.userId) {
+        throw new Error("User ID not available in context");
+      }
       const result = await ctx.runAction(internal.canvasTools.getAssignments, { 
-        userId: ctx.userId as any as any, 
+        userId: ctx.userId as Id<"users">, 
         courseId: args.courseId 
       });
       return result;
@@ -74,10 +84,13 @@ const getAssignments = createTool({
 
 const getUpcomingEvents = createTool({
   description: "Get upcoming events/assignments with due dates from Canvas LMS. Use this to help with schedule planning and identifying urgent tasks.",
-  args: v.object({}),
-  handler: async (ctx, args): Promise<any> => {
+  args: z.object({}).describe("No arguments required"),
+  handler: async (ctx, args): Promise<unknown> => {
     try {
-      const result = await ctx.runAction(internal.canvasTools.getUpcomingEvents, { userId: ctx.userId as any as any });
+      if (!ctx.userId) {
+        throw new Error("User ID not available in context");
+      }
+      const result = await ctx.runAction(internal.canvasTools.getUpcomingEvents, { userId: ctx.userId as Id<"users"> });
       return result;
     } catch (error) {
       return { success: false, error: `Failed to get upcoming events: ${error}` };
@@ -87,13 +100,16 @@ const getUpcomingEvents = createTool({
 
 const getCourseGrades = createTool({
   description: "Get grades for assignments in a specific course from Canvas LMS. Use this to analyze academic performance and identify areas needing improvement.",
-  args: v.object({
-    courseId: v.string(),
+  args: z.object({
+    courseId: z.string().describe("Canvas course ID"),
   }),
-  handler: async (ctx, args): Promise<any> => {
+  handler: async (ctx, args): Promise<unknown> => {
     try {
+      if (!ctx.userId) {
+        throw new Error("User ID not available in context");
+      }
       const result = await ctx.runAction(internal.canvasTools.getCourseGrades, { 
-        userId: ctx.userId as any, 
+        userId: ctx.userId as Id<"users">, 
         courseId: args.courseId 
       });
       return result;
@@ -105,10 +121,13 @@ const getCourseGrades = createTool({
 
 const getEnrollmentGrades = createTool({
   description: "Get overall grades for all enrolled courses from Canvas LMS. Use this for comprehensive academic performance analysis.",
-  args: v.object({}),
-  handler: async (ctx, args): Promise<any> => {
+  args: z.object({}).describe("No arguments required"),
+  handler: async (ctx, args): Promise<unknown> => {
     try {
-      const result = await ctx.runAction(internal.canvasTools.getEnrollmentGrades, { userId: ctx.userId as any });
+      if (!ctx.userId) {
+        throw new Error("User ID not available in context");
+      }
+      const result = await ctx.runAction(internal.canvasTools.getEnrollmentGrades, { userId: ctx.userId as Id<"users"> });
       return result;
     } catch (error) {
       return { success: false, error: `Failed to get enrollment grades: ${error}` };
@@ -118,13 +137,16 @@ const getEnrollmentGrades = createTool({
 
 const getAnnouncements = createTool({
   description: "Get announcements for a specific course from Canvas LMS. Use this to stay informed about course updates and important information.",
-  args: v.object({
-    courseId: v.string(),
+  args: z.object({
+    courseId: z.string().describe("Canvas course ID"),
   }),
-  handler: async (ctx, args): Promise<any> => {
+  handler: async (ctx, args): Promise<unknown> => {
     try {
+      if (!ctx.userId) {
+        throw new Error("User ID not available in context");
+      }
       const result = await ctx.runAction(internal.canvasTools.getAnnouncements, { 
-        userId: ctx.userId as any, 
+        userId: ctx.userId as Id<"users">, 
         courseId: args.courseId 
       });
       return result;
@@ -136,13 +158,16 @@ const getAnnouncements = createTool({
 
 const getModules = createTool({
   description: "Get modules for a specific course from Canvas LMS. Use this to understand course structure and learning progression.",
-  args: v.object({
-    courseId: v.string(),
+  args: z.object({
+    courseId: z.string().describe("Canvas course ID"),
   }),
-  handler: async (ctx, args): Promise<any> => {
+  handler: async (ctx, args): Promise<unknown> => {
     try {
+      if (!ctx.userId) {
+        throw new Error("User ID not available in context");
+      }
       const result = await ctx.runAction(internal.canvasTools.getModules, { 
-        userId: ctx.userId as any, 
+        userId: ctx.userId as Id<"users">, 
         courseId: args.courseId 
       });
       return result;
@@ -154,13 +179,16 @@ const getModules = createTool({
 
 const getDiscussions = createTool({
   description: "Get discussion topics for a specific course from Canvas LMS. Use this to understand class participation and discussion topics.",
-  args: v.object({
-    courseId: v.string(),
+  args: z.object({
+    courseId: z.string().describe("Canvas course ID"),
   }),
-  handler: async (ctx, args): Promise<any> => {
+  handler: async (ctx, args): Promise<unknown> => {
     try {
+      if (!ctx.userId) {
+        throw new Error("User ID not available in context");
+      }
       const result = await ctx.runAction(internal.canvasTools.getDiscussions, { 
-        userId: ctx.userId as any, 
+        userId: ctx.userId as Id<"users">, 
         courseId: args.courseId 
       });
       return result;
@@ -172,14 +200,19 @@ const getDiscussions = createTool({
 
 const getCalendarEvents = createTool({
   description: "Get calendar events from Canvas LMS. Use this for comprehensive schedule management and planning.",
-  args: v.object({
-    startDate: v.optional(v.string()),
-    endDate: v.optional(v.string()),
-  }),
-  handler: async (ctx, args): Promise<any> => {
+  args: z
+    .object({
+      startDate: z.string().optional().describe("ISO date string inclusive start"),
+      endDate: z.string().optional().describe("ISO date string inclusive end"),
+    })
+    .describe("Optional date range"),
+  handler: async (ctx, args): Promise<unknown> => {
     try {
+      if (!ctx.userId) {
+        throw new Error("User ID not available in context");
+      }
       const result = await ctx.runAction(internal.canvasTools.getCalendarEvents, { 
-        userId: ctx.userId as any, 
+        userId: ctx.userId as Id<"users">, 
         startDate: args.startDate,
         endDate: args.endDate 
       });
@@ -192,10 +225,13 @@ const getCalendarEvents = createTool({
 
 const getUserProfile = createTool({
   description: "Get the user's profile information from Canvas LMS. Use this to understand user context and personalize responses.",
-  args: v.object({}),
-  handler: async (ctx, args): Promise<any> => {
+  args: z.object({}).describe("No arguments required"),
+  handler: async (ctx, args): Promise<unknown> => {
     try {
-      const result = await ctx.runAction(internal.canvasTools.getUserProfile, { userId: ctx.userId as any });
+      if (!ctx.userId) {
+        throw new Error("User ID not available in context");
+      }
+      const result = await ctx.runAction(internal.canvasTools.getUserProfile, { userId: ctx.userId as Id<"users"> });
       return result;
     } catch (error) {
       return { success: false, error: `Failed to get user profile: ${error}` };
@@ -204,12 +240,10 @@ const getUserProfile = createTool({
 });
 
 // Create the main Studi agent
-export const studyAgent = new Agent(components.agent, {
+export const studyAgent = new Agent(components.agent as any, {
   name: "Studi",
-
   chat: openai.chat("gpt-4o"),
-
-  // system prompt to the agent
+  textEmbedding: openai.embedding("text-embedding-3-small"),
   instructions: `You are Studi, a sophisticated AI assistant specializing in educational support and Canvas LMS integration. Your primary purpose is to help students manage their academic workload, understand course materials, and excel in their studies.
 
 ## Core Capabilities:
@@ -241,7 +275,6 @@ export const studyAgent = new Agent(components.agent, {
 
 Remember: You are here to empower students to succeed academically while maintaining a healthy balance in their educational journey.`,
 
-
   tools: {
     getCourses,
     getAssignments,
@@ -254,29 +287,34 @@ Remember: You are here to empower students to succeed academically while maintai
     getCalendarEvents,
     getUserProfile,
   },
-
-  maxSteps: 3,
+  maxSteps: 5,
 });
 
-// Mutation to save a user message and schedule AI response generation
+// Mutation to save a user message and schedule AI response generation (async pattern)
 export const sendMessage = mutation({
   args: {
     threadId: v.string(),
     message: v.string(),
   },
-  returns: v.object({
-    threadId: v.string(),
-    messageId: v.string(),
-  }),
-  handler: async (ctx, args): Promise<{ threadId: string; messageId: string }> => {
-    // Authorize thread access - this checks authentication and ownership
-    const { user } = await authorizeThreadAccess(ctx, args.threadId);
+  handler: async (ctx, args) => {
+    const user = await getAuthenticatedUser(ctx);
+
+    // Authorize access to the thread
+    const threadMeta = await ctx.runQuery(
+      (components.agent as any).getThread,
+      { threadId: args.threadId }
+    );
+    if (!threadMeta || threadMeta.userId !== (user._id as unknown as string)) {
+      throw new Error("Unauthorized");
+    }
 
     // Save the user message to the thread using agent's saveMessages method
     const { lastMessageId: messageId } = await studyAgent.saveMessages(ctx, {
       threadId: args.threadId,
       userId: user._id,
       messages: [{ role: "user", content: args.message }],
+      // Saving in a mutation: let embeddings be generated lazily later
+      skipEmbeddings: true,
     });
 
     // Schedule the AI response generation asynchronously
@@ -286,10 +324,7 @@ export const sendMessage = mutation({
       userId: user._id,
     });
 
-    return {
-      threadId: args.threadId,
-      messageId,
-    };
+    return { threadId: args.threadId, messageId };
   },
 });
 
@@ -298,51 +333,80 @@ export const generateResponseAsync = internalAction({
   args: {
     threadId: v.string(),
     promptMessageId: v.string(),
-    userId: v.string(),
+    userId: v.id("users"),
   },
   handler: async (ctx, args) => {
     try {
-      // Continue the thread and generate response with tools
+      // Continue the thread and generate streaming response with tools
       const { thread } = await studyAgent.continueThread(ctx, {
         threadId: args.threadId,
         userId: args.userId,
       });
 
       // Generate streaming response using the saved message as prompt
-      const result = await thread.streamText({
-        parentMessageId: args.promptMessageId,
-        maxSteps: 5,
-      });
+      const result = await thread.streamText(
+        { promptMessageId: args.promptMessageId },
+        { saveStreamDeltas: true }
+      );
 
       // Consume the stream to completion
       await result.consumeStream();
     } catch (error) {
       console.error("Failed to generate AI response:", error);
-      
-      // Could save an error message to the thread here if needed
-      // For now, we'll let the error propagate to Convex's retry system
       throw error;
     }
   },
 });
 
-// Query to get thread messages - using a simplified approach for now
+// Query to get thread messages using proper Agent component API  
 export const listThreadMessages = query({
   args: {
     threadId: v.string(),
     paginationOpts: paginationOptsValidator,
+    streamArgs: v.optional(vStreamArgs),
   },
   handler: async (ctx, args) => {
-    // Authorize thread access - this checks authentication and ownership
-    await authorizeThreadAccess(ctx, args.threadId);
+    await getAuthenticatedUser(ctx); // Authorize access
 
-    // Return basic structure that matches what frontend expects
-    // The Agent component will manage the actual message storage
-    return {
-      page: [],
-      isDone: true,
-      continueCursor: null,
-    };
+    // Ensure the requesting user owns the thread
+    const currentUser = await getAuthenticatedUser(ctx);
+    const threadMeta = await ctx.runQuery(
+      (components.agent as any).getThread,
+      { threadId: args.threadId }
+    );
+    if (!threadMeta || threadMeta.userId !== (currentUser._id as unknown as string)) {
+      throw new Error("Unauthorized");
+    }
+
+    const paginated = await listMessages(ctx, components.agent as any, {
+      threadId: args.threadId,
+      paginationOpts: args.paginationOpts,
+      excludeToolMessages: true,
+    });
+
+    const page = paginated.page.map((doc) => ({
+      _id: doc._id,
+      _creationTime: doc._creationTime,
+      // "message" is the CoreMessage-like object on the doc
+      role: (doc as any).message?.role ?? "assistant",
+      content: extractText((doc as any).message) ?? "",
+    }));
+
+    const base = {
+      page,
+      isDone: paginated.isDone,
+      continueCursor: paginated.continueCursor,
+    } as any;
+
+    if (args.streamArgs) {
+      const streams = await syncStreams(ctx, components.agent as any, {
+        threadId: args.threadId,
+        streamArgs: args.streamArgs,
+      });
+      base.streams = streams;
+    }
+
+    return base;
   },
 });
 
@@ -352,19 +416,7 @@ export const createThread = action({
     title: v.optional(v.string()),
   },
   handler: async (ctx, args): Promise<{ id: string; threadId: string }> => {
-    // Get the authenticated user
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
-    // Extract clean Clerk ID and get user
-    const clerkId = getCleanClerkId(identity.subject);
-    const user = await ctx.runQuery(internal.users.getUserByClerkId, { clerkId });
-    
-    if (!user) {
-      throw new Error("User not found");
-    }
+    const user = await getAuthenticatedUser(ctx);
 
     // Create a new thread using the agent
     const { threadId } = await studyAgent.createThread(ctx, {
@@ -376,31 +428,29 @@ export const createThread = action({
   },
 });
 
-// Query to get user's threads
+// Query to get user's threads using proper Agent component API
 export const listUserThreads = query({
   args: {
     paginationOpts: paginationOptsValidator,
   },
-  handler: async (ctx, args): Promise<any> => {
-    // Get the authenticated user
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
+  handler: async (ctx, args) => {
+    const user = await getAuthenticatedUser(ctx);
 
-    // Extract clean Clerk ID and get user
-    const clerkId = getCleanClerkId(identity.subject);
-    const user = await ctx.runQuery(internal.users.getUserByClerkId, { clerkId });
-    
-    if (!user) {
-      throw new Error("User not found");
-    }
+    // Use the Agent component API to get user threads
+    const { cursor, numItems } = args.paginationOpts;
+    const result = await ctx.runQuery(
+      (components.agent as any).getThreadsByUserId,
+      {
+        userId: user._id,
+        cursor: cursor ?? null,
+        limit: numItems,
+      }
+    );
 
-    // Return basic structure - we'll enhance this once Agent component APIs are clearer
     return {
-      page: [],
-      isDone: true,
-      continueCursor: null,
+      page: result.threads,
+      isDone: result.isDone,
+      continueCursor: result.continueCursor,
     };
   },
 });

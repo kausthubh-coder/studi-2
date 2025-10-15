@@ -5,7 +5,28 @@ import { Copy, Check, Heart, ChevronDown, ChevronRight, Brain, Zap } from "lucid
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import ReactMarkdown from 'react-markdown';
-import { useSmoothText, type UIMessage } from "@convex-dev/agent/react";
+
+// Define UIMessage type locally since Agent package hook isn't available yet
+interface UIMessage {
+  key: string;
+  content: string;
+  role: string;
+  parts?: Array<{
+    type: string;
+    text?: string;
+    toolName?: string;
+    result?: unknown;
+  }>;
+  status?: string;
+  agentName?: string;
+}
+
+// Simple text smoothing hook implementation
+function useSmoothText(text: string): [string] {
+  // For now, just return the text as-is
+  // This will be replaced when Agent package hooks are properly available
+  return [text];
+}
 
 type StreamingMessageProps = {
   message: UIMessage;
@@ -14,23 +35,17 @@ type StreamingMessageProps = {
 export function StreamingMessage({ message }: StreamingMessageProps) {
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);
-  const [expandedFunction, setExpandedFunction] = useState(false);
   const [expandedReasoning, setExpandedReasoning] = useState(false);
   
   const isUser = message.role === "user";
   const isStreaming = message.status === "streaming";
   
   // Use smooth text for streaming messages
-  const [visibleText] = useSmoothText(message.content, {
-    startStreaming: isStreaming,
-  });
+  const [visibleText] = useSmoothText(message.content);
 
   // Parse function call data from parts if present
   const toolCallParts = message.parts?.filter(part => part.type === "toolCall") || [];
   const toolResultParts = message.parts?.filter(part => part.type === "toolResult") || [];
-  
-  // Check if this is a ReAct agent response (legacy support)
-  const isAgentResponse = message.agentName === "Studi" && toolCallParts.length > 0;
   
   const formattedTime = formatDistanceToNow(new Date(), { addSuffix: true });
 
@@ -40,9 +55,6 @@ export function StreamingMessage({ message }: StreamingMessageProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const toggleFunctionDetails = () => {
-    setExpandedFunction(!expandedFunction);
-  };
 
   return (
     <div className={`mb-4 flex ${isUser ? 'justify-end' : 'justify-center'} w-full`}>
@@ -117,14 +129,14 @@ export function StreamingMessage({ message }: StreamingMessageProps) {
                                         <Zap className="w-3 h-3 text-purple-500" />
                                         <span className="text-xs font-medium text-gray-700">Tool:</span>
                                         <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded">
-                                          {(toolCall as any)?.toolName || 'Unknown'}
+                                          {(toolCall as { toolName?: string })?.toolName || 'Unknown'}
                                         </span>
                                       </div>
                                       {toolResult && (
                                         <div className="mt-2">
                                           <div className="text-xs font-medium text-gray-700 mb-1">Result:</div>
                                           <pre className="text-xs bg-gray-100 p-2 rounded overflow-x-auto">
-                                            {JSON.stringify((toolResult as any)?.result, null, 2)}
+                                            {JSON.stringify((toolResult as { result?: unknown })?.result, null, 2)}
                                           </pre>
                                         </div>
                                       )}

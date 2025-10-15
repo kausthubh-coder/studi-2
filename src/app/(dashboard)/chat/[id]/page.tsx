@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useAction, useMutation } from "convex/react";
+import { useQuery, useAction, useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Loader2 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
-import { useUIMessages, optimisticallySendMessage } from "@convex-dev/agent/react";
+// Removed Agent React hook fallback to maintain compatibility across versions
 
 // Basic message type for ChatContainer compatibility
 export interface MessageType {
@@ -109,19 +109,25 @@ export default function ChatDetailPage() {
   
   const threadId = params?.id ? (params.id as string) : null;
   
-  // Use Agent React hook to fetch UI messages with streaming
-  const { results: uiMessages } = useUIMessages(
+  // Fallback: fetch messages directly via query (no Agent React hook)
+  const messagesResult = useQuery(
     api.studyAgent.listThreadMessages,
-    threadId && isLoaded && isSignedIn ? { threadId } : "skip",
-    { initialNumItems: 50, stream: true }
+    threadId && isLoaded && isSignedIn
+      ? { threadId, paginationOpts: { cursor: null, numItems: 50 } }
+      : "skip"
   );
   
   // Format messages for ChatContainer compatibility
-  const formattedMessages: MessageType[] = (uiMessages ?? []).map((m: any) => ({
-    _id: m.key || m._id || "temp-id",
-    content: m.text || "",
-    role: (m.role as "user" | "assistant" | "system" | "function") || "assistant",
-    _creationTime: m._creationTime || Date.now(),
+  const formattedMessages: MessageType[] = (messagesResult?.page ?? []).map((msg: {
+    _id?: string;
+    content?: string;
+    role?: string;
+    _creationTime?: number;
+  }) => ({
+    _id: msg._id || "temp-id",
+    content: msg.content || "",
+    role: (msg.role as "user" | "assistant" | "system" | "function") || "assistant",
+    _creationTime: msg._creationTime || Date.now(),
     threadId: threadId || "",
   }));
 
@@ -129,13 +135,7 @@ export default function ChatDetailPage() {
   // const streamingText = messagesResult?.streams?.text ?? "";
   
   // Send message using the Agent system
-  const sendMessage = useMutation(api.studyAgent.sendMessage).withOptimisticUpdate(
-    (store, args: { threadId: string; message: string }) =>
-      optimisticallySendMessage(api.studyAgent.listThreadMessages)(store, {
-        threadId: args.threadId,
-        prompt: args.message,
-      })
-  );
+  const sendMessage = useMutation(api.studyAgent.sendMessage);
   
   // Create thread action
   const createThread = useAction(api.studyAgent.createThread);

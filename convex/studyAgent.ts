@@ -446,6 +446,10 @@ export const listUserThreads = query({
       }
     );
 
-    return result as any;
+    return {
+      page: (result as any).threads,
+      isDone: (result as any).isDone,
+      continueCursor: (result as any).continueCursor,
+    } as any;
   },
 });

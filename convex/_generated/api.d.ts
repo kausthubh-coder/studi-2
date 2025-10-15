@@ -46,6 +46,103 @@ export declare const internal: FilterApi<
 
 export declare const components: {
   agent: {
+    apiKeys: {
+      destroy: FunctionReference<
+        "mutation",
+        "internal",
+        { apiKey?: string; name?: string },
+        | "missing"
+        | "deleted"
+        | "name mismatch"
+        | "must provide either apiKey or name"
+      >;
+      issue: FunctionReference<
+        "mutation",
+        "internal",
+        { name?: string },
+        string
+      >;
+      validate: FunctionReference<
+        "query",
+        "internal",
+        { apiKey: string },
+        boolean
+      >;
+    };
+    files: {
+      addFile: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          filename?: string;
+          hash: string;
+          mimeType: string;
+          storageId: string;
+        },
+        { fileId: string; storageId: string }
+      >;
+      copyFile: FunctionReference<
+        "mutation",
+        "internal",
+        { fileId: string },
+        null
+      >;
+      deleteFiles: FunctionReference<
+        "mutation",
+        "internal",
+        { fileIds: Array<string>; force?: boolean },
+        Array<string>
+      >;
+      get: FunctionReference<
+        "query",
+        "internal",
+        { fileId: string },
+        null | {
+          _creationTime: number;
+          _id: string;
+          filename?: string;
+          hash: string;
+          lastTouchedAt: number;
+          mimeType: string;
+          refcount: number;
+          storageId: string;
+        }
+      >;
+      getFilesToDelete: FunctionReference<
+        "query",
+        "internal",
+        {
+          paginationOpts: {
+            cursor: string | null;
+            endCursor?: string | null;
+            id?: number;
+            maximumBytesRead?: number;
+            maximumRowsRead?: number;
+            numItems: number;
+          };
+        },
+        {
+          continueCursor: string;
+          isDone: boolean;
+          page: Array<{
+            _creationTime: number;
+            _id: string;
+            filename?: string;
+            hash: string;
+            lastTouchedAt: number;
+            mimeType: string;
+            refcount: number;
+            storageId: string;
+          }>;
+        }
+      >;
+      useExistingFile: FunctionReference<
+        "mutation",
+        "internal",
+        { filename?: string; hash: string },
+        null | { fileId: string; storageId: string }
+      >;
+    };
     messages: {
       addMessages: FunctionReference<
         "mutation",
@@ -53,723 +150,25 @@ export declare const components: {
         {
           agentName?: string;
           embeddings?: {
-            dimension: 128 | 256 | 512 | 768 | 1024 | 1536 | 2048 | 3072 | 4096;
+            dimension:
+              | 128
+              | 256
+              | 512
+              | 768
+              | 1024
+              | 1408
+              | 1536
+              | 2048
+              | 3072
+              | 4096;
             model: string;
             vectors: Array<Array<number> | null>;
           };
           failPendingSteps?: boolean;
           messages: Array<{
-            fileId?: string;
-            id?: string;
-            message:
-              | {
-                  content:
-                    | string
-                    | Array<
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            text: string;
-                            type: "text";
-                          }
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            image: string | ArrayBuffer;
-                            mimeType?: string;
-                            providerOptions?: Record<string, any>;
-                            type: "image";
-                          }
-                        | {
-                            data: string | ArrayBuffer;
-                            experimental_providerMetadata?: Record<string, any>;
-                            mimeType: string;
-                            providerOptions?: Record<string, any>;
-                            type: "file";
-                          }
-                      >;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "user";
-                }
-              | {
-                  content:
-                    | string
-                    | Array<
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            text: string;
-                            type: "text";
-                          }
-                        | {
-                            data: string | ArrayBuffer;
-                            experimental_providerMetadata?: Record<string, any>;
-                            mimeType: string;
-                            providerOptions?: Record<string, any>;
-                            type: "file";
-                          }
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            text: string;
-                            type: "reasoning";
-                          }
-                        | {
-                            data: string;
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            type: "redacted-reasoning";
-                          }
-                        | {
-                            args: any;
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            toolCallId: string;
-                            toolName: string;
-                            type: "tool-call";
-                          }
-                      >;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "assistant";
-                }
-              | {
-                  content: Array<{
-                    args?: any;
-                    experimental_content?: Array<
-                      | { text: string; type: "text" }
-                      | { data: string; mimeType?: string; type: "image" }
-                    >;
-                    experimental_providerMetadata?: Record<string, any>;
-                    isError?: boolean;
-                    providerOptions?: Record<string, any>;
-                    result: any;
-                    toolCallId: string;
-                    toolName: string;
-                    type: "tool-result";
-                  }>;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "tool";
-                }
-              | {
-                  content: string;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "system";
-                };
-          }>;
-          model?: string;
-          parentMessageId?: string;
-          pending?: boolean;
-          stepId?: string;
-          threadId: string;
-          userId?: string;
-        },
-        {
-          messages: Array<{
-            _creationTime: number;
-            _id: string;
-            agentName?: string;
-            embeddingId?:
-              | string
-              | string
-              | string
-              | string
-              | string
-              | string
-              | string
-              | string
-              | string;
             error?: string;
-            fileId?: string;
-            id?: string;
-            message?:
-              | {
-                  content:
-                    | string
-                    | Array<
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            text: string;
-                            type: "text";
-                          }
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            image: string | ArrayBuffer;
-                            mimeType?: string;
-                            providerOptions?: Record<string, any>;
-                            type: "image";
-                          }
-                        | {
-                            data: string | ArrayBuffer;
-                            experimental_providerMetadata?: Record<string, any>;
-                            mimeType: string;
-                            providerOptions?: Record<string, any>;
-                            type: "file";
-                          }
-                      >;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "user";
-                }
-              | {
-                  content:
-                    | string
-                    | Array<
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            text: string;
-                            type: "text";
-                          }
-                        | {
-                            data: string | ArrayBuffer;
-                            experimental_providerMetadata?: Record<string, any>;
-                            mimeType: string;
-                            providerOptions?: Record<string, any>;
-                            type: "file";
-                          }
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            text: string;
-                            type: "reasoning";
-                          }
-                        | {
-                            data: string;
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            type: "redacted-reasoning";
-                          }
-                        | {
-                            args: any;
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            toolCallId: string;
-                            toolName: string;
-                            type: "tool-call";
-                          }
-                      >;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "assistant";
-                }
-              | {
-                  content: Array<{
-                    args?: any;
-                    experimental_content?: Array<
-                      | { text: string; type: "text" }
-                      | { data: string; mimeType?: string; type: "image" }
-                    >;
-                    experimental_providerMetadata?: Record<string, any>;
-                    isError?: boolean;
-                    providerOptions?: Record<string, any>;
-                    result: any;
-                    toolCallId: string;
-                    toolName: string;
-                    type: "tool-result";
-                  }>;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "tool";
-                }
-              | {
-                  content: string;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "system";
-                };
-            model?: string;
-            order: number;
-            parentMessageId?: string;
-            status: "pending" | "success" | "failed";
-            stepId?: string;
-            stepOrder: number;
-            text?: string;
-            threadId: string;
-            tool: boolean;
-            userId?: string;
-          }>;
-          pending?: {
-            _creationTime: number;
-            _id: string;
-            agentName?: string;
-            embeddingId?:
-              | string
-              | string
-              | string
-              | string
-              | string
-              | string
-              | string
-              | string
-              | string;
-            error?: string;
-            fileId?: string;
-            id?: string;
-            message?:
-              | {
-                  content:
-                    | string
-                    | Array<
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            text: string;
-                            type: "text";
-                          }
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            image: string | ArrayBuffer;
-                            mimeType?: string;
-                            providerOptions?: Record<string, any>;
-                            type: "image";
-                          }
-                        | {
-                            data: string | ArrayBuffer;
-                            experimental_providerMetadata?: Record<string, any>;
-                            mimeType: string;
-                            providerOptions?: Record<string, any>;
-                            type: "file";
-                          }
-                      >;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "user";
-                }
-              | {
-                  content:
-                    | string
-                    | Array<
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            text: string;
-                            type: "text";
-                          }
-                        | {
-                            data: string | ArrayBuffer;
-                            experimental_providerMetadata?: Record<string, any>;
-                            mimeType: string;
-                            providerOptions?: Record<string, any>;
-                            type: "file";
-                          }
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            text: string;
-                            type: "reasoning";
-                          }
-                        | {
-                            data: string;
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            type: "redacted-reasoning";
-                          }
-                        | {
-                            args: any;
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            toolCallId: string;
-                            toolName: string;
-                            type: "tool-call";
-                          }
-                      >;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "assistant";
-                }
-              | {
-                  content: Array<{
-                    args?: any;
-                    experimental_content?: Array<
-                      | { text: string; type: "text" }
-                      | { data: string; mimeType?: string; type: "image" }
-                    >;
-                    experimental_providerMetadata?: Record<string, any>;
-                    isError?: boolean;
-                    providerOptions?: Record<string, any>;
-                    result: any;
-                    toolCallId: string;
-                    toolName: string;
-                    type: "tool-result";
-                  }>;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "tool";
-                }
-              | {
-                  content: string;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "system";
-                };
-            model?: string;
-            order: number;
-            parentMessageId?: string;
-            status: "pending" | "success" | "failed";
-            stepId?: string;
-            stepOrder: number;
-            text?: string;
-            threadId: string;
-            tool: boolean;
-            userId?: string;
-          };
-        }
-      >;
-      addStep: FunctionReference<
-        "mutation",
-        "internal",
-        {
-          embeddings?: {
-            dimension: 128 | 256 | 512 | 768 | 1024 | 1536 | 2048 | 3072 | 4096;
-            model: string;
-            vectors: Array<Array<number> | null>;
-          };
-          failPendingSteps?: boolean;
-          messageId: string;
-          step: {
-            messages: Array<{
-              fileId?: string;
-              id?: string;
-              message:
-                | {
-                    content:
-                      | string
-                      | Array<
-                          | {
-                              experimental_providerMetadata?: Record<
-                                string,
-                                any
-                              >;
-                              providerOptions?: Record<string, any>;
-                              text: string;
-                              type: "text";
-                            }
-                          | {
-                              experimental_providerMetadata?: Record<
-                                string,
-                                any
-                              >;
-                              image: string | ArrayBuffer;
-                              mimeType?: string;
-                              providerOptions?: Record<string, any>;
-                              type: "image";
-                            }
-                          | {
-                              data: string | ArrayBuffer;
-                              experimental_providerMetadata?: Record<
-                                string,
-                                any
-                              >;
-                              mimeType: string;
-                              providerOptions?: Record<string, any>;
-                              type: "file";
-                            }
-                        >;
-                    experimental_providerMetadata?: Record<string, any>;
-                    providerOptions?: Record<string, any>;
-                    role: "user";
-                  }
-                | {
-                    content:
-                      | string
-                      | Array<
-                          | {
-                              experimental_providerMetadata?: Record<
-                                string,
-                                any
-                              >;
-                              providerOptions?: Record<string, any>;
-                              text: string;
-                              type: "text";
-                            }
-                          | {
-                              data: string | ArrayBuffer;
-                              experimental_providerMetadata?: Record<
-                                string,
-                                any
-                              >;
-                              mimeType: string;
-                              providerOptions?: Record<string, any>;
-                              type: "file";
-                            }
-                          | {
-                              experimental_providerMetadata?: Record<
-                                string,
-                                any
-                              >;
-                              providerOptions?: Record<string, any>;
-                              text: string;
-                              type: "reasoning";
-                            }
-                          | {
-                              data: string;
-                              experimental_providerMetadata?: Record<
-                                string,
-                                any
-                              >;
-                              providerOptions?: Record<string, any>;
-                              type: "redacted-reasoning";
-                            }
-                          | {
-                              args: any;
-                              experimental_providerMetadata?: Record<
-                                string,
-                                any
-                              >;
-                              providerOptions?: Record<string, any>;
-                              toolCallId: string;
-                              toolName: string;
-                              type: "tool-call";
-                            }
-                        >;
-                    experimental_providerMetadata?: Record<string, any>;
-                    providerOptions?: Record<string, any>;
-                    role: "assistant";
-                  }
-                | {
-                    content: Array<{
-                      args?: any;
-                      experimental_content?: Array<
-                        | { text: string; type: "text" }
-                        | { data: string; mimeType?: string; type: "image" }
-                      >;
-                      experimental_providerMetadata?: Record<string, any>;
-                      isError?: boolean;
-                      providerOptions?: Record<string, any>;
-                      result: any;
-                      toolCallId: string;
-                      toolName: string;
-                      type: "tool-result";
-                    }>;
-                    experimental_providerMetadata?: Record<string, any>;
-                    providerOptions?: Record<string, any>;
-                    role: "tool";
-                  }
-                | {
-                    content: string;
-                    experimental_providerMetadata?: Record<string, any>;
-                    providerOptions?: Record<string, any>;
-                    role: "system";
-                  };
-            }>;
-            step: {
-              experimental_providerMetadata?: Record<string, any>;
-              files?: Array<any>;
-              finishReason:
-                | "stop"
-                | "length"
-                | "content-filter"
-                | "tool-calls"
-                | "error"
-                | "other"
-                | "unknown";
-              isContinued: boolean;
-              logprobs?: any;
-              providerMetadata?: Record<string, any>;
-              providerOptions?: Record<string, any>;
-              reasoning?: string;
-              reasoningDetails?: Array<any>;
-              request?: {
-                body?: any;
-                headers?: Record<string, string>;
-                method?: string;
-                url?: string;
-              };
-              response?: {
-                body?: any;
-                headers?: Record<string, string>;
-                id: string;
-                messages: Array<{
-                  fileId?: string;
-                  id?: string;
-                  message:
-                    | {
-                        content:
-                          | string
-                          | Array<
-                              | {
-                                  experimental_providerMetadata?: Record<
-                                    string,
-                                    any
-                                  >;
-                                  providerOptions?: Record<string, any>;
-                                  text: string;
-                                  type: "text";
-                                }
-                              | {
-                                  experimental_providerMetadata?: Record<
-                                    string,
-                                    any
-                                  >;
-                                  image: string | ArrayBuffer;
-                                  mimeType?: string;
-                                  providerOptions?: Record<string, any>;
-                                  type: "image";
-                                }
-                              | {
-                                  data: string | ArrayBuffer;
-                                  experimental_providerMetadata?: Record<
-                                    string,
-                                    any
-                                  >;
-                                  mimeType: string;
-                                  providerOptions?: Record<string, any>;
-                                  type: "file";
-                                }
-                            >;
-                        experimental_providerMetadata?: Record<string, any>;
-                        providerOptions?: Record<string, any>;
-                        role: "user";
-                      }
-                    | {
-                        content:
-                          | string
-                          | Array<
-                              | {
-                                  experimental_providerMetadata?: Record<
-                                    string,
-                                    any
-                                  >;
-                                  providerOptions?: Record<string, any>;
-                                  text: string;
-                                  type: "text";
-                                }
-                              | {
-                                  data: string | ArrayBuffer;
-                                  experimental_providerMetadata?: Record<
-                                    string,
-                                    any
-                                  >;
-                                  mimeType: string;
-                                  providerOptions?: Record<string, any>;
-                                  type: "file";
-                                }
-                              | {
-                                  experimental_providerMetadata?: Record<
-                                    string,
-                                    any
-                                  >;
-                                  providerOptions?: Record<string, any>;
-                                  text: string;
-                                  type: "reasoning";
-                                }
-                              | {
-                                  data: string;
-                                  experimental_providerMetadata?: Record<
-                                    string,
-                                    any
-                                  >;
-                                  providerOptions?: Record<string, any>;
-                                  type: "redacted-reasoning";
-                                }
-                              | {
-                                  args: any;
-                                  experimental_providerMetadata?: Record<
-                                    string,
-                                    any
-                                  >;
-                                  providerOptions?: Record<string, any>;
-                                  toolCallId: string;
-                                  toolName: string;
-                                  type: "tool-call";
-                                }
-                            >;
-                        experimental_providerMetadata?: Record<string, any>;
-                        providerOptions?: Record<string, any>;
-                        role: "assistant";
-                      }
-                    | {
-                        content: Array<{
-                          args?: any;
-                          experimental_content?: Array<
-                            | { text: string; type: "text" }
-                            | { data: string; mimeType?: string; type: "image" }
-                          >;
-                          experimental_providerMetadata?: Record<string, any>;
-                          isError?: boolean;
-                          providerOptions?: Record<string, any>;
-                          result: any;
-                          toolCallId: string;
-                          toolName: string;
-                          type: "tool-result";
-                        }>;
-                        experimental_providerMetadata?: Record<string, any>;
-                        providerOptions?: Record<string, any>;
-                        role: "tool";
-                      }
-                    | {
-                        content: string;
-                        experimental_providerMetadata?: Record<string, any>;
-                        providerOptions?: Record<string, any>;
-                        role: "system";
-                      };
-                }>;
-                modelId: string;
-                timestamp: number;
-              };
-              sources?: Array<{
-                id: string;
-                providerMetadata?: Record<string, any>;
-                sourceType: "url";
-                title?: string;
-                url: string;
-              }>;
-              stepType: "initial" | "continue" | "tool-result";
-              text: string;
-              toolCalls: Array<{
-                args: any;
-                experimental_providerMetadata?: Record<string, any>;
-                providerOptions?: Record<string, any>;
-                toolCallId: string;
-                toolName: string;
-                type: "tool-call";
-              }>;
-              toolResults: Array<{
-                args?: any;
-                experimental_content?: Array<
-                  | { text: string; type: "text" }
-                  | { data: string; mimeType?: string; type: "image" }
-                >;
-                experimental_providerMetadata?: Record<string, any>;
-                isError?: boolean;
-                providerOptions?: Record<string, any>;
-                result: any;
-                toolCallId: string;
-                toolName: string;
-                type: "tool-result";
-              }>;
-              usage?: {
-                completionTokens: number;
-                promptTokens: number;
-                totalTokens: number;
-              };
-              warnings?: Array<
-                | {
-                    details?: string;
-                    setting: string;
-                    type: "unsupported-setting";
-                  }
-                | { details?: string; tool: any; type: "unsupported-tool" }
-                | { message: string; type: "other" }
-              >;
-            };
-          };
-          threadId: string;
-        },
-        Array<{
-          _creationTime: number;
-          _id: string;
-          order: number;
-          parentMessageId: string;
-          status: "pending" | "success" | "failed";
-          step: {
-            experimental_providerMetadata?: Record<string, any>;
-            files?: Array<any>;
-            finishReason:
+            fileIds?: Array<string>;
+            finishReason?:
               | "stop"
               | "length"
               | "content-filter"
@@ -777,181 +176,134 @@ export declare const components: {
               | "error"
               | "other"
               | "unknown";
-            isContinued: boolean;
-            logprobs?: any;
-            providerMetadata?: Record<string, any>;
-            providerOptions?: Record<string, any>;
+            id?: string;
+            message:
+              | {
+                  content:
+                    | string
+                    | Array<
+                        | {
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            text: string;
+                            type: "text";
+                          }
+                        | {
+                            image: string | ArrayBuffer;
+                            mimeType?: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "image";
+                          }
+                        | {
+                            data: string | ArrayBuffer;
+                            filename?: string;
+                            mimeType: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "file";
+                          }
+                      >;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "user";
+                }
+              | {
+                  content:
+                    | string
+                    | Array<
+                        | {
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            text: string;
+                            type: "text";
+                          }
+                        | {
+                            data: string | ArrayBuffer;
+                            filename?: string;
+                            mimeType: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "file";
+                          }
+                        | {
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            signature?: string;
+                            text: string;
+                            type: "reasoning";
+                          }
+                        | {
+                            data: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "redacted-reasoning";
+                          }
+                        | {
+                            args: any;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            toolCallId: string;
+                            toolName: string;
+                            type: "tool-call";
+                          }
+                      >;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "assistant";
+                }
+              | {
+                  content: Array<{
+                    args?: any;
+                    experimental_content?: Array<
+                      | { text: string; type: "text" }
+                      | { data: string; mimeType?: string; type: "image" }
+                    >;
+                    isError?: boolean;
+                    providerOptions?: Record<string, Record<string, any>>;
+                    result: any;
+                    toolCallId: string;
+                    toolName: string;
+                    type: "tool-result";
+                  }>;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "tool";
+                }
+              | {
+                  content: string;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "system";
+                };
+            model?: string;
+            provider?: string;
+            providerMetadata?: Record<string, Record<string, any>>;
             reasoning?: string;
-            reasoningDetails?: Array<any>;
-            request?: {
-              body?: any;
-              headers?: Record<string, string>;
-              method?: string;
-              url?: string;
-            };
-            response?: {
-              body?: any;
-              headers?: Record<string, string>;
-              id: string;
-              messages: Array<{
-                fileId?: string;
-                id?: string;
-                message:
-                  | {
-                      content:
-                        | string
-                        | Array<
-                            | {
-                                experimental_providerMetadata?: Record<
-                                  string,
-                                  any
-                                >;
-                                providerOptions?: Record<string, any>;
-                                text: string;
-                                type: "text";
-                              }
-                            | {
-                                experimental_providerMetadata?: Record<
-                                  string,
-                                  any
-                                >;
-                                image: string | ArrayBuffer;
-                                mimeType?: string;
-                                providerOptions?: Record<string, any>;
-                                type: "image";
-                              }
-                            | {
-                                data: string | ArrayBuffer;
-                                experimental_providerMetadata?: Record<
-                                  string,
-                                  any
-                                >;
-                                mimeType: string;
-                                providerOptions?: Record<string, any>;
-                                type: "file";
-                              }
-                          >;
-                      experimental_providerMetadata?: Record<string, any>;
-                      providerOptions?: Record<string, any>;
-                      role: "user";
-                    }
-                  | {
-                      content:
-                        | string
-                        | Array<
-                            | {
-                                experimental_providerMetadata?: Record<
-                                  string,
-                                  any
-                                >;
-                                providerOptions?: Record<string, any>;
-                                text: string;
-                                type: "text";
-                              }
-                            | {
-                                data: string | ArrayBuffer;
-                                experimental_providerMetadata?: Record<
-                                  string,
-                                  any
-                                >;
-                                mimeType: string;
-                                providerOptions?: Record<string, any>;
-                                type: "file";
-                              }
-                            | {
-                                experimental_providerMetadata?: Record<
-                                  string,
-                                  any
-                                >;
-                                providerOptions?: Record<string, any>;
-                                text: string;
-                                type: "reasoning";
-                              }
-                            | {
-                                data: string;
-                                experimental_providerMetadata?: Record<
-                                  string,
-                                  any
-                                >;
-                                providerOptions?: Record<string, any>;
-                                type: "redacted-reasoning";
-                              }
-                            | {
-                                args: any;
-                                experimental_providerMetadata?: Record<
-                                  string,
-                                  any
-                                >;
-                                providerOptions?: Record<string, any>;
-                                toolCallId: string;
-                                toolName: string;
-                                type: "tool-call";
-                              }
-                          >;
-                      experimental_providerMetadata?: Record<string, any>;
-                      providerOptions?: Record<string, any>;
-                      role: "assistant";
-                    }
-                  | {
-                      content: Array<{
-                        args?: any;
-                        experimental_content?: Array<
-                          | { text: string; type: "text" }
-                          | { data: string; mimeType?: string; type: "image" }
-                        >;
-                        experimental_providerMetadata?: Record<string, any>;
-                        isError?: boolean;
-                        providerOptions?: Record<string, any>;
-                        result: any;
-                        toolCallId: string;
-                        toolName: string;
-                        type: "tool-result";
-                      }>;
-                      experimental_providerMetadata?: Record<string, any>;
-                      providerOptions?: Record<string, any>;
-                      role: "tool";
-                    }
-                  | {
-                      content: string;
-                      experimental_providerMetadata?: Record<string, any>;
-                      providerOptions?: Record<string, any>;
-                      role: "system";
-                    };
-              }>;
-              modelId: string;
-              timestamp: number;
-            };
+            reasoningDetails?: Array<
+              | { signature?: string; text: string; type: "text" }
+              | { data: string; type: "redacted" }
+            >;
             sources?: Array<{
               id: string;
-              providerMetadata?: Record<string, any>;
+              providerOptions?: Record<string, Record<string, any>>;
               sourceType: "url";
               title?: string;
               url: string;
             }>;
-            stepType: "initial" | "continue" | "tool-result";
-            text: string;
-            toolCalls: Array<{
-              args: any;
-              experimental_providerMetadata?: Record<string, any>;
-              providerOptions?: Record<string, any>;
-              toolCallId: string;
-              toolName: string;
-              type: "tool-call";
-            }>;
-            toolResults: Array<{
-              args?: any;
-              experimental_content?: Array<
-                | { text: string; type: "text" }
-                | { data: string; mimeType?: string; type: "image" }
-              >;
-              experimental_providerMetadata?: Record<string, any>;
-              isError?: boolean;
-              providerOptions?: Record<string, any>;
-              result: any;
-              toolCallId: string;
-              toolName: string;
-              type: "tool-result";
-            }>;
+            text?: string;
             usage?: {
               completionTokens: number;
               promptTokens: number;
@@ -966,25 +318,178 @@ export declare const components: {
               | { details?: string; tool: any; type: "unsupported-tool" }
               | { message: string; type: "other" }
             >;
-          };
-          stepOrder: number;
+          }>;
+          pending?: boolean;
+          promptMessageId?: string;
           threadId: string;
-        }>
-      >;
-      archiveThread: FunctionReference<
-        "mutation",
-        "internal",
-        { threadId: string },
-        {
-          _creationTime: number;
-          _id: string;
-          defaultSystemPrompt?: string;
-          order?: number;
-          parentThreadIds?: Array<string>;
-          status: "active" | "archived";
-          summary?: string;
-          title?: string;
           userId?: string;
+        },
+        {
+          messages: Array<{
+            _creationTime: number;
+            _id: string;
+            agentName?: string;
+            embeddingId?: string;
+            error?: string;
+            fileIds?: Array<string>;
+            finishReason?:
+              | "stop"
+              | "length"
+              | "content-filter"
+              | "tool-calls"
+              | "error"
+              | "other"
+              | "unknown";
+            id?: string;
+            message?:
+              | {
+                  content:
+                    | string
+                    | Array<
+                        | {
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            text: string;
+                            type: "text";
+                          }
+                        | {
+                            image: string | ArrayBuffer;
+                            mimeType?: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "image";
+                          }
+                        | {
+                            data: string | ArrayBuffer;
+                            filename?: string;
+                            mimeType: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "file";
+                          }
+                      >;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "user";
+                }
+              | {
+                  content:
+                    | string
+                    | Array<
+                        | {
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            text: string;
+                            type: "text";
+                          }
+                        | {
+                            data: string | ArrayBuffer;
+                            filename?: string;
+                            mimeType: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "file";
+                          }
+                        | {
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            signature?: string;
+                            text: string;
+                            type: "reasoning";
+                          }
+                        | {
+                            data: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "redacted-reasoning";
+                          }
+                        | {
+                            args: any;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            toolCallId: string;
+                            toolName: string;
+                            type: "tool-call";
+                          }
+                      >;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "assistant";
+                }
+              | {
+                  content: Array<{
+                    args?: any;
+                    experimental_content?: Array<
+                      | { text: string; type: "text" }
+                      | { data: string; mimeType?: string; type: "image" }
+                    >;
+                    isError?: boolean;
+                    providerOptions?: Record<string, Record<string, any>>;
+                    result: any;
+                    toolCallId: string;
+                    toolName: string;
+                    type: "tool-result";
+                  }>;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "tool";
+                }
+              | {
+                  content: string;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "system";
+                };
+            model?: string;
+            order: number;
+            provider?: string;
+            providerMetadata?: Record<string, Record<string, any>>;
+            providerOptions?: Record<string, Record<string, any>>;
+            reasoning?: string;
+            reasoningDetails?: Array<
+              | { signature?: string; text: string; type: "text" }
+              | { data: string; type: "redacted" }
+            >;
+            sources?: Array<{
+              id: string;
+              providerOptions?: Record<string, Record<string, any>>;
+              sourceType: "url";
+              title?: string;
+              url: string;
+            }>;
+            status: "pending" | "success" | "failed";
+            stepOrder: number;
+            text?: string;
+            threadId: string;
+            tool: boolean;
+            usage?: {
+              completionTokens: number;
+              promptTokens: number;
+              totalTokens: number;
+            };
+            userId?: string;
+            warnings?: Array<
+              | {
+                  details?: string;
+                  setting: string;
+                  type: "unsupported-setting";
+                }
+              | { details?: string; tool: any; type: "unsupported-tool" }
+              | { message: string; type: "other" }
+            >;
+          }>;
         }
       >;
       commitMessage: FunctionReference<
@@ -993,6 +498,1168 @@ export declare const components: {
         { messageId: string },
         null
       >;
+      deleteByIds: FunctionReference<
+        "mutation",
+        "internal",
+        { messageIds: Array<string> },
+        Array<string>
+      >;
+      deleteByOrder: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          endOrder: number;
+          endStepOrder?: number;
+          startOrder: number;
+          startStepOrder?: number;
+          threadId: string;
+        },
+        { isDone: boolean; lastOrder?: number; lastStepOrder?: number }
+      >;
+      getMessagesByIds: FunctionReference<
+        "query",
+        "internal",
+        { messageIds: Array<string> },
+        Array<null | {
+          _creationTime: number;
+          _id: string;
+          agentName?: string;
+          embeddingId?: string;
+          error?: string;
+          fileIds?: Array<string>;
+          finishReason?:
+            | "stop"
+            | "length"
+            | "content-filter"
+            | "tool-calls"
+            | "error"
+            | "other"
+            | "unknown";
+          id?: string;
+          message?:
+            | {
+                content:
+                  | string
+                  | Array<
+                      | {
+                          providerOptions?: Record<string, Record<string, any>>;
+                          text: string;
+                          type: "text";
+                        }
+                      | {
+                          image: string | ArrayBuffer;
+                          mimeType?: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "image";
+                        }
+                      | {
+                          data: string | ArrayBuffer;
+                          filename?: string;
+                          mimeType: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "file";
+                        }
+                    >;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "user";
+              }
+            | {
+                content:
+                  | string
+                  | Array<
+                      | {
+                          providerOptions?: Record<string, Record<string, any>>;
+                          text: string;
+                          type: "text";
+                        }
+                      | {
+                          data: string | ArrayBuffer;
+                          filename?: string;
+                          mimeType: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "file";
+                        }
+                      | {
+                          providerOptions?: Record<string, Record<string, any>>;
+                          signature?: string;
+                          text: string;
+                          type: "reasoning";
+                        }
+                      | {
+                          data: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "redacted-reasoning";
+                        }
+                      | {
+                          args: any;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          toolCallId: string;
+                          toolName: string;
+                          type: "tool-call";
+                        }
+                    >;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "assistant";
+              }
+            | {
+                content: Array<{
+                  args?: any;
+                  experimental_content?: Array<
+                    | { text: string; type: "text" }
+                    | { data: string; mimeType?: string; type: "image" }
+                  >;
+                  isError?: boolean;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  result: any;
+                  toolCallId: string;
+                  toolName: string;
+                  type: "tool-result";
+                }>;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "tool";
+              }
+            | {
+                content: string;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "system";
+              };
+          model?: string;
+          order: number;
+          provider?: string;
+          providerMetadata?: Record<string, Record<string, any>>;
+          providerOptions?: Record<string, Record<string, any>>;
+          reasoning?: string;
+          reasoningDetails?: Array<
+            | { signature?: string; text: string; type: "text" }
+            | { data: string; type: "redacted" }
+          >;
+          sources?: Array<{
+            id: string;
+            providerOptions?: Record<string, Record<string, any>>;
+            sourceType: "url";
+            title?: string;
+            url: string;
+          }>;
+          status: "pending" | "success" | "failed";
+          stepOrder: number;
+          text?: string;
+          threadId: string;
+          tool: boolean;
+          usage?: {
+            completionTokens: number;
+            promptTokens: number;
+            totalTokens: number;
+          };
+          userId?: string;
+          warnings?: Array<
+            | { details?: string; setting: string; type: "unsupported-setting" }
+            | { details?: string; tool: any; type: "unsupported-tool" }
+            | { message: string; type: "other" }
+          >;
+        }>
+      >;
+      listMessagesByThreadId: FunctionReference<
+        "query",
+        "internal",
+        {
+          excludeToolMessages?: boolean;
+          order: "asc" | "desc";
+          paginationOpts?: {
+            cursor: string | null;
+            endCursor?: string | null;
+            id?: number;
+            maximumBytesRead?: number;
+            maximumRowsRead?: number;
+            numItems: number;
+          };
+          statuses?: Array<"pending" | "success" | "failed">;
+          threadId: string;
+          upToAndIncludingMessageId?: string;
+        },
+        {
+          continueCursor: string;
+          isDone: boolean;
+          page: Array<{
+            _creationTime: number;
+            _id: string;
+            agentName?: string;
+            embeddingId?: string;
+            error?: string;
+            fileIds?: Array<string>;
+            finishReason?:
+              | "stop"
+              | "length"
+              | "content-filter"
+              | "tool-calls"
+              | "error"
+              | "other"
+              | "unknown";
+            id?: string;
+            message?:
+              | {
+                  content:
+                    | string
+                    | Array<
+                        | {
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            text: string;
+                            type: "text";
+                          }
+                        | {
+                            image: string | ArrayBuffer;
+                            mimeType?: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "image";
+                          }
+                        | {
+                            data: string | ArrayBuffer;
+                            filename?: string;
+                            mimeType: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "file";
+                          }
+                      >;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "user";
+                }
+              | {
+                  content:
+                    | string
+                    | Array<
+                        | {
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            text: string;
+                            type: "text";
+                          }
+                        | {
+                            data: string | ArrayBuffer;
+                            filename?: string;
+                            mimeType: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "file";
+                          }
+                        | {
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            signature?: string;
+                            text: string;
+                            type: "reasoning";
+                          }
+                        | {
+                            data: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "redacted-reasoning";
+                          }
+                        | {
+                            args: any;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            toolCallId: string;
+                            toolName: string;
+                            type: "tool-call";
+                          }
+                      >;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "assistant";
+                }
+              | {
+                  content: Array<{
+                    args?: any;
+                    experimental_content?: Array<
+                      | { text: string; type: "text" }
+                      | { data: string; mimeType?: string; type: "image" }
+                    >;
+                    isError?: boolean;
+                    providerOptions?: Record<string, Record<string, any>>;
+                    result: any;
+                    toolCallId: string;
+                    toolName: string;
+                    type: "tool-result";
+                  }>;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "tool";
+                }
+              | {
+                  content: string;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "system";
+                };
+            model?: string;
+            order: number;
+            provider?: string;
+            providerMetadata?: Record<string, Record<string, any>>;
+            providerOptions?: Record<string, Record<string, any>>;
+            reasoning?: string;
+            reasoningDetails?: Array<
+              | { signature?: string; text: string; type: "text" }
+              | { data: string; type: "redacted" }
+            >;
+            sources?: Array<{
+              id: string;
+              providerOptions?: Record<string, Record<string, any>>;
+              sourceType: "url";
+              title?: string;
+              url: string;
+            }>;
+            status: "pending" | "success" | "failed";
+            stepOrder: number;
+            text?: string;
+            threadId: string;
+            tool: boolean;
+            usage?: {
+              completionTokens: number;
+              promptTokens: number;
+              totalTokens: number;
+            };
+            userId?: string;
+            warnings?: Array<
+              | {
+                  details?: string;
+                  setting: string;
+                  type: "unsupported-setting";
+                }
+              | { details?: string; tool: any; type: "unsupported-tool" }
+              | { message: string; type: "other" }
+            >;
+          }>;
+          pageStatus?: "SplitRecommended" | "SplitRequired" | null;
+          splitCursor?: string | null;
+        }
+      >;
+      rollbackMessage: FunctionReference<
+        "mutation",
+        "internal",
+        { error?: string; messageId: string },
+        null
+      >;
+      searchMessages: FunctionReference<
+        "action",
+        "internal",
+        {
+          beforeMessageId?: string;
+          embedding?: Array<number>;
+          embeddingModel?: string;
+          limit: number;
+          messageRange?: { after: number; before: number };
+          searchAllMessagesForUserId?: string;
+          text?: string;
+          threadId?: string;
+          vectorScoreThreshold?: number;
+        },
+        Array<{
+          _creationTime: number;
+          _id: string;
+          agentName?: string;
+          embeddingId?: string;
+          error?: string;
+          fileIds?: Array<string>;
+          finishReason?:
+            | "stop"
+            | "length"
+            | "content-filter"
+            | "tool-calls"
+            | "error"
+            | "other"
+            | "unknown";
+          id?: string;
+          message?:
+            | {
+                content:
+                  | string
+                  | Array<
+                      | {
+                          providerOptions?: Record<string, Record<string, any>>;
+                          text: string;
+                          type: "text";
+                        }
+                      | {
+                          image: string | ArrayBuffer;
+                          mimeType?: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "image";
+                        }
+                      | {
+                          data: string | ArrayBuffer;
+                          filename?: string;
+                          mimeType: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "file";
+                        }
+                    >;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "user";
+              }
+            | {
+                content:
+                  | string
+                  | Array<
+                      | {
+                          providerOptions?: Record<string, Record<string, any>>;
+                          text: string;
+                          type: "text";
+                        }
+                      | {
+                          data: string | ArrayBuffer;
+                          filename?: string;
+                          mimeType: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "file";
+                        }
+                      | {
+                          providerOptions?: Record<string, Record<string, any>>;
+                          signature?: string;
+                          text: string;
+                          type: "reasoning";
+                        }
+                      | {
+                          data: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "redacted-reasoning";
+                        }
+                      | {
+                          args: any;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          toolCallId: string;
+                          toolName: string;
+                          type: "tool-call";
+                        }
+                    >;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "assistant";
+              }
+            | {
+                content: Array<{
+                  args?: any;
+                  experimental_content?: Array<
+                    | { text: string; type: "text" }
+                    | { data: string; mimeType?: string; type: "image" }
+                  >;
+                  isError?: boolean;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  result: any;
+                  toolCallId: string;
+                  toolName: string;
+                  type: "tool-result";
+                }>;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "tool";
+              }
+            | {
+                content: string;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "system";
+              };
+          model?: string;
+          order: number;
+          provider?: string;
+          providerMetadata?: Record<string, Record<string, any>>;
+          providerOptions?: Record<string, Record<string, any>>;
+          reasoning?: string;
+          reasoningDetails?: Array<
+            | { signature?: string; text: string; type: "text" }
+            | { data: string; type: "redacted" }
+          >;
+          sources?: Array<{
+            id: string;
+            providerOptions?: Record<string, Record<string, any>>;
+            sourceType: "url";
+            title?: string;
+            url: string;
+          }>;
+          status: "pending" | "success" | "failed";
+          stepOrder: number;
+          text?: string;
+          threadId: string;
+          tool: boolean;
+          usage?: {
+            completionTokens: number;
+            promptTokens: number;
+            totalTokens: number;
+          };
+          userId?: string;
+          warnings?: Array<
+            | { details?: string; setting: string; type: "unsupported-setting" }
+            | { details?: string; tool: any; type: "unsupported-tool" }
+            | { message: string; type: "other" }
+          >;
+        }>
+      >;
+      textSearch: FunctionReference<
+        "query",
+        "internal",
+        {
+          beforeMessageId?: string;
+          limit: number;
+          searchAllMessagesForUserId?: string;
+          text: string;
+          threadId?: string;
+        },
+        Array<{
+          _creationTime: number;
+          _id: string;
+          agentName?: string;
+          embeddingId?: string;
+          error?: string;
+          fileIds?: Array<string>;
+          finishReason?:
+            | "stop"
+            | "length"
+            | "content-filter"
+            | "tool-calls"
+            | "error"
+            | "other"
+            | "unknown";
+          id?: string;
+          message?:
+            | {
+                content:
+                  | string
+                  | Array<
+                      | {
+                          providerOptions?: Record<string, Record<string, any>>;
+                          text: string;
+                          type: "text";
+                        }
+                      | {
+                          image: string | ArrayBuffer;
+                          mimeType?: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "image";
+                        }
+                      | {
+                          data: string | ArrayBuffer;
+                          filename?: string;
+                          mimeType: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "file";
+                        }
+                    >;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "user";
+              }
+            | {
+                content:
+                  | string
+                  | Array<
+                      | {
+                          providerOptions?: Record<string, Record<string, any>>;
+                          text: string;
+                          type: "text";
+                        }
+                      | {
+                          data: string | ArrayBuffer;
+                          filename?: string;
+                          mimeType: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "file";
+                        }
+                      | {
+                          providerOptions?: Record<string, Record<string, any>>;
+                          signature?: string;
+                          text: string;
+                          type: "reasoning";
+                        }
+                      | {
+                          data: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "redacted-reasoning";
+                        }
+                      | {
+                          args: any;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          toolCallId: string;
+                          toolName: string;
+                          type: "tool-call";
+                        }
+                    >;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "assistant";
+              }
+            | {
+                content: Array<{
+                  args?: any;
+                  experimental_content?: Array<
+                    | { text: string; type: "text" }
+                    | { data: string; mimeType?: string; type: "image" }
+                  >;
+                  isError?: boolean;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  result: any;
+                  toolCallId: string;
+                  toolName: string;
+                  type: "tool-result";
+                }>;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "tool";
+              }
+            | {
+                content: string;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "system";
+              };
+          model?: string;
+          order: number;
+          provider?: string;
+          providerMetadata?: Record<string, Record<string, any>>;
+          providerOptions?: Record<string, Record<string, any>>;
+          reasoning?: string;
+          reasoningDetails?: Array<
+            | { signature?: string; text: string; type: "text" }
+            | { data: string; type: "redacted" }
+          >;
+          sources?: Array<{
+            id: string;
+            providerOptions?: Record<string, Record<string, any>>;
+            sourceType: "url";
+            title?: string;
+            url: string;
+          }>;
+          status: "pending" | "success" | "failed";
+          stepOrder: number;
+          text?: string;
+          threadId: string;
+          tool: boolean;
+          usage?: {
+            completionTokens: number;
+            promptTokens: number;
+            totalTokens: number;
+          };
+          userId?: string;
+          warnings?: Array<
+            | { details?: string; setting: string; type: "unsupported-setting" }
+            | { details?: string; tool: any; type: "unsupported-tool" }
+            | { message: string; type: "other" }
+          >;
+        }>
+      >;
+      updateMessage: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          messageId: string;
+          patch: {
+            error?: string;
+            fileIds?: Array<string>;
+            message?:
+              | {
+                  content:
+                    | string
+                    | Array<
+                        | {
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            text: string;
+                            type: "text";
+                          }
+                        | {
+                            image: string | ArrayBuffer;
+                            mimeType?: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "image";
+                          }
+                        | {
+                            data: string | ArrayBuffer;
+                            filename?: string;
+                            mimeType: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "file";
+                          }
+                      >;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "user";
+                }
+              | {
+                  content:
+                    | string
+                    | Array<
+                        | {
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            text: string;
+                            type: "text";
+                          }
+                        | {
+                            data: string | ArrayBuffer;
+                            filename?: string;
+                            mimeType: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "file";
+                          }
+                        | {
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            signature?: string;
+                            text: string;
+                            type: "reasoning";
+                          }
+                        | {
+                            data: string;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            type: "redacted-reasoning";
+                          }
+                        | {
+                            args: any;
+                            providerOptions?: Record<
+                              string,
+                              Record<string, any>
+                            >;
+                            toolCallId: string;
+                            toolName: string;
+                            type: "tool-call";
+                          }
+                      >;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "assistant";
+                }
+              | {
+                  content: Array<{
+                    args?: any;
+                    experimental_content?: Array<
+                      | { text: string; type: "text" }
+                      | { data: string; mimeType?: string; type: "image" }
+                    >;
+                    isError?: boolean;
+                    providerOptions?: Record<string, Record<string, any>>;
+                    result: any;
+                    toolCallId: string;
+                    toolName: string;
+                    type: "tool-result";
+                  }>;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "tool";
+                }
+              | {
+                  content: string;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  role: "system";
+                };
+            status?: "pending" | "success" | "failed";
+          };
+        },
+        {
+          _creationTime: number;
+          _id: string;
+          agentName?: string;
+          embeddingId?: string;
+          error?: string;
+          fileIds?: Array<string>;
+          finishReason?:
+            | "stop"
+            | "length"
+            | "content-filter"
+            | "tool-calls"
+            | "error"
+            | "other"
+            | "unknown";
+          id?: string;
+          message?:
+            | {
+                content:
+                  | string
+                  | Array<
+                      | {
+                          providerOptions?: Record<string, Record<string, any>>;
+                          text: string;
+                          type: "text";
+                        }
+                      | {
+                          image: string | ArrayBuffer;
+                          mimeType?: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "image";
+                        }
+                      | {
+                          data: string | ArrayBuffer;
+                          filename?: string;
+                          mimeType: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "file";
+                        }
+                    >;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "user";
+              }
+            | {
+                content:
+                  | string
+                  | Array<
+                      | {
+                          providerOptions?: Record<string, Record<string, any>>;
+                          text: string;
+                          type: "text";
+                        }
+                      | {
+                          data: string | ArrayBuffer;
+                          filename?: string;
+                          mimeType: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "file";
+                        }
+                      | {
+                          providerOptions?: Record<string, Record<string, any>>;
+                          signature?: string;
+                          text: string;
+                          type: "reasoning";
+                        }
+                      | {
+                          data: string;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          type: "redacted-reasoning";
+                        }
+                      | {
+                          args: any;
+                          providerOptions?: Record<string, Record<string, any>>;
+                          toolCallId: string;
+                          toolName: string;
+                          type: "tool-call";
+                        }
+                    >;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "assistant";
+              }
+            | {
+                content: Array<{
+                  args?: any;
+                  experimental_content?: Array<
+                    | { text: string; type: "text" }
+                    | { data: string; mimeType?: string; type: "image" }
+                  >;
+                  isError?: boolean;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  result: any;
+                  toolCallId: string;
+                  toolName: string;
+                  type: "tool-result";
+                }>;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "tool";
+              }
+            | {
+                content: string;
+                providerOptions?: Record<string, Record<string, any>>;
+                role: "system";
+              };
+          model?: string;
+          order: number;
+          provider?: string;
+          providerMetadata?: Record<string, Record<string, any>>;
+          providerOptions?: Record<string, Record<string, any>>;
+          reasoning?: string;
+          reasoningDetails?: Array<
+            | { signature?: string; text: string; type: "text" }
+            | { data: string; type: "redacted" }
+          >;
+          sources?: Array<{
+            id: string;
+            providerOptions?: Record<string, Record<string, any>>;
+            sourceType: "url";
+            title?: string;
+            url: string;
+          }>;
+          status: "pending" | "success" | "failed";
+          stepOrder: number;
+          text?: string;
+          threadId: string;
+          tool: boolean;
+          usage?: {
+            completionTokens: number;
+            promptTokens: number;
+            totalTokens: number;
+          };
+          userId?: string;
+          warnings?: Array<
+            | { details?: string; setting: string; type: "unsupported-setting" }
+            | { details?: string; tool: any; type: "unsupported-tool" }
+            | { message: string; type: "other" }
+          >;
+        }
+      >;
+    };
+    streams: {
+      abort: FunctionReference<
+        "mutation",
+        "internal",
+        { reason: string; streamId: string },
+        boolean
+      >;
+      abortByOrder: FunctionReference<
+        "mutation",
+        "internal",
+        { order: number; reason: string; threadId: string },
+        boolean
+      >;
+      addDelta: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          end: number;
+          parts: Array<
+            | { textDelta: string; type: "text-delta" }
+            | { textDelta: string; type: "reasoning" }
+            | {
+                source: {
+                  id: string;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  sourceType: "url";
+                  title?: string;
+                  url: string;
+                };
+                type: "source";
+              }
+            | {
+                args: any;
+                providerOptions?: Record<string, Record<string, any>>;
+                toolCallId: string;
+                toolName: string;
+                type: "tool-call";
+              }
+            | {
+                toolCallId: string;
+                toolName: string;
+                type: "tool-call-streaming-start";
+              }
+            | {
+                argsTextDelta: string;
+                toolCallId: string;
+                toolName: string;
+                type: "tool-call-delta";
+              }
+            | {
+                args?: any;
+                experimental_content?: Array<
+                  | { text: string; type: "text" }
+                  | { data: string; mimeType?: string; type: "image" }
+                >;
+                isError?: boolean;
+                providerOptions?: Record<string, Record<string, any>>;
+                result: any;
+                toolCallId: string;
+                toolName: string;
+                type: "tool-result";
+              }
+          >;
+          start: number;
+          streamId: string;
+        },
+        boolean
+      >;
+      create: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          agentName?: string;
+          model?: string;
+          order: number;
+          provider?: string;
+          providerOptions?: Record<string, Record<string, any>>;
+          stepOrder: number;
+          threadId: string;
+          userId?: string;
+        },
+        string
+      >;
+      deleteAllStreamsForThreadIdAsync: FunctionReference<
+        "mutation",
+        "internal",
+        { deltaCursor?: string; streamOrder?: number; threadId: string },
+        { deltaCursor?: string; isDone: boolean; streamOrder?: number }
+      >;
+      deleteAllStreamsForThreadIdSync: FunctionReference<
+        "action",
+        "internal",
+        { threadId: string },
+        null
+      >;
+      deleteStreamAsync: FunctionReference<
+        "mutation",
+        "internal",
+        { cursor?: string; streamId: string },
+        null
+      >;
+      deleteStreamSync: FunctionReference<
+        "mutation",
+        "internal",
+        { streamId: string },
+        null
+      >;
+      finish: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          finalDelta?: {
+            end: number;
+            parts: Array<
+              | { textDelta: string; type: "text-delta" }
+              | { textDelta: string; type: "reasoning" }
+              | {
+                  source: {
+                    id: string;
+                    providerOptions?: Record<string, Record<string, any>>;
+                    sourceType: "url";
+                    title?: string;
+                    url: string;
+                  };
+                  type: "source";
+                }
+              | {
+                  args: any;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  toolCallId: string;
+                  toolName: string;
+                  type: "tool-call";
+                }
+              | {
+                  toolCallId: string;
+                  toolName: string;
+                  type: "tool-call-streaming-start";
+                }
+              | {
+                  argsTextDelta: string;
+                  toolCallId: string;
+                  toolName: string;
+                  type: "tool-call-delta";
+                }
+              | {
+                  args?: any;
+                  experimental_content?: Array<
+                    | { text: string; type: "text" }
+                    | { data: string; mimeType?: string; type: "image" }
+                  >;
+                  isError?: boolean;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  result: any;
+                  toolCallId: string;
+                  toolName: string;
+                  type: "tool-result";
+                }
+            >;
+            start: number;
+            streamId: string;
+          };
+          streamId: string;
+        },
+        null
+      >;
+      list: FunctionReference<
+        "query",
+        "internal",
+        {
+          startOrder?: number;
+          statuses?: Array<"streaming" | "finished" | "aborted">;
+          threadId: string;
+        },
+        Array<{
+          agentName?: string;
+          model?: string;
+          order: number;
+          provider?: string;
+          providerOptions?: Record<string, Record<string, any>>;
+          status: "streaming" | "finished" | "aborted";
+          stepOrder: number;
+          streamId: string;
+          userId?: string;
+        }>
+      >;
+      listDeltas: FunctionReference<
+        "query",
+        "internal",
+        {
+          cursors: Array<{ cursor: number; streamId: string }>;
+          threadId: string;
+        },
+        Array<{
+          end: number;
+          parts: Array<
+            | { textDelta: string; type: "text-delta" }
+            | { textDelta: string; type: "reasoning" }
+            | {
+                source: {
+                  id: string;
+                  providerOptions?: Record<string, Record<string, any>>;
+                  sourceType: "url";
+                  title?: string;
+                  url: string;
+                };
+                type: "source";
+              }
+            | {
+                args: any;
+                providerOptions?: Record<string, Record<string, any>>;
+                toolCallId: string;
+                toolName: string;
+                type: "tool-call";
+              }
+            | {
+                toolCallId: string;
+                toolName: string;
+                type: "tool-call-streaming-start";
+              }
+            | {
+                argsTextDelta: string;
+                toolCallId: string;
+                toolName: string;
+                type: "tool-call-delta";
+              }
+            | {
+                args?: any;
+                experimental_content?: Array<
+                  | { text: string; type: "text" }
+                  | { data: string; mimeType?: string; type: "image" }
+                >;
+                isError?: boolean;
+                providerOptions?: Record<string, Record<string, any>>;
+                result: any;
+                toolCallId: string;
+                toolName: string;
+                type: "tool-result";
+              }
+          >;
+          start: number;
+          streamId: string;
+        }>
+      >;
+    };
+    threads: {
       createThread: FunctionReference<
         "mutation",
         "internal",
@@ -1006,9 +1673,6 @@ export declare const components: {
         {
           _creationTime: number;
           _id: string;
-          defaultSystemPrompt?: string;
-          order?: number;
-          parentThreadIds?: Array<string>;
           status: "active" | "archived";
           summary?: string;
           title?: string;
@@ -1018,15 +1682,102 @@ export declare const components: {
       deleteAllForThreadIdAsync: FunctionReference<
         "mutation",
         "internal",
-        { cursor?: string; limit?: number; threadId: string },
-        { cursor: string; isDone: boolean }
+        {
+          cursor?: string;
+          deltaCursor?: string;
+          limit?: number;
+          messagesDone?: boolean;
+          streamOrder?: number;
+          streamsDone?: boolean;
+          threadId: string;
+        },
+        { isDone: boolean }
       >;
       deleteAllForThreadIdSync: FunctionReference<
         "action",
         "internal",
-        { cursor?: string; limit?: number; threadId: string },
-        { cursor: string; isDone: boolean }
+        { limit?: number; threadId: string },
+        null
       >;
+      getThread: FunctionReference<
+        "query",
+        "internal",
+        { threadId: string },
+        {
+          _creationTime: number;
+          _id: string;
+          status: "active" | "archived";
+          summary?: string;
+          title?: string;
+          userId?: string;
+        } | null
+      >;
+      listThreadsByUserId: FunctionReference<
+        "query",
+        "internal",
+        {
+          order?: "asc" | "desc";
+          paginationOpts?: {
+            cursor: string | null;
+            endCursor?: string | null;
+            id?: number;
+            maximumBytesRead?: number;
+            maximumRowsRead?: number;
+            numItems: number;
+          };
+          userId?: string;
+        },
+        {
+          continueCursor: string;
+          isDone: boolean;
+          page: Array<{
+            _creationTime: number;
+            _id: string;
+            status: "active" | "archived";
+            summary?: string;
+            title?: string;
+            userId?: string;
+          }>;
+          pageStatus?: "SplitRecommended" | "SplitRequired" | null;
+          splitCursor?: string | null;
+        }
+      >;
+      searchThreadTitles: FunctionReference<
+        "query",
+        "internal",
+        { limit: number; query: string; userId?: string | null },
+        Array<{
+          _creationTime: number;
+          _id: string;
+          status: "active" | "archived";
+          summary?: string;
+          title?: string;
+          userId?: string;
+        }>
+      >;
+      updateThread: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          patch: {
+            status?: "active" | "archived";
+            summary?: string;
+            title?: string;
+            userId?: string;
+          };
+          threadId: string;
+        },
+        {
+          _creationTime: number;
+          _id: string;
+          status: "active" | "archived";
+          summary?: string;
+          title?: string;
+          userId?: string;
+        }
+      >;
+    };
+    users: {
       deleteAllForUserId: FunctionReference<
         "action",
         "internal",
@@ -1039,504 +1790,25 @@ export declare const components: {
         { userId: string },
         boolean
       >;
-      getFilesToDelete: FunctionReference<
-        "query",
-        "internal",
-        { cursor?: string; limit?: number },
-        {
-          continueCursor: string;
-          files: Array<{
-            _creationTime: number;
-            _id: string;
-            hash: string;
-            refcount: number;
-            storageId: string;
-          }>;
-          isDone: boolean;
-        }
-      >;
-      getThread: FunctionReference<
-        "query",
-        "internal",
-        { threadId: string },
-        {
-          _creationTime: number;
-          _id: string;
-          defaultSystemPrompt?: string;
-          order?: number;
-          parentThreadIds?: Array<string>;
-          status: "active" | "archived";
-          summary?: string;
-          title?: string;
-          userId?: string;
-        } | null
-      >;
-      getThreadMessages: FunctionReference<
+      listUsersWithThreads: FunctionReference<
         "query",
         "internal",
         {
-          cursor?: string;
-          isTool?: boolean;
-          limit?: number;
-          order?: "asc" | "desc";
-          parentMessageId?: string;
-          statuses?: Array<"pending" | "success" | "failed">;
-          threadId: string;
-        },
-        {
-          continueCursor: string;
-          isDone: boolean;
-          messages: Array<{
-            _creationTime: number;
-            _id: string;
-            agentName?: string;
-            embeddingId?:
-              | string
-              | string
-              | string
-              | string
-              | string
-              | string
-              | string
-              | string
-              | string;
-            error?: string;
-            fileId?: string;
-            id?: string;
-            message?:
-              | {
-                  content:
-                    | string
-                    | Array<
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            text: string;
-                            type: "text";
-                          }
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            image: string | ArrayBuffer;
-                            mimeType?: string;
-                            providerOptions?: Record<string, any>;
-                            type: "image";
-                          }
-                        | {
-                            data: string | ArrayBuffer;
-                            experimental_providerMetadata?: Record<string, any>;
-                            mimeType: string;
-                            providerOptions?: Record<string, any>;
-                            type: "file";
-                          }
-                      >;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "user";
-                }
-              | {
-                  content:
-                    | string
-                    | Array<
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            text: string;
-                            type: "text";
-                          }
-                        | {
-                            data: string | ArrayBuffer;
-                            experimental_providerMetadata?: Record<string, any>;
-                            mimeType: string;
-                            providerOptions?: Record<string, any>;
-                            type: "file";
-                          }
-                        | {
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            text: string;
-                            type: "reasoning";
-                          }
-                        | {
-                            data: string;
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            type: "redacted-reasoning";
-                          }
-                        | {
-                            args: any;
-                            experimental_providerMetadata?: Record<string, any>;
-                            providerOptions?: Record<string, any>;
-                            toolCallId: string;
-                            toolName: string;
-                            type: "tool-call";
-                          }
-                      >;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "assistant";
-                }
-              | {
-                  content: Array<{
-                    args?: any;
-                    experimental_content?: Array<
-                      | { text: string; type: "text" }
-                      | { data: string; mimeType?: string; type: "image" }
-                    >;
-                    experimental_providerMetadata?: Record<string, any>;
-                    isError?: boolean;
-                    providerOptions?: Record<string, any>;
-                    result: any;
-                    toolCallId: string;
-                    toolName: string;
-                    type: "tool-result";
-                  }>;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "tool";
-                }
-              | {
-                  content: string;
-                  experimental_providerMetadata?: Record<string, any>;
-                  providerOptions?: Record<string, any>;
-                  role: "system";
-                };
-            model?: string;
-            order: number;
-            parentMessageId?: string;
-            status: "pending" | "success" | "failed";
-            stepId?: string;
-            stepOrder: number;
-            text?: string;
-            threadId: string;
-            tool: boolean;
-            userId?: string;
-          }>;
-        }
-      >;
-      getThreadsByUserId: FunctionReference<
-        "query",
-        "internal",
-        {
-          cursor?: string | null;
-          limit?: number;
-          offset?: number;
-          statuses?: "active" | "archived";
-          userId: string;
-        },
-        {
-          continueCursor: string;
-          isDone: boolean;
-          threads: Array<{
-            _creationTime: number;
-            _id: string;
-            defaultSystemPrompt?: string;
-            order?: number;
-            parentThreadIds?: Array<string>;
-            status: "active" | "archived";
-            summary?: string;
-            title?: string;
-            userId?: string;
-          }>;
-        }
-      >;
-      rollbackMessage: FunctionReference<
-        "mutation",
-        "internal",
-        { error?: string; messageId: string },
-        null
-      >;
-      searchMessages: FunctionReference<
-        "action",
-        "internal",
-        {
-          limit: number;
-          messageRange?: { after: number; before: number };
-          parentMessageId?: string;
-          text?: string;
-          threadId?: string;
-          userId?: string;
-          vector?: Array<number>;
-          vectorModel?: string;
-          vectorScoreThreshold?: number;
-        },
-        Array<{
-          _creationTime: number;
-          _id: string;
-          agentName?: string;
-          embeddingId?:
-            | string
-            | string
-            | string
-            | string
-            | string
-            | string
-            | string
-            | string
-            | string;
-          error?: string;
-          fileId?: string;
-          id?: string;
-          message?:
-            | {
-                content:
-                  | string
-                  | Array<
-                      | {
-                          experimental_providerMetadata?: Record<string, any>;
-                          providerOptions?: Record<string, any>;
-                          text: string;
-                          type: "text";
-                        }
-                      | {
-                          experimental_providerMetadata?: Record<string, any>;
-                          image: string | ArrayBuffer;
-                          mimeType?: string;
-                          providerOptions?: Record<string, any>;
-                          type: "image";
-                        }
-                      | {
-                          data: string | ArrayBuffer;
-                          experimental_providerMetadata?: Record<string, any>;
-                          mimeType: string;
-                          providerOptions?: Record<string, any>;
-                          type: "file";
-                        }
-                    >;
-                experimental_providerMetadata?: Record<string, any>;
-                providerOptions?: Record<string, any>;
-                role: "user";
-              }
-            | {
-                content:
-                  | string
-                  | Array<
-                      | {
-                          experimental_providerMetadata?: Record<string, any>;
-                          providerOptions?: Record<string, any>;
-                          text: string;
-                          type: "text";
-                        }
-                      | {
-                          data: string | ArrayBuffer;
-                          experimental_providerMetadata?: Record<string, any>;
-                          mimeType: string;
-                          providerOptions?: Record<string, any>;
-                          type: "file";
-                        }
-                      | {
-                          experimental_providerMetadata?: Record<string, any>;
-                          providerOptions?: Record<string, any>;
-                          text: string;
-                          type: "reasoning";
-                        }
-                      | {
-                          data: string;
-                          experimental_providerMetadata?: Record<string, any>;
-                          providerOptions?: Record<string, any>;
-                          type: "redacted-reasoning";
-                        }
-                      | {
-                          args: any;
-                          experimental_providerMetadata?: Record<string, any>;
-                          providerOptions?: Record<string, any>;
-                          toolCallId: string;
-                          toolName: string;
-                          type: "tool-call";
-                        }
-                    >;
-                experimental_providerMetadata?: Record<string, any>;
-                providerOptions?: Record<string, any>;
-                role: "assistant";
-              }
-            | {
-                content: Array<{
-                  args?: any;
-                  experimental_content?: Array<
-                    | { text: string; type: "text" }
-                    | { data: string; mimeType?: string; type: "image" }
-                  >;
-                  experimental_providerMetadata?: Record<string, any>;
-                  isError?: boolean;
-                  providerOptions?: Record<string, any>;
-                  result: any;
-                  toolCallId: string;
-                  toolName: string;
-                  type: "tool-result";
-                }>;
-                experimental_providerMetadata?: Record<string, any>;
-                providerOptions?: Record<string, any>;
-                role: "tool";
-              }
-            | {
-                content: string;
-                experimental_providerMetadata?: Record<string, any>;
-                providerOptions?: Record<string, any>;
-                role: "system";
-              };
-          model?: string;
-          order: number;
-          parentMessageId?: string;
-          status: "pending" | "success" | "failed";
-          stepId?: string;
-          stepOrder: number;
-          text?: string;
-          threadId: string;
-          tool: boolean;
-          userId?: string;
-        }>
-      >;
-      textSearch: FunctionReference<
-        "query",
-        "internal",
-        { limit: number; text: string; threadId?: string; userId?: string },
-        Array<{
-          _creationTime: number;
-          _id: string;
-          agentName?: string;
-          embeddingId?:
-            | string
-            | string
-            | string
-            | string
-            | string
-            | string
-            | string
-            | string
-            | string;
-          error?: string;
-          fileId?: string;
-          id?: string;
-          message?:
-            | {
-                content:
-                  | string
-                  | Array<
-                      | {
-                          experimental_providerMetadata?: Record<string, any>;
-                          providerOptions?: Record<string, any>;
-                          text: string;
-                          type: "text";
-                        }
-                      | {
-                          experimental_providerMetadata?: Record<string, any>;
-                          image: string | ArrayBuffer;
-                          mimeType?: string;
-                          providerOptions?: Record<string, any>;
-                          type: "image";
-                        }
-                      | {
-                          data: string | ArrayBuffer;
-                          experimental_providerMetadata?: Record<string, any>;
-                          mimeType: string;
-                          providerOptions?: Record<string, any>;
-                          type: "file";
-                        }
-                    >;
-                experimental_providerMetadata?: Record<string, any>;
-                providerOptions?: Record<string, any>;
-                role: "user";
-              }
-            | {
-                content:
-                  | string
-                  | Array<
-                      | {
-                          experimental_providerMetadata?: Record<string, any>;
-                          providerOptions?: Record<string, any>;
-                          text: string;
-                          type: "text";
-                        }
-                      | {
-                          data: string | ArrayBuffer;
-                          experimental_providerMetadata?: Record<string, any>;
-                          mimeType: string;
-                          providerOptions?: Record<string, any>;
-                          type: "file";
-                        }
-                      | {
-                          experimental_providerMetadata?: Record<string, any>;
-                          providerOptions?: Record<string, any>;
-                          text: string;
-                          type: "reasoning";
-                        }
-                      | {
-                          data: string;
-                          experimental_providerMetadata?: Record<string, any>;
-                          providerOptions?: Record<string, any>;
-                          type: "redacted-reasoning";
-                        }
-                      | {
-                          args: any;
-                          experimental_providerMetadata?: Record<string, any>;
-                          providerOptions?: Record<string, any>;
-                          toolCallId: string;
-                          toolName: string;
-                          type: "tool-call";
-                        }
-                    >;
-                experimental_providerMetadata?: Record<string, any>;
-                providerOptions?: Record<string, any>;
-                role: "assistant";
-              }
-            | {
-                content: Array<{
-                  args?: any;
-                  experimental_content?: Array<
-                    | { text: string; type: "text" }
-                    | { data: string; mimeType?: string; type: "image" }
-                  >;
-                  experimental_providerMetadata?: Record<string, any>;
-                  isError?: boolean;
-                  providerOptions?: Record<string, any>;
-                  result: any;
-                  toolCallId: string;
-                  toolName: string;
-                  type: "tool-result";
-                }>;
-                experimental_providerMetadata?: Record<string, any>;
-                providerOptions?: Record<string, any>;
-                role: "tool";
-              }
-            | {
-                content: string;
-                experimental_providerMetadata?: Record<string, any>;
-                providerOptions?: Record<string, any>;
-                role: "system";
-              };
-          model?: string;
-          order: number;
-          parentMessageId?: string;
-          status: "pending" | "success" | "failed";
-          stepId?: string;
-          stepOrder: number;
-          text?: string;
-          threadId: string;
-          tool: boolean;
-          userId?: string;
-        }>
-      >;
-      updateThread: FunctionReference<
-        "mutation",
-        "internal",
-        {
-          patch: {
-            defaultSystemPrompt?: string;
-            status?: "active" | "archived";
-            summary?: string;
-            title?: string;
+          paginationOpts: {
+            cursor: string | null;
+            endCursor?: string | null;
+            id?: number;
+            maximumBytesRead?: number;
+            maximumRowsRead?: number;
+            numItems: number;
           };
-          threadId: string;
         },
         {
-          _creationTime: number;
-          _id: string;
-          defaultSystemPrompt?: string;
-          order?: number;
-          parentThreadIds?: Array<string>;
-          status: "active" | "archived";
-          summary?: string;
-          title?: string;
-          userId?: string;
+          continueCursor: string;
+          isDone: boolean;
+          page: Array<string>;
+          pageStatus?: "SplitRecommended" | "SplitRequired" | null;
+          splitCursor?: string | null;
         }
       >;
     };
@@ -1547,6 +1819,7 @@ export declare const components: {
           "internal",
           {
             ids: Array<
+              | string
               | string
               | string
               | string
@@ -1574,6 +1847,7 @@ export declare const components: {
               | 512
               | 768
               | 1024
+              | 1408
               | 1536
               | 2048
               | 3072
@@ -1591,11 +1865,13 @@ export declare const components: {
               | 512
               | 768
               | 1024
+              | 1408
               | 1536
               | 2048
               | 3072
               | 4096;
             vectors: Array<{
+              messageId?: string;
               model: string;
               table: string;
               threadId?: string;
@@ -1603,7 +1879,18 @@ export declare const components: {
               vector: Array<number>;
             }>;
           },
-          null
+          Array<
+            | string
+            | string
+            | string
+            | string
+            | string
+            | string
+            | string
+            | string
+            | string
+            | string
+          >
         >;
         paginate: FunctionReference<
           "query",
@@ -1619,6 +1906,7 @@ export declare const components: {
               | 512
               | 768
               | 1024
+              | 1408
               | 1536
               | 2048
               | 3072
@@ -1627,6 +1915,7 @@ export declare const components: {
           {
             continueCursor: string;
             ids: Array<
+              | string
               | string
               | string
               | string
@@ -1646,6 +1935,7 @@ export declare const components: {
           {
             vectors: Array<{
               id:
+                | string
                 | string
                 | string
                 | string
